@@ -58,7 +58,7 @@ const userSchema = new Schema<IUser>(
 // Индекс для быстрого поиска по email
 userSchema.index({ email: 1 })
 
-// Method to check if user has active subscription
+// Method to check if user has active subscription (including trial)
 userSchema.methods.hasActiveSubscription = function(): boolean {
   if (this.role === 'admin' || this.role === 'teacher') {
     return true // Admins and teachers always have access
