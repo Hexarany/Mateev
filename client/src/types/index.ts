@@ -33,6 +33,10 @@ export interface Topic {
   model3D?: string
   slug: string
   order: number
+  region?: {
+    ru: string
+    ro: string
+  }
 }
 
 export interface MediaFile {
@@ -92,3 +96,50 @@ export interface QuizResult {
 }
 
 export type Language = 'ru' | 'ro'
+
+// Subscription types
+export interface SubscriptionPlan {
+  id: string
+  name: {
+    ru: string
+    ro: string
+  }
+  description: {
+    ru: string
+    ro: string
+  }
+  price: number
+  currency: string
+  duration: number // in days
+  features: {
+    ru: string[]
+    ro: string[]
+  }
+  stripePriceId?: string
+}
+
+export interface Subscription {
+  _id: string
+  userId: string
+  plan: 'monthly' | 'yearly'
+  status: 'active' | 'cancelled' | 'expired' | 'trial'
+  startDate: string | Date
+  endDate: string | Date
+  autoRenew: boolean
+  paymentMethod?: string
+  stripeCustomerId?: string
+  stripeSubscriptionId?: string
+  amount: number
+  currency: string
+  createdAt: string | Date
+  updatedAt: string | Date
+}
+
+export interface CurrentSubscription {
+  user: {
+    subscriptionStatus: 'none' | 'active' | 'trial' | 'expired'
+    subscriptionEndDate?: string | Date
+    hasActiveSubscription: boolean
+  }
+  subscription: Subscription | null
+}

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Category, Topic, Quiz } from '@/types'
+import type { Category, Topic, Quiz, SubscriptionPlan, CurrentSubscription, Subscription } from '@/types'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
@@ -61,6 +61,67 @@ export const uploadMedia = async (file: File): Promise<any> => {
   const response = await api.post('/media/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
+    },
+  })
+  return response.data
+}
+
+// Subscriptions
+export const getSubscriptionPlans = async (): Promise<{ plans: SubscriptionPlan[]; trialDays: number }> => {
+  const response = await api.get('/subscriptions/plans')
+  return response.data
+}
+
+export const getCurrentSubscription = async (token: string): Promise<CurrentSubscription> => {
+  const response = await api.get('/subscriptions/current', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const startTrial = async (token: string): Promise<any> => {
+  const response = await api.post('/subscriptions/start-trial', {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const cancelSubscription = async (token: string): Promise<any> => {
+  const response = await api.post('/subscriptions/cancel', {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const getSubscriptionHistory = async (token: string): Promise<{ subscriptions: Subscription[] }> => {
+  const response = await api.get('/subscriptions/history', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+// PayPal
+export const createPayPalOrder = async (token: string, planId: string): Promise<any> => {
+  const response = await api.post('/paypal/create-order', { planId }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const capturePayPalOrder = async (token: string, orderId: string, planId: string): Promise<any> => {
+  const response = await api.post('/paypal/capture-order', { orderId, planId }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   })
   return response.data

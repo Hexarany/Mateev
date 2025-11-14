@@ -22,6 +22,7 @@ export interface ITopic extends Document {
   model3D?: string
   slug: string
   order: number
+  region?: IMultiLangText
   createdAt: Date
   updatedAt: Date
 }
@@ -64,6 +65,10 @@ const TopicSchema: Schema = new Schema(
     model3D: { type: String },
     slug: { type: String, required: true, unique: true },
     order: { type: Number, default: 0 },
+    region: {
+      ru: String,
+      ro: String,
+    },
   },
   {
     timestamps: true,

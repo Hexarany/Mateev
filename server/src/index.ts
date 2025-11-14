@@ -9,6 +9,8 @@ import topicRoutes from './routes/topicRoutes'
 import quizRoutes from './routes/quizRoutes'
 import mediaRoutes from './routes/mediaRoutes'
 import authRoutes from './routes/auth'
+import subscriptionRoutes from './routes/subscriptionRoutes'
+import paypalRoutes from './routes/paypalRoutes'
 
 // Load environment variables
 dotenv.config()
@@ -54,6 +56,8 @@ app.use('/api/categories', categoryRoutes)
 app.use('/api/topics', topicRoutes)
 app.use('/api/quizzes', quizRoutes)
 app.use('/api/media', mediaRoutes)
+app.use('/api/subscriptions', subscriptionRoutes)
+app.use('/api/paypal', paypalRoutes)
 
 // Health check endpoints
 app.get('/health', (req, res) => {

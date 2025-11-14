@@ -9,6 +9,8 @@ import QuizPage from './pages/QuizPage'
 import AdminPage from './pages/AdminPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import SubscriptionPage from './pages/SubscriptionPage'
+import ProfilePage from './pages/ProfilePage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/subscription" element={<SubscriptionPage />} />
           <Route path="/category/:categoryId" element={<CategoryPage />} />
           <Route path="/topic/:topicId" element={<TopicPage />} />
           <Route path="/quiz/:quizId" element={<QuizPage />} />

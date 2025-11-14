@@ -211,8 +211,42 @@ const Navbar = () => {
                   <MenuItem disabled>
                     <Typography textAlign="center">{user?.name}</Typography>
                   </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseUserMenu()
+                      navigate('/profile')
+                    }}
+                  >
+                    <Typography textAlign="center">
+                      {i18n.language === 'ru' ? 'Профиль' : 'Profil'}
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseUserMenu()
+                      navigate('/subscription')
+                    }}
+                  >
+                    <Typography textAlign="center">
+                      {i18n.language === 'ru' ? 'Подписка' : 'Abonament'}
+                    </Typography>
+                  </MenuItem>
+                  {(user?.role === 'admin' || user?.role === 'teacher') && (
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu()
+                        navigate('/admin')
+                      }}
+                    >
+                      <Typography textAlign="center">
+                        {i18n.language === 'ru' ? 'Админ-панель' : 'Panou admin'}
+                      </Typography>
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleLogout}>
-                    <Typography textAlign="center">Выход</Typography>
+                    <Typography textAlign="center">
+                      {i18n.language === 'ru' ? 'Выход' : 'Ieșire'}
+                    </Typography>
                   </MenuItem>
                 </Menu>
               </>
