@@ -1,3 +1,4 @@
+// client/src/types/index.ts
 export interface Category {
   _id: string
   name: {
@@ -15,7 +16,7 @@ export interface Category {
 
 export interface Topic {
   _id: string
-  categoryId: string
+  categoryId: string | Category // Добавлен тип Category для populated
   name: {
     ru: string
     ro: string
@@ -37,6 +38,11 @@ export interface Topic {
     ru: string
     ro: string
   }
+  // === ДОБАВЛЕННЫЕ ПОЛЯ (для TopicsManager.tsx) ===
+  imageUrl?: string // Используется в форме
+  modelUrl?: string // Используется в форме
+  difficulty?: 'beginner' | 'intermediate' | 'advanced'
+  estimatedTime?: number
 }
 
 export interface MediaFile {

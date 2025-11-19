@@ -1,212 +1,97 @@
+import React, { useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
-import Callout from './Callout'
+import remarkGfm from 'remark-gfm' // Для поддержки таблиц, зачеркивания и т.д.
+import { Box, Typography } from '@mui/material'
+import Callout from './Callout' // Предполагаем, что этот компонент существует
 
-interface EnhancedMarkdownProps {
-  children: string
+// Регулярное выражение для поиска и замены пользовательских блоков Callout
+// Оно ищет :::TYPE [Optional Title] Content :::
+const CALLOUT_REGEX = /:::(\w+)(?:\s*\[(.*?)\])?\n([\s\S]*?)\n:::/g
+
+// Map для рендеринга пользовательских элементов
+const customRenderers = {
+  // Преобразование стандартного тега <table> в кастомный компонент MUI (если необходимо)
+  table: ({ children }: { children: React.ReactNode }) => (
+    <Box sx={{ overflowX: 'auto', my: 2 }}>
+      <table style={{ borderCollapse: 'collapse', width: '100%' }}>{children}</table>
+    </Box>
+  ),
+  // Преобразование <img> для стилизации MUI
+  img: ({ src, alt }: { src?: string; alt?: string }) => (
+    <Box sx={{ maxWidth: '100%', height: 'auto', my: 2, display: 'flex', flexDirection: 'column' }}>
+        <img src={src} alt={alt} style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
+        {alt && <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>{alt}</Typography>}
+    </Box>
+  ),
 }
 
-const EnhancedMarkdown = ({ children }: EnhancedMarkdownProps) => {
-  // Обработка callouts в markdown
-  const processCallouts = (text: string) => {
-    // Паттерн для callouts: :::warning, :::info, :::danger, :::success, :::clinical
-    const calloutRegex = /:::(warning|info|danger|success|clinical)\s*(?:\[(.+?)\])?\n([\s\S]*?):::/g
+interface EnhancedMarkdownProps {
+  content: string
+}
 
-    const parts: React.ReactNode[] = []
-    let lastIndex = 0
-    let match
+const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ content }) => {
+  const processedContent = useMemo(() => {
+    if (!content) return ''
 
-    while ((match = calloutRegex.exec(text)) !== null) {
-      // Добавляем текст перед callout
-      if (match.index > lastIndex) {
-        parts.push(
-          <ReactMarkdown key={`md-${lastIndex}`} remarkPlugins={[remarkGfm]} components={markdownComponents}>
-            {text.slice(lastIndex, match.index)}
-          </ReactMarkdown>
-        )
-      }
+    // 1. Пре-обработка: Замена кастомных блоков на HTML-компоненты Callout
+    // Мы заменяем :::...::: на временные HTML-теги, которые ReactMarkdown не обработает
+    let tempHtml = content.replace(CALLOUT_REGEX, (match, type, title, blockContent) => {
+      // Кодируем содержимое, чтобы избежать проблем с Markdown-парсингом внутри Callout
+      const encodedContent = encodeURIComponent(blockContent.trim())
+      const encodedTitle = title ? encodeURIComponent(title.trim()) : ''
+      
+      // Используем специальный HTML-тег с атрибутами data-*
+      return `<div 
+        data-callout-type="${type.toLowerCase()}" 
+        data-callout-title="${encodedTitle}" 
+        data-callout-content="${encodedContent}"
+      ></div>`
+    })
 
-      // Добавляем callout
-      const [, type, title, content] = match
-      parts.push(
-        <Callout key={`callout-${match.index}`} type={type as any} title={title}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>{content.trim()}</ReactMarkdown>
-        </Callout>
-      )
+    return tempHtml
+  }, [content])
 
-      lastIndex = match.index + match[0].length
+  // 2. Рендеринг: Обработка Markdown и кастомных элементов
+  const renderers = useMemo(() => {
+    return {
+      // Наследуем стандартные рендереры
+      ...customRenderers,
+
+      // Обработка кастомного DIV-элемента, созданного на шаге 1
+      div: ({ node, ...props }: any) => {
+        const { 'data-callout-type': type, 'data-callout-title': title, 'data-callout-content': content } = props
+        
+        if (type) {
+          // Если это наш кастомный блок Callout
+          const decodedContent = decodeURIComponent(content || '')
+          const decodedTitle = decodeURIComponent(title || '')
+          
+          return (
+            <Box sx={{ my: 2 }}>
+                <Callout type={type} title={decodedTitle} content={decodedContent} />
+            </Box>
+          )
+        }
+        
+        // Если это обычный div, возвращаем его как есть
+        return <div {...props} />
+      },
     }
-
-    // Добавляем оставшийся текст
-    if (lastIndex < text.length) {
-      parts.push(
-        <ReactMarkdown key={`md-${lastIndex}`} remarkPlugins={[remarkGfm]} components={markdownComponents}>
-          {text.slice(lastIndex)}
-        </ReactMarkdown>
-      )
-    }
-
-    return parts.length > 0 ? parts : <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>{text}</ReactMarkdown>
-  }
-
-  const markdownComponents = {
-    table: ({ children }: any) => (
-      <TableContainer component={Paper} elevation={0} sx={{ my: 3, border: '1px solid #e0e0e0' }}>
-        <Table size="small">
-          {children}
-        </Table>
-      </TableContainer>
-    ),
-    thead: ({ children }: any) => (
-      <TableHead sx={{ bgcolor: '#f5f5f5' }}>
-        {children}
-      </TableHead>
-    ),
-    tbody: ({ children }: any) => (
-      <TableBody>
-        {children}
-      </TableBody>
-    ),
-    tr: ({ children }: any) => (
-      <TableRow>
-        {children}
-      </TableRow>
-    ),
-    th: ({ children }: any) => (
-      <TableCell sx={{ fontWeight: 600, borderBottom: '2px solid #e0e0e0' }}>
-        {children}
-      </TableCell>
-    ),
-    td: ({ children }: any) => (
-      <TableCell sx={{ borderBottom: '1px solid #f0f0f0' }}>
-        {children}
-      </TableCell>
-    ),
-    h1: ({ children }: any) => (
-      <Box component="h1" sx={{
-        fontSize: '2rem',
-        fontWeight: 600,
-        mt: 4,
-        mb: 2,
-        color: 'primary.main',
-        borderBottom: '3px solid',
-        borderColor: 'primary.main',
-        pb: 1,
-      }}>
-        {children}
-      </Box>
-    ),
-    h2: ({ children }: any) => (
-      <Box component="h2" sx={{
-        fontSize: '1.5rem',
-        fontWeight: 600,
-        mt: 3.5,
-        mb: 1.5,
-        color: 'primary.dark',
-        borderBottom: '2px solid',
-        borderColor: 'primary.light',
-        pb: 0.5,
-      }}>
-        {children}
-      </Box>
-    ),
-    h3: ({ children }: any) => (
-      <Box component="h3" sx={{
-        fontSize: '1.25rem',
-        fontWeight: 600,
-        mt: 3,
-        mb: 1,
-        color: 'text.primary',
-      }}>
-        {children}
-      </Box>
-    ),
-    h4: ({ children }: any) => (
-      <Box component="h4" sx={{
-        fontSize: '1.1rem',
-        fontWeight: 600,
-        mt: 2.5,
-        mb: 1,
-        color: 'text.primary',
-      }}>
-        {children}
-      </Box>
-    ),
-    p: ({ children }: any) => (
-      <Box component="p" sx={{ mb: 2, lineHeight: 1.8 }}>
-        {children}
-      </Box>
-    ),
-    ul: ({ children }: any) => (
-      <Box component="ul" sx={{ mb: 2, pl: 3, '& li': { mb: 0.5 } }}>
-        {children}
-      </Box>
-    ),
-    ol: ({ children }: any) => (
-      <Box component="ol" sx={{ mb: 2, pl: 3, '& li': { mb: 0.5 } }}>
-        {children}
-      </Box>
-    ),
-    blockquote: ({ children }: any) => (
-      <Box
-        component="blockquote"
-        sx={{
-          borderLeft: '4px solid',
-          borderColor: 'grey.400',
-          bgcolor: 'grey.50',
-          p: 2,
-          my: 2,
-          fontStyle: 'italic',
-        }}
-      >
-        {children}
-      </Box>
-    ),
-    code: ({ inline, children }: any) => (
-      inline ? (
-        <Box
-          component="code"
-          sx={{
-            bgcolor: 'grey.100',
-            color: 'error.dark',
-            px: 0.5,
-            py: 0.25,
-            borderRadius: 0.5,
-            fontSize: '0.9em',
-            fontFamily: 'monospace',
-          }}
-        >
-          {children}
-        </Box>
-      ) : (
-        <Box
-          component="pre"
-          sx={{
-            bgcolor: 'grey.900',
-            color: 'grey.50',
-            p: 2,
-            borderRadius: 1,
-            overflow: 'auto',
-            my: 2,
-          }}
-        >
-          <code>{children}</code>
-        </Box>
-      )
-    ),
-  }
+  }, [])
 
   return (
-    <Box
-      sx={{
-        '& strong': { fontWeight: 600, color: 'text.primary' },
-        '& em': { fontStyle: 'italic' },
-        '& a': { color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } },
-      }}
+    <ReactMarkdown
+      // Используем плагин GFM для таблиц и других расширений
+      remarkPlugins={[remarkGfm]}
+      // Разрешаем рендерить HTML, чтобы перехватывать наш div
+      rehypePlugins={[]} 
+      components={renderers}
+      // Это позволяет нам вставлять HTML-теги для перехвата
+      skipHtml={false} 
+      className="markdown-body" 
     >
-      {processCallouts(children)}
-    </Box>
+      {processedContent}
+    </ReactMarkdown>
   )
 }
 

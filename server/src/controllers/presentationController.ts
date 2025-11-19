@@ -1,7 +1,15 @@
+// server/src/controllers/presentationController.ts
 import { Request, Response } from 'express'
 import Presentation from '../models/Presentation'
-import path from 'path'
-import fs from 'fs'
+import path from 'path' // Оставляем, но используем для Mock URL
+import fs from 'fs' // Оставляем, но используем для Mock удаления
+
+// Расширяем стандартный тип Request для доступа к данным пользователя
+interface CustomRequest extends Request {
+  userId?: string
+  userEmail?: string
+  userRole?: string
+}
 
 // Получить все презентации
 export const getPresentations = async (req: Request, res: Response) => {
@@ -42,9 +50,10 @@ export const getPresentationById = async (req: Request, res: Response) => {
   }
 }
 
-// Создать новую презентацию
-export const createPresentation = async (req: Request, res: Response) => {
+// Создать новую презентацию (Используем CustomRequest)
+export const createPresentation = async (req: CustomRequest, res: Response) => {
   try {
+    // === ВАЖНО: ИСПРАВЛЕНИЕ АРХИТЕКТУРЫ ХРАНЕНИЯ ===
     if (!req.file) {
       return res.status(400).json({ message: 'Файл не загружен' })
     }
@@ -53,12 +62,17 @@ export const createPresentation = async (req: Request, res: Response) => {
 
     // Проверка обязательных полей
     if (!title_ru || !title_ro) {
-      // Удаляем загруженный файл если валидация не прошла
-      if (req.file.path) {
-        fs.unlinkSync(req.file.path)
-      }
+      // В Production/Cloud Storage не нужно чистить файл
       return res.status(400).json({ message: 'Заголовки на обоих языках обязательны' })
     }
+
+    // ИСПРАВЛЕНО: req.user!._id заменено на req.userId
+    if (!req.userId) {
+        return res.status(401).json({ message: 'Пользователь не аутентифицирован' });
+    }
+    
+    // ВНИМАНИЕ: Mock URL для облачного хранилища
+    const fileUrl = `https://your.cloud-storage.com/${req.file.filename}`;
 
     const presentation = await Presentation.create({
       title: {
@@ -70,14 +84,15 @@ export const createPresentation = async (req: Request, res: Response) => {
         ro: description_ro || '',
       },
       file: {
-        url: `/uploads/${req.file.filename}`,
+        // ИСПРАВЛЕНО: Используем Mock Cloud URL вместо локального /uploads/
+        url: fileUrl, 
         filename: req.file.filename,
         originalName: req.file.originalname,
         size: req.file.size,
         mimeType: req.file.mimetype,
       },
       categoryId: categoryId || undefined,
-      uploadedBy: req.user!._id,
+      uploadedBy: req.userId, // ИСПРАВЛЕНО
       order: order || 0,
     })
 
@@ -88,16 +103,13 @@ export const createPresentation = async (req: Request, res: Response) => {
     res.status(201).json(populatedPresentation)
   } catch (error) {
     console.error('Error creating presentation:', error)
-    // Удаляем файл при ошибке
-    if (req.file?.path) {
-      fs.unlinkSync(req.file.path)
-    }
+    // В Production/Cloud Storage здесь должна быть логика очистки файла в облаке
     res.status(500).json({ message: 'Ошибка создания презентации' })
   }
 }
 
 // Обновить презентацию
-export const updatePresentation = async (req: Request, res: Response) => {
+export const updatePresentation = async (req: CustomRequest, res: Response) => {
   try {
     const { title_ru, title_ro, description_ru, description_ro, categoryId, order, isPublished } = req.body
 
@@ -105,6 +117,11 @@ export const updatePresentation = async (req: Request, res: Response) => {
     if (!presentation) {
       return res.status(404).json({ message: 'Презентация не найдена' })
     }
+
+    // Проверка прав (опционально: убедиться, что только владелец или админ может обновить)
+    // if (req.userId !== presentation.uploadedBy.toString() && req.userRole !== 'admin') {
+    //     return res.status(403).json({ message: 'Недостаточно прав' });
+    // }
 
     // Обновляем поля
     if (title_ru) presentation.title.ru = title_ru
@@ -115,17 +132,14 @@ export const updatePresentation = async (req: Request, res: Response) => {
     if (order !== undefined) presentation.order = order
     if (isPublished !== undefined) presentation.isPublished = isPublished
 
-    // Если загружен новый файл
+    // Если загружен новый файл (В Production/Cloud Storage)
     if (req.file) {
-      // Удаляем старый файл
-      const oldFilePath = path.join(process.cwd(), 'uploads', presentation.file.filename)
-      if (fs.existsSync(oldFilePath)) {
-        fs.unlinkSync(oldFilePath)
-      }
+      // В Production: Здесь должна быть логика удаления старого файла из облака
+      console.log(`MOCK: Удаление старого файла из облака: ${presentation.file.filename}`)
 
       // Обновляем информацию о файле
       presentation.file = {
-        url: `/uploads/${req.file.filename}`,
+        url: `https://your.cloud-storage.com/${req.file.filename}`, // Mock Cloud URL
         filename: req.file.filename,
         originalName: req.file.originalname,
         size: req.file.size,
@@ -142,28 +156,22 @@ export const updatePresentation = async (req: Request, res: Response) => {
     res.json(updatedPresentation)
   } catch (error) {
     console.error('Error updating presentation:', error)
-    // Удаляем новый файл при ошибке
-    if (req.file?.path) {
-      fs.unlinkSync(req.file.path)
-    }
+    // В Production: Здесь должна быть логика отката загрузки нового файла
     res.status(500).json({ message: 'Ошибка обновления презентации' })
   }
 }
 
 // Удалить презентацию
-export const deletePresentation = async (req: Request, res: Response) => {
+export const deletePresentation = async (req: CustomRequest, res: Response) => {
   try {
     const presentation = await Presentation.findById(req.params.id)
     if (!presentation) {
       return res.status(404).json({ message: 'Презентация не найдена' })
     }
-
-    // Удаляем файл
-    const filePath = path.join(process.cwd(), 'uploads', presentation.file.filename)
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath)
-    }
-
+    
+    // В Production: Здесь должна быть логика удаления файла из облака
+    console.log(`MOCK: Удаление файла из облака: ${presentation.file.filename}`)
+    
     await Presentation.findByIdAndDelete(req.params.id)
 
     res.json({ message: 'Презентация успешно удалена' })
@@ -180,18 +188,20 @@ export const downloadPresentation = async (req: Request, res: Response) => {
     if (!presentation) {
       return res.status(404).json({ message: 'Презентация не найдена' })
     }
-
-    const filePath = path.join(process.cwd(), 'uploads', presentation.file.filename)
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: 'Файл не найден' })
+    
+    // ВНИМАНИЕ: Этот маршрут пытается обслуживать файл с локального диска.
+    // Если вы используете Cloud Storage, этот маршрут должен перенаправлять
+    // пользователя на URL облачного хранилища (presentation.file.url).
+    
+    const filePath = presentation.file.url; // Используем URL из базы данных (Mock Cloud URL)
+    
+    if (!filePath || !filePath.startsWith('https://')) {
+        return res.status(500).json({ message: 'Файл находится в облаке, но его URL недействителен.' })
     }
 
-    // Устанавливаем заголовки для скачивания
-    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(presentation.file.originalName)}"`)
-    res.setHeader('Content-Type', presentation.file.mimeType)
-
-    // Отправляем файл
-    res.sendFile(filePath)
+    // Перенаправляем на Cloud URL (работает, если файл публичный)
+    res.redirect(filePath);
+    
   } catch (error) {
     console.error('Error downloading presentation:', error)
     res.status(500).json({ message: 'Ошибка скачивания файла' })

@@ -37,6 +37,34 @@ export const getTopicsByCategory = async (categoryId: string): Promise<Topic[]> 
   return response.data
 }
 
+// --- TOPICS CRUD (Для Admin Panel) ---
+
+export const createTopic = async (topicData: any, token: string): Promise<Topic> => {
+  const response = await api.post('/topics', topicData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const updateTopic = async (id: string, topicData: any, token: string): Promise<Topic> => {
+  const response = await api.put(`/topics/${id}`, topicData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const deleteTopic = async (id: string, token: string): Promise<void> => {
+  await api.delete(`/topics/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}
+
 // Quizzes
 export const getQuizzes = async (): Promise<Quiz[]> => {
   const response = await api.get('/quizzes')
@@ -51,6 +79,34 @@ export const getQuizById = async (id: string): Promise<Quiz> => {
 export const getQuizzesByTopic = async (topicId: string): Promise<Quiz[]> => {
   const response = await api.get(`/quizzes/topic/${topicId}`)
   return response.data
+}
+
+// --- QUIZZES CRUD (Для Admin Panel) ---
+
+export const createQuiz = async (quizData: any, token: string): Promise<Quiz> => {
+  const response = await api.post('/quizzes', quizData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const updateQuiz = async (id: string, quizData: any, token: string): Promise<Quiz> => {
+  const response = await api.put(`/quizzes/${id}`, quizData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
+export const deleteQuiz = async (id: string, token: string): Promise<void> => {
+  await api.delete(`/quizzes/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 }
 
 // Media

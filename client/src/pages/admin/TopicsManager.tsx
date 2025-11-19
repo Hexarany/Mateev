@@ -28,6 +28,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import type { Topic, Category } from '@/types'
+import { createTopic, updateTopic, deleteTopic } from '@/services/api' // <-- ИМПОРТ НОВЫХ ФУНКЦИЙ
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
@@ -96,6 +97,7 @@ const TopicsManager = () => {
         name: topic.name,
         description: topic.description,
         content: topic.content,
+        // Проверка: topic.categoryId может быть ObjectId (string) или populated object (Category)
         categoryId: typeof topic.categoryId === 'string' ? topic.categoryId : topic.categoryId._id,
         imageUrl: topic.imageUrl || '',
         modelUrl: topic.modelUrl || '',
@@ -130,24 +132,26 @@ const TopicsManager = () => {
     if (!token) return
 
     try {
+      // Подготовка данных, включая slug (будет создан на сервере, но устанавливаем order)
+      const dataToSend = { 
+          ...formData, 
+          // Устанавливаем order, если это новая тема и order не задан
+          order: formData.order === 0 && !editingTopic ? topics.length + 1 : formData.order 
+      };
+
       if (editingTopic) {
-        await axios.put(
-          `${API_BASE_URL}/topics/${editingTopic._id}`,
-          formData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
+        // Использование стандартизированной функции API: PUT
+        await updateTopic(editingTopic._id, dataToSend, token)
         showSnackbar('Тема обновлена', 'success')
       } else {
-        await axios.post(
-          `${API_BASE_URL}/topics`,
-          formData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
+        // Использование стандартизированной функции API: POST
+        await createTopic(dataToSend, token)
         showSnackbar('Тема создана', 'success')
       }
       loadTopics()
       handleCloseDialog()
     } catch (error) {
+      // TODO: Отображение более детальной ошибки с сервера
       showSnackbar('Ошибка сохранения', 'error')
     }
   }
@@ -156,9 +160,8 @@ const TopicsManager = () => {
     if (!token || !confirm('Вы уверены? / Sunteți sigur?')) return
 
     try {
-      await axios.delete(`${API_BASE_URL}/topics/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      // Использование стандартизированной функции API: DELETE
+      await deleteTopic(id, token)
       showSnackbar('Тема удалена', 'success')
       loadTopics()
     } catch (error) {

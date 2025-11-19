@@ -1,3 +1,4 @@
+// server/src/models/Topic.ts
 import mongoose, { Schema, Document } from 'mongoose'
 
 interface IMultiLangText {
@@ -23,6 +24,9 @@ export interface ITopic extends Document {
   slug: string
   order: number
   region?: IMultiLangText
+  // === ДОБАВЛЕННЫЕ ПОЛЯ ===
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  estimatedTime: number
   createdAt: Date
   updatedAt: Date
 }
@@ -65,6 +69,13 @@ const TopicSchema: Schema = new Schema(
     model3D: { type: String },
     slug: { type: String, required: true, unique: true },
     order: { type: Number, default: 0 },
+    // === ДОБАВЛЕННЫЕ ПОЛЯ ===
+    difficulty: {
+      type: String,
+      enum: ['beginner', 'intermediate', 'advanced'],
+      default: 'beginner',
+    },
+    estimatedTime: { type: Number, default: 10 },
     region: {
       ru: String,
       ro: String,

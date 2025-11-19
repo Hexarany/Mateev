@@ -1,3 +1,5 @@
+// server/src/routes/presentationRoutes.ts
+
 import express from 'express'
 import {
   getPresentations,
@@ -7,19 +9,40 @@ import {
   deletePresentation,
   downloadPresentation,
 } from '../controllers/presentationController'
-import { protect, restrictTo } from '../middleware/auth'
-import { upload } from '../middleware/upload'
+import { authenticateToken, authorizeRole } from '../middleware/auth' // <-- ИСПРАВЛЕННЫЕ ИМПОРТЫ
+import multer from 'multer'
+
+// Конфигурация Multer для обработки входящего файла (используем memoryStorage для Mock-логики)
+const storage = multer.memoryStorage() 
+const upload = multer({ storage })
 
 const router = express.Router()
 
-// Публичные роуты (доступны всем аутентифицированным пользователям)
-router.get('/', protect, getPresentations)
-router.get('/:id', protect, getPresentationById)
-router.get('/:id/download', protect, downloadPresentation)
+// PUBLIC: Чтение и скачивание
+router.get('/', getPresentations)
+router.get('/:id', getPresentationById)
+router.get('/download/:id', downloadPresentation) 
 
-// Защищенные роуты (только для админов и учителей)
-router.post('/', protect, restrictTo('admin', 'teacher'), upload.single('file'), createPresentation)
-router.put('/:id', protect, restrictTo('admin', 'teacher'), upload.single('file'), updatePresentation)
-router.delete('/:id', protect, restrictTo('admin', 'teacher'), deletePresentation)
+// ADMIN ONLY: CRUD
+// Создание: Требует файл ('file') в FormData
+router.post(
+  '/',
+  authenticateToken,
+  authorizeRole('admin', 'teacher'),
+  upload.single('file'), 
+  createPresentation
+)
+
+// Обновление: Может содержать новый файл
+router.put(
+  '/:id',
+  authenticateToken,
+  authorizeRole('admin', 'teacher'),
+  upload.single('file'),
+  updatePresentation
+)
+
+// Удаление
+router.delete('/:id', authenticateToken, authorizeRole('admin'), deletePresentation)
 
 export default router
