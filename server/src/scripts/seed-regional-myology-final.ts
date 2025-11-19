@@ -1,3 +1,4 @@
+
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import Topic from '../models/Topic'
@@ -5,7 +6,7 @@ import Category from '../models/Category'
 
 dotenv.config()
 
-// Переименование основной категории Миологии, чтобы избежать дублирования
+// Временный slug для старой категории "myology"
 const TEMP_MYOLOGY_SLUG = 'temp-myology-old' 
 
 const seedRegionalMyology = async () => {
@@ -22,6 +23,7 @@ const seedRegionalMyology = async () => {
     const myologyCategory = await Category.findOne({ slug: 'myology' })
 
     if (!myologyCategory) {
+        // Мы предполагаем, что пользователь запустил seed-full, и категория "myology" существует
         throw new Error("❌ Основная категория 'myology' не найдена. Запустите seed-full.")
     }
 
@@ -29,8 +31,14 @@ const seedRegionalMyology = async () => {
     const baseOrder = myologyCategory.order || 0; // Использование order существующей Миологии
     
     // Переименовываем старую Миологию, чтобы создать новые
-    myologyCategory.slug = TEMP_MYOLOGY_SLUG
-    await myologyCategory.save()
+    const tempMyology = await Category.findOneAndUpdate(
+        { slug: 'myology' },
+        { $set: { slug: TEMP_MYOLOGY_SLUG } },
+        { new: true }
+    );
+    if (!tempMyology) {
+        throw new Error("❌ Не удалось найти или переименовать категорию 'myology'.")
+    }
 
     const newCategories = await Category.insertMany([
       {
@@ -68,15 +76,15 @@ const seedRegionalMyology = async () => {
 
     // 3. Переносим существующие темы в новые категории
     
-    // 3.1. Мышцы туловища
+    // 3.1. Мышцы туловища (back-muscles, chest-muscles)
     const torsoSlugs = ['back-muscles', 'chest-muscles']
     await Topic.updateMany({ slug: { $in: torsoSlugs } }, { $set: { categoryId: torsoMuscles._id } })
     
-    // 3.2. Мышцы нижней конечности
+    // 3.2. Мышцы нижней конечности (gluteal-group-detailed, hamstrings-detailed, iliopsoas-detailed)
     const lowerLimbSlugs = ['gluteal-group-detailed', 'hamstrings-detailed', 'iliopsoas-detailed']
     await Topic.updateMany({ slug: { $in: lowerLimbSlugs } }, { $set: { categoryId: lowerLimbMuscles._id } })
 
-    // 3.3. Мышцы головы и шеи
+    // 3.3. Мышцы головы и шеи (neck-muscles)
     await Topic.updateMany({ slug: 'neck-muscles' }, { $set: { categoryId: headNeckMuscles._id } })
 
     console.log('✅ Существующие темы мышц перенесены в новые региональные категории.')
@@ -344,8 +352,6 @@ Nervul radial trece aproape de triceps (partea posterioară a brațului). Lucra�
 Cauzat de dezechilibrul dintre VMO și Vastus lateralis. Masajul profund al Vastus lateralis este necesar.
 :::
 
----
-
 ## 2. Mușchiul Croitor (M. sartorius) ⭐⭐
 - **Funcție:** Flexia, abducția și rotația externă a șoldului.
 - **Clinic:** Face parte din "laba de gâscă" (pes anserinus), zonă frecventă de tendinită.
@@ -440,8 +446,6 @@ Formează cel mai puternic tendon al corpului.
 - **Funcție:** **Dorsiflexia** (ridicarea piciorului), supinația.
 - **Clinic:** Sindromul de compartiment anterior ("Shin Splints") - durere la efort.
 
----
-
 ## 3. Bolțile piciorului
 - **Mușchii gambei** sunt esențiali pentru menținerea bolților și prevenirea piciorului plat.
 `,
@@ -449,6 +453,7 @@ Formează cel mai puternic tendon al corpului.
       },
     ]
 
+    // --- ФИНАЛЬНЫЙ БЛОК ДЛЯ ОБНОВЛЕНИЯ ---
     await Topic.insertMany(newMuscleTopics)
     console.log(`✅ Добавлено ${newMuscleTopics.length} новых тем по мышцам конечностей.`)
     
