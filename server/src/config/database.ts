@@ -2,7 +2,11 @@ import mongoose from 'mongoose'
 
 export const connectDB = async (): Promise<void> => {
   try {
-    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/anatomia'
+    const MONGODB_URI = process.env.MONGODB_URI
+
+    if (!MONGODB_URI) {
+      throw new Error("❌ MONGODB_URI не определен. Проверьте ваш файл .env")
+    }
 
     await mongoose.connect(MONGODB_URI)
 
