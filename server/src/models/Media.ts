@@ -7,6 +7,7 @@ export interface IMedia extends Document {
   size: number
   url: string
   uploadedBy: mongoose.Types.ObjectId
+  cloudinaryPublicId?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -38,6 +39,10 @@ const mediaSchema = new Schema<IMedia>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: [true, 'Uploader is required'],
+    },
+    cloudinaryPublicId: {
+      type: String,
+      required: false,
     },
   },
   {
