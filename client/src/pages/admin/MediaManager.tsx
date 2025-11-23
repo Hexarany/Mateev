@@ -103,9 +103,11 @@ const MediaManager = () => {
 
   const handleCopyUrl = async (url: string) => {
     try {
-      // Формируем полный URL для доступа к файлу
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-      const fullUrl = `${baseUrl}${url}`
+      // Если URL уже полный (из Cloudinary), используем его напрямую
+      // Иначе формируем полный URL для локальных файлов
+      const fullUrl = url.startsWith('http')
+        ? url
+        : `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${url}`
 
       await navigator.clipboard.writeText(fullUrl)
       showSnackbar('URL скопирован в буфер обмена!', 'success')
