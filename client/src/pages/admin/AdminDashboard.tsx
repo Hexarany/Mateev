@@ -17,6 +17,7 @@ import MediaManager from './MediaManager'
 import MassageProtocolsManager from './MassageProtocolsManager'
 import HygieneGuidelinesManager from './HygieneGuidelinesManager'
 import AnatomyModels3DManager from './AnatomyModels3DManager'
+import TriggerPointsManager from './TriggerPointsManager'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -89,6 +90,7 @@ const AdminDashboard = () => {
             <Tab label="Протоколы массажа / Protocoale masaj" />
             <Tab label="Гигиена и стандарты / Igienă și standarde" />
             <Tab label="3D Модели / Modele 3D" />
+            <Tab label="Триггерные точки / Puncte trigger" />
             <Tab label="Медиа / Media" />
           </Tabs>
         </Box>
@@ -112,6 +114,9 @@ const AdminDashboard = () => {
           <AnatomyModels3DManager />
         </TabPanel>
         <TabPanel value={activeTab} index={6}>
+          <TriggerPointsManager />
+        </TabPanel>
+        <TabPanel value={activeTab} index={7}>
           <MediaManager />
         </TabPanel>
       </Paper>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Category, Topic, Quiz, SubscriptionPlan, CurrentSubscription, Subscription, MassageProtocol, HygieneGuideline, AnatomyModel3D } from '@/types'
+import type { Category, Topic, Quiz, SubscriptionPlan, CurrentSubscription, Subscription, MassageProtocol, HygieneGuideline, AnatomyModel3D, TriggerPoint } from '@/types'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
@@ -425,6 +425,43 @@ export const updateAnatomyModel3D = async (id: string, data: any, token: string)
 
 export const deleteAnatomyModel3D = async (id: string, token: string): Promise<void> => {
   await api.delete(`/anatomy-models-3d/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+}
+
+// Trigger Points
+export const getTriggerPoints = async (category?: string): Promise<TriggerPoint[]> => {
+  const params = category ? { category } : {}
+  const response = await api.get('/trigger-points', { params })
+  return response.data
+}
+
+export const getTriggerPointById = async (id: string): Promise<TriggerPoint> => {
+  const response = await api.get(`/trigger-points/${id}`)
+  return response.data
+}
+
+export const getTriggerPointBySlug = async (slug: string): Promise<TriggerPoint> => {
+  const response = await api.get(`/trigger-points/slug/${slug}`)
+  return response.data
+}
+
+export const createTriggerPoint = async (data: any, token: string): Promise<TriggerPoint> => {
+  const response = await api.post('/trigger-points', data, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  return response.data
+}
+
+export const updateTriggerPoint = async (id: string, data: any, token: string): Promise<TriggerPoint> => {
+  const response = await api.put(`/trigger-points/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  return response.data
+}
+
+export const deleteTriggerPoint = async (id: string, token: string): Promise<void> => {
+  await api.delete(`/trigger-points/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
 }

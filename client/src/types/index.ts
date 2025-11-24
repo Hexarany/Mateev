@@ -235,3 +235,42 @@ export interface AnatomyModel3D {
   createdAt?: string | Date
   updatedAt?: string | Date
 }
+
+export interface TriggerPoint {
+  _id: string
+  name: {
+    ru: string
+    ro: string
+  }
+  muscle: string
+  location: {
+    ru: string
+    ro: string
+  }
+  symptoms: {
+    ru: string
+    ro: string
+  }
+  referralPattern: {
+    ru: string
+    ro: string
+  }
+  technique: {
+    ru: string
+    ro: string
+  }
+  contraindications?: {
+    ru: string
+    ro: string
+  }
+  images: MediaFile[]
+  videos: MediaFile[]
+  model3D?: string
+  category: 'head_neck' | 'shoulder_arm' | 'back' | 'chest' | 'hip_leg' | 'other'
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  slug: string
+  order: number
+  isPublished: boolean
+  createdAt?: string | Date
+  updatedAt?: string | Date
+}

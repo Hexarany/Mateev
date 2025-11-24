@@ -1,0 +1,121 @@
+import { Request, Response } from 'express'
+import TriggerPoint from '../models/TriggerPoint'
+
+// Получить все триггерные точки
+export const getTriggerPoints = async (req: Request, res: Response) => {
+  try {
+    const { category } = req.query
+    const filter: any = { isPublished: true }
+
+    if (category) {
+      filter.category = category
+    }
+
+    const triggerPoints = await TriggerPoint.find(filter)
+      .sort({ order: 1, createdAt: -1 })
+      .select('-__v')
+
+    res.json(triggerPoints)
+  } catch (error) {
+    console.error('Error fetching trigger points:', error)
+    res.status(500).json({ error: { message: 'Ошибка при получении триггерных точек' } })
+  }
+}
+
+// Получить триггерную точку по ID
+export const getTriggerPointById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const triggerPoint = await TriggerPoint.findById(id).select('-__v')
+
+    if (!triggerPoint) {
+      return res.status(404).json({ error: { message: 'Триггерная точка не найдена' } })
+    }
+
+    res.json(triggerPoint)
+  } catch (error) {
+    console.error('Error fetching trigger point:', error)
+    res.status(500).json({ error: { message: 'Ошибка при получении триггерной точки' } })
+  }
+}
+
+// Получить триггерную точку по slug
+export const getTriggerPointBySlug = async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params
+    const triggerPoint = await TriggerPoint.findOne({ slug, isPublished: true }).select('-__v')
+
+    if (!triggerPoint) {
+      return res.status(404).json({ error: { message: 'Триггерная точка не найдена' } })
+    }
+
+    res.json(triggerPoint)
+  } catch (error) {
+    console.error('Error fetching trigger point by slug:', error)
+    res.status(500).json({ error: { message: 'Ошибка при получении триггерной точки' } })
+  }
+}
+
+// Создать новую триггерную точку (ADMIN)
+export const createTriggerPoint = async (req: Request, res: Response) => {
+  try {
+    const triggerPoint = new TriggerPoint(req.body)
+    await triggerPoint.save()
+    res.status(201).json(triggerPoint)
+  } catch (error: any) {
+    console.error('Error creating trigger point:', error)
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        error: { message: 'Триггерная точка с таким slug уже существует' }
+      })
+    }
+
+    res.status(500).json({ error: { message: 'Ошибка при создании триггерной точки' } })
+  }
+}
+
+// Обновить триггерную точку (ADMIN)
+export const updateTriggerPoint = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const triggerPoint = await TriggerPoint.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true, runValidators: true }
+    )
+
+    if (!triggerPoint) {
+      return res.status(404).json({ error: { message: 'Триггерная точка не найдена' } })
+    }
+
+    res.json(triggerPoint)
+  } catch (error: any) {
+    console.error('Error updating trigger point:', error)
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        error: { message: 'Триггерная точка с таким slug уже существует' }
+      })
+    }
+
+    res.status(500).json({ error: { message: 'Ошибка при обновлении триггерной точки' } })
+  }
+}
+
+// Удалить триггерную точку (ADMIN)
+export const deleteTriggerPoint = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const triggerPoint = await TriggerPoint.findByIdAndDelete(id)
+
+    if (!triggerPoint) {
+      return res.status(404).json({ error: { message: 'Триггерная точка не найдена' } })
+    }
+
+    res.json({ message: 'Триггерная точка успешно удалена' })
+  } catch (error) {
+    console.error('Error deleting trigger point:', error)
+    res.status(500).json({ error: { message: 'Ошибка при удалении триггерной точки' } })
+  }
+}
