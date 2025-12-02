@@ -47,6 +47,7 @@ const uploadToCloudinary = (buffer: Buffer, filename: string, mimetype: string):
 
     // Генерируем уникальное имя
     const basename = filename.substring(0, filename.lastIndexOf('.')) || filename
+    const extension = filename.substring(filename.lastIndexOf('.')) || ''
     const transliteratedName = slugify(basename, {
       lowercase: true,
       separator: '-'
@@ -55,7 +56,10 @@ const uploadToCloudinary = (buffer: Buffer, filename: string, mimetype: string):
       ? transliteratedName
       : 'file'
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    const publicId = `anatomia/${resourceType}s/${finalName}-${uniqueSuffix}`
+    // For raw files (like .glb), preserve the file extension in public_id
+    const publicId = resourceType === 'raw'
+      ? `anatomia/${resourceType}s/${finalName}-${uniqueSuffix}${extension}`
+      : `anatomia/${resourceType}s/${finalName}-${uniqueSuffix}`
 
     const uploadStream = cloudinary.uploader.upload_stream(
       {
