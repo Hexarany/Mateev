@@ -18,6 +18,7 @@ import MassageProtocolsManager from './MassageProtocolsManager'
 import HygieneGuidelinesManager from './HygieneGuidelinesManager'
 import AnatomyModels3DManager from './AnatomyModels3DManager'
 import TriggerPointsManager from './TriggerPointsManager'
+import UsersManager from './UsersManager'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -92,6 +93,7 @@ const AdminDashboard = () => {
             <Tab label="3D Модели / Modele 3D" />
             <Tab label="Триггерные точки / Puncte trigger" />
             <Tab label="Медиа / Media" />
+            {user?.role === 'admin' && <Tab label="Пользователи / Utilizatori" />}
           </Tabs>
         </Box>
 
@@ -119,6 +121,11 @@ const AdminDashboard = () => {
         <TabPanel value={activeTab} index={7}>
           <MediaManager />
         </TabPanel>
+        {user?.role === 'admin' && (
+          <TabPanel value={activeTab} index={8}>
+            <UsersManager />
+          </TabPanel>
+        )}
       </Paper>
     </Container>
   )

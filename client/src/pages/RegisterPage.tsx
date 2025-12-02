@@ -16,7 +16,8 @@ const RegisterPage = () => {
   const navigate = useNavigate()
   const { register } = useAuth()
 
-  const [name, setName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -28,8 +29,18 @@ const RegisterPage = () => {
     setError('')
 
     // Валидация
-    if (!name || !email || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setError('Пожалуйста, заполните все поля')
+      return
+    }
+
+    if (firstName.length < 2) {
+      setError('Имя должно быть минимум 2 символа')
+      return
+    }
+
+    if (lastName.length < 2) {
+      setError('Фамилия должна быть минимум 2 символа')
       return
     }
 
@@ -46,7 +57,7 @@ const RegisterPage = () => {
     setLoading(true)
 
     try {
-      await register(email, password, name)
+      await register(email, password, firstName, lastName)
       navigate('/')
     } catch (err: any) {
       setError(err.message || 'Ошибка регистрации')
@@ -85,14 +96,28 @@ const RegisterPage = () => {
               margin="normal"
               required
               fullWidth
-              id="name"
+              id="firstName"
               label="Имя"
-              name="name"
-              autoComplete="name"
+              name="firstName"
+              autoComplete="given-name"
               autoFocus
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               disabled={loading}
+              helperText="Минимум 2 символа"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="lastName"
+              label="Фамилия"
+              name="lastName"
+              autoComplete="family-name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              disabled={loading}
+              helperText="Минимум 2 символа"
             />
             <TextField
               margin="normal"

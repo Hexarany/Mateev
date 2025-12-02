@@ -18,6 +18,8 @@ import AnatomyModels3DPage from './pages/AnatomyModels3DPage'
 import AnatomyModel3DViewerPage from './pages/AnatomyModel3DViewerPage'
 import TriggerPointsPage from './pages/TriggerPointsPage'
 import TriggerPointDetailPage from './pages/TriggerPointDetailPage'
+import PricingPage from './pages/PricingPage'
+import PaymentCallbackPage from './pages/PaymentCallbackPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/subscription" element={<SubscriptionPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/payment-callback" element={<PaymentCallbackPage />} />
           <Route path="/category/:categoryId" element={<CategoryPage />} />
           <Route path="/topic/:topicId" element={<TopicPage />} />
           <Route path="/quiz/:quizId" element={<QuizPage />} />

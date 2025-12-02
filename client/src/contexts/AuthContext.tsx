@@ -6,8 +6,12 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 interface User {
   id: string
   email: string
-  name: string
+  firstName: string
+  lastName: string
   role: 'student' | 'teacher' | 'admin'
+  accessLevel: 'free' | 'basic' | 'premium'
+  paymentAmount?: number
+  paymentDate?: string
 }
 
 interface AuthContextType {
@@ -15,8 +19,10 @@ interface AuthContextType {
   token: string | null
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, name: string) => Promise<void>
+  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
   logout: () => void
+  updateUser: (updatedUser: User) => void
+  hasAccess: (requiredTier: 'free' | 'basic' | 'premium') => boolean
   isAuthenticated: boolean
 }
 
@@ -90,12 +96,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   // Регистрация
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ) => {
     try {
       const response = await axios.post(`${API_URL}/auth/register`, {
         email,
         password,
-        name,
+        firstName,
+        lastName,
       })
 
       const { token: newToken, user: newUser } = response.data
@@ -107,6 +119,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Registration error:', error)
       throw new Error(error.response?.data?.message || 'Ошибка регистрации')
     }
+  }
+
+  // Обновление данных пользователя (например, после покупки тарифа)
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser)
+  }
+
+  // Проверка доступа к контенту по тарифу
+  const hasAccess = (requiredTier: 'free' | 'basic' | 'premium'): boolean => {
+    if (!user) return false
+
+    // Админы и учителя имеют полный доступ
+    if (user.role === 'admin' || user.role === 'teacher') {
+      return true
+    }
+
+    const tierHierarchy = { free: 0, basic: 1, premium: 2 }
+    const userLevel = tierHierarchy[user.accessLevel]
+    const requiredLevel = tierHierarchy[requiredTier]
+
+    return userLevel >= requiredLevel
   }
 
   // Выход
@@ -125,6 +158,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
+    hasAccess,
     isAuthenticated,
   }
 
