@@ -8,14 +8,14 @@ import {
   updateQuiz, // НОВЫЙ
   deleteQuiz, // НОВЫЙ
 } from '../controllers/quizController'
-import { authenticateToken, authorizeRole } from '../middleware/auth'
+import { authenticateToken, authorizeRole, optionalAuth } from '../middleware/auth'
 
 const router = express.Router()
 
 // PUBLIC: Чтение викторин
-router.get('/', getAllQuizzes)
-router.get('/:id', getQuizById)
-router.get('/topic/:topicId', getQuizzesByTopic)
+router.get('/', optionalAuth, getAllQuizzes)
+router.get('/:id', optionalAuth, getQuizById)
+router.get('/topic/:topicId', optionalAuth, getQuizzesByTopic)
 
 // ADMIN ONLY: CRUD для викторин
 router.post('/', authenticateToken, authorizeRole('admin'), createQuiz)

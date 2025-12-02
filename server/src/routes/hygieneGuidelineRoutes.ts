@@ -8,13 +8,13 @@ import {
   addImageToGuideline,
   removeImageFromGuideline,
 } from '../controllers/hygieneGuidelineController'
-import { authenticateToken, authorizeRole } from '../middleware/auth'
+import { authenticateToken, authorizeRole, optionalAuth } from '../middleware/auth'
 
 const router = express.Router()
 
 // Публичные маршруты
-router.get('/', getAllGuidelines)
-router.get('/:id', getGuidelineById)
+router.get('/', optionalAuth, getAllGuidelines)
+router.get('/:id', optionalAuth, getGuidelineById)
 
 // Защищенные маршруты (admin/teacher)
 router.post('/', authenticateToken, authorizeRole('admin', 'teacher'), createGuideline)
