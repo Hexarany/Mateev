@@ -25,7 +25,8 @@ export const createOrder = async (req: Request, res: Response) => {
     const order = await createPayPalOrder(
       plan.price,
       plan.currency,
-      plan.name.ru // или выбрать по языку пользователя
+      plan.name.ru, // или выбрать по языку пользователя
+      'legacy' // Old subscription system - deprecated
     )
 
     // Сохранить информацию о заказе для последующего использования

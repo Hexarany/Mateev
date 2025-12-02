@@ -42,7 +42,7 @@ export const createTierOrder = async (req: Request, res: Response) => {
     // Create PayPal order
     const description = isUpgrade ? `Обновление до ${plan.name.ru}` : plan.name.ru
 
-    const order = await createPayPalOrder(price, plan.currency, description)
+    const order = await createPayPalOrder(price, plan.currency, description, tierId)
 
     res.json({
       orderId: order.id,

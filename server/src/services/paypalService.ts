@@ -30,7 +30,8 @@ export const getPayPalAccessToken = async (): Promise<string> => {
 export const createPayPalOrder = async (
   amount: number,
   currency: string = 'USD',
-  planName: string
+  planName: string,
+  tierId: string
 ): Promise<any> => {
   try {
     const accessToken = await getPayPalAccessToken()
@@ -47,8 +48,8 @@ export const createPayPalOrder = async (
         },
       ],
       application_context: {
-        return_url: `${process.env.CLIENT_URL}/subscription/success`,
-        cancel_url: `${process.env.CLIENT_URL}/subscription/cancel`,
+        return_url: `${process.env.CLIENT_URL}/payment-callback?tierId=${tierId}`,
+        cancel_url: `${process.env.CLIENT_URL}/payment-callback?cancelled=true`,
         brand_name: 'Anatomia Atlas',
         landing_page: 'NO_PREFERENCE',
         user_action: 'PAY_NOW',
