@@ -6,6 +6,222 @@ import { connectDB } from '../config/database'
 dotenv.config()
 
 const hygieneGuidelines = [
+  // Введение в гигиену (Introduction)
+  {
+    title: {
+      ru: 'Что такое гигиена в массажной практике',
+      ro: 'Ce este igiena în practica de masaj',
+    },
+    category: 'introduction',
+    content: {
+      ru: `# Гигиена в массажной практике: основы профессиональной деятельности
+
+## Что такое гигиена?
+
+**Гигиена** (от греч. hygieinós — «здоровый») — это наука о сохранении и укреплении здоровья человека. В контексте массажной практики гигиена представляет собой комплекс мер, направленных на:
+
+- Предотвращение распространения инфекций
+- Создание безопасной среды для клиентов и массажистов
+- Поддержание высоких профессиональных стандартов
+- Обеспечение комфортных и безопасных условий работы
+
+## Почему гигиена критически важна?
+
+### 1. Защита здоровья клиентов
+Во время массажа происходит тесный физический контакт, при котором возможна передача микроорганизмов. Соблюдение гигиенических норм минимизирует риски инфицирования.
+
+### 2. Защита здоровья массажиста
+Массажист ежедневно контактирует с множеством людей, что повышает риск заражения инфекционными заболеваниями. Правильные гигиенические практики защищают специалиста.
+
+### 3. Профессиональная репутация
+Чистота, порядок и соблюдение санитарных норм формируют доверие клиентов и подчеркивают профессионализм.
+
+### 4. Юридическая ответственность
+Несоблюдение санитарно-гигиенических норм может привести к административной или даже уголовной ответственности.
+
+## Основные принципы гигиены в массаже
+
+### Асептика и антисептика
+- **Асептика** — комплекс мер по предупреждению попадания микроорганизмов в рану или на обрабатываемую поверхность
+- **Антисептика** — методы уничтожения микроорганизмов на коже, инструментах и поверхностях
+
+### Барьерные методы защиты
+- Обработка рук перед каждым сеансом
+- Использование одноразовых материалов при необходимости
+- Смена белья после каждого клиента
+
+### Регулярная очистка и дезинфекция
+- Массажного стола и оборудования
+- Помещения и всех поверхностей
+- Инструментов и аксессуаров
+
+## Три уровня обработки
+
+В массажной практике применяются три уровня обработки инструментов и поверхностей:
+
+### 1. Очистка (Cleaning)
+Механическое удаление загрязнений, органических остатков и части микроорганизмов.
+
+**Применение**: первый этап перед дезинфекцией или стерилизацией.
+
+### 2. Дезинфекция (Disinfection)
+Уничтожение патогенных микроорганизмов (бактерий, вирусов, грибов), но не спор.
+
+**Применение**: обработка поверхностей, массажного стола, неинвазивных инструментов.
+
+### 3. Стерилизация (Sterilization)
+Полное уничтожение всех форм микроорганизмов, включая споры.
+
+**Применение**: инструменты, контактирующие с кровью или используемые для инвазивных процедур.
+
+## Ключевые области гигиены
+
+### Личная гигиена массажиста
+- Чистота рук и ногтей
+- Опрятный внешний вид
+- Специальная рабочая одежда
+- Регулярные медицинские осмотры
+
+### Гигиена рабочего пространства
+- Чистота помещения
+- Правильное освещение и вентиляция
+- Оптимальная температура и влажность
+- Порядок и организация пространства
+
+### Гигиена инструментов и материалов
+- Правильное хранение чистого белья
+- Стерилизация/дезинфекция инструментов
+- Использование качественных материалов
+- Своевременная замена расходников
+
+## Профилактика профессиональных рисков
+
+Массажист ежедневно подвергается профессиональным рискам:
+
+- **Физические**: нагрузка на опорно-двигательный аппарат
+- **Биологические**: контакт с микроорганизмами
+- **Химические**: работа с дезинфектантами и маслами
+- **Эргономические**: длительное стояние, повторяющиеся движения
+
+Соблюдение гигиенических норм и правил эргономики помогает минимизировать эти риски.
+
+## Заключение
+
+Гигиена — это не просто требование законодательства, это основа профессиональной этики массажиста. Знание и применение гигиенических стандартов:
+
+- Защищает здоровье клиентов и специалиста
+- Повышает качество услуг
+- Формирует доверие и профессиональную репутацию
+- Создает комфортные условия работы
+
+В следующих разделах мы подробно рассмотрим конкретные методы стерилизации, дезинфекции, требования к кабинету, личной гигиене и профессиональным стандартам массажиста.`,
+      ro: `# Igiena în practica de masaj: fundamentele activității profesionale
+
+## Ce este igiena?
+
+**Igiena** (din greacă hygieinós — „sănătos") este știința despre conservarea și consolidarea sănătății omului. În contextul practicii de masaj, igiena reprezintă un complex de măsuri menite să:
+
+- Prevină răspândirea infecțiilor
+- Creeze un mediu sigur pentru clienți și terapeuți
+- Mențină standarde profesionale înalte
+- Asigure condiții de lucru confortabile și sigure
+
+## De ce este igiena critică?
+
+### 1. Protecția sănătății clienților
+În timpul masajului are loc un contact fizic strâns, în timpul căruia este posibilă transmiterea microorganismelor. Respectarea normelor igienice minimizează riscurile de infectare.
+
+### 2. Protecția sănătății terapeutului
+Terapeutul contactează zilnic cu multe persoane, ceea ce crește riscul de infectare cu boli infecțioase. Practicile igienice corecte protejează specialistul.
+
+### 3. Reputația profesională
+Curățenia, ordinea și respectarea normelor sanitare formează încrederea clienților și subliniază profesionalismul.
+
+### 4. Responsabilitate juridică
+Nerespectarea normelor sanitaro-igienice poate duce la răspundere administrativă sau chiar penală.
+
+## Principiile de bază ale igienei în masaj
+
+### Asepsia și antisepsia
+- **Asepsia** — complex de măsuri pentru prevenirea pătrunderii microorganismelor în rană sau pe suprafața tratată
+- **Antisepsia** — metode de distrugere a microorganismelor pe piele, instrumente și suprafețe
+
+### Metode barieră de protecție
+- Tratarea mâinilor înainte de fiecare sesiune
+- Utilizarea materialelor de unică folosință când este necesar
+- Schimbarea lenjeriei după fiecare client
+
+### Curățare și dezinfecție regulată
+- A mesei de masaj și echipamentului
+- A încăperii și tuturor suprafețelor
+- A instrumentelor și accesoriilor
+
+## Trei niveluri de tratare
+
+În practica de masaj se aplică trei niveluri de tratare a instrumentelor și suprafețelor:
+
+### 1. Curățarea (Cleaning)
+Îndepărtarea mecanică a impurităților, reziduurilor organice și a unei părți din microorganisme.
+
+**Aplicare**: prima etapă înainte de dezinfecție sau sterilizare.
+
+### 2. Dezinfecția (Disinfection)
+Distrugerea microorganismelor patogene (bacterii, virusuri, fungi), dar nu a sporilor.
+
+**Aplicare**: tratarea suprafețelor, mesei de masaj, instrumentelor neinvazive.
+
+### 3. Sterilizarea (Sterilization)
+Distrugerea completă a tuturor formelor de microorganisme, inclusiv a sporilor.
+
+**Aplicare**: instrumente care contactează cu sângele sau sunt folosite pentru proceduri invazive.
+
+## Domenii cheie ale igienei
+
+### Igiena personală a terapeutului
+- Curățenia mâinilor și unghiilor
+- Aspect îngrijit
+- Îmbrăcăminte de lucru specială
+- Controale medicale regulate
+
+### Igiena spațiului de lucru
+- Curățenia încăperii
+- Iluminare și ventilație corecte
+- Temperatură și umiditate optimale
+- Ordine și organizare a spațiului
+
+### Igiena instrumentelor și materialelor
+- Depozitarea corectă a lenjeriei curate
+- Sterilizarea/dezinfecția instrumentelor
+- Utilizarea materialelor de calitate
+- Înlocuirea la timp a consumabilelor
+
+## Prevenirea riscurilor profesionale
+
+Terapeutul este supus zilnic riscurilor profesionale:
+
+- **Fizice**: sarcină pe aparatul locomotor
+- **Biologice**: contact cu microorganisme
+- **Chimice**: lucru cu dezinfectanți și uleiuri
+- **Ergonomice**: starea prelungită în picioare, mișcări repetitive
+
+Respectarea normelor igienice și a regulilor de ergonomie ajută la minimizarea acestor riscuri.
+
+## Concluzie
+
+Igiena nu este doar o cerință a legislației, ci baza eticii profesionale a terapeutului. Cunoașterea și aplicarea standardelor igienice:
+
+- Protejează sănătatea clienților și specialistului
+- Crește calitatea serviciilor
+- Formează încredere și reputație profesională
+- Creează condiții de lucru confortabile
+
+În secțiunile următoare vom examina în detaliu metodele concrete de sterilizare, dezinfecție, cerințele pentru cabinet, igiena personală și standardele profesionale ale terapeutului.`,
+    },
+    images: [],
+    order: 0,
+    isPublished: true,
+  },
+
   // Методы стерилизации (Sterilization)
   {
     title: {

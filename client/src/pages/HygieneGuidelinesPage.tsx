@@ -20,6 +20,7 @@ import AccessibleIcon from '@mui/icons-material/Accessible'
 import BusinessIcon from '@mui/icons-material/Business'
 import PersonIcon from '@mui/icons-material/Person'
 import CheckroomIcon from '@mui/icons-material/Checkroom'
+import InfoIcon from '@mui/icons-material/Info'
 import EnhancedMarkdown from '@/components/EnhancedMarkdown'
 import { getHygieneGuidelines } from '@/services/api'
 import type { HygieneGuideline } from '@/types'
@@ -27,6 +28,12 @@ import type { HygieneGuideline } from '@/types'
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'
 
 const categoryConfig = {
+  introduction: {
+    icon: InfoIcon,
+    color: '#673ab7',
+    nameRu: 'Введение в гигиену',
+    nameRo: 'Introducere în igienă',
+  },
   sterilization: {
     icon: CleanHandsIcon,
     color: '#2196f3',

@@ -14,7 +14,7 @@ interface IMediaFile {
 
 export interface IHygieneGuideline extends Document {
   title: IMultiLangText
-  category: 'sterilization' | 'disinfection' | 'ergonomics' | 'office_requirements' | 'therapist_requirements' | 'dress_code'
+  category: 'introduction' | 'sterilization' | 'disinfection' | 'ergonomics' | 'office_requirements' | 'therapist_requirements' | 'dress_code'
   content: IMultiLangText
   images: IMediaFile[]
   order: number
@@ -45,7 +45,7 @@ const HygieneGuidelineSchema: Schema = new Schema(
     },
     category: {
       type: String,
-      enum: ['sterilization', 'disinfection', 'ergonomics', 'office_requirements', 'therapist_requirements', 'dress_code'],
+      enum: ['introduction', 'sterilization', 'disinfection', 'ergonomics', 'office_requirements', 'therapist_requirements', 'dress_code'],
       required: true,
     },
     content: {
