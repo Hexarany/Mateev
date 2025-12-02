@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Container, Typography, Box, Button, CircularProgress, Paper, Chip } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import Model3DViewer from '@/components/Model3DViewer'
+import AccessGate from '@/components/AccessGate'
 import { getAnatomyModel3DById } from '@/services/api'
 import type { AnatomyModel3D } from '@/types'
 
@@ -72,11 +73,19 @@ const AnatomyModel3DViewerPage = () => {
         )}
       </Paper>
 
-      <Model3DViewer
-        modelUrl={model.modelUrl.startsWith('http') ? model.modelUrl : `${API_BASE_URL}${model.modelUrl}`}
-        caption={model.name[lang]}
-        autoRotate={true}
-      />
+      <AccessGate
+        requiredTier="premium"
+        preview={lang === 'ru' ? 'Для просмотра интерактивных 3D моделей требуется Premium доступ.' : 'Vizualizarea modelelor 3D interactive necesită acces Premium.'}
+        contentType={lang === 'ru' ? '3D модель' : 'model 3D'}
+      >
+        {model.modelUrl && (
+          <Model3DViewer
+            modelUrl={model.modelUrl.startsWith('http') ? model.modelUrl : `${API_BASE_URL}${model.modelUrl}`}
+            caption={model.name[lang]}
+            autoRotate={true}
+          />
+        )}
+      </AccessGate>
 
       {model.attribution && (model.attribution.author || model.attribution.source) && (
         <Paper elevation={0} sx={{ p: 2, mt: 2, bgcolor: 'background.default', borderLeft: 3, borderColor: 'primary.main' }}>
