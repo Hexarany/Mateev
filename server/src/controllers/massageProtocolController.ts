@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import MassageProtocol from '../models/MassageProtocol'
+import User from '../models/User'
 import mongoose from 'mongoose'
+import { BASIC_TIER_MASSAGE_PROTOCOLS } from '../config/tier-plans'
 
 interface CustomRequest extends Request {
   userId?: string
@@ -9,22 +11,62 @@ interface CustomRequest extends Request {
   hasActiveSubscription?: boolean
 }
 
-// Helper: Проверяет, авторизован ли пользователь для получения полного контента
-const isAuthorizedForFullContent = (req: CustomRequest): boolean => {
-  return !!req.userRole
+// Helper: Check if user has access to specific protocol based on tier
+const hasAccessToProtocol = async (
+  protocol: any,
+  userId: string | undefined,
+  userRole: string | undefined
+): Promise<{ hasAccess: boolean; userAccessLevel: string; requiredTier: string }> => {
+  // Admins and teachers have full access
+  if (userRole === 'admin' || userRole === 'teacher') {
+    return { hasAccess: true, userAccessLevel: 'premium', requiredTier: 'free' }
+  }
+
+  // Get user access level
+  let userAccessLevel: 'free' | 'basic' | 'premium' = 'free'
+  if (userId) {
+    const user = await User.findById(userId)
+    userAccessLevel = user?.accessLevel || 'free'
+  }
+
+  // Check if protocol is in basic tier
+  const isBasicTierProtocol = BASIC_TIER_MASSAGE_PROTOCOLS.includes(protocol.slug)
+  const requiredTier = isBasicTierProtocol ? 'basic' : 'premium'
+
+  // Premium users have access to everything
+  if (userAccessLevel === 'premium') {
+    return { hasAccess: true, userAccessLevel, requiredTier }
+  }
+
+  // Basic users have access to basic tier protocols only
+  if (userAccessLevel === 'basic' && isBasicTierProtocol) {
+    return { hasAccess: true, userAccessLevel, requiredTier }
+  }
+
+  // Free users only get preview
+  return { hasAccess: false, userAccessLevel, requiredTier }
 }
 
 // Helper: Применяет блокировку контента
-const createSafeProtocol = (protocol: any, isAuthorized: boolean) => {
+const createSafeProtocol = (
+  protocol: any,
+  hasAccess: boolean,
+  userAccessLevel: string,
+  requiredTier: string
+) => {
   const previewContentRu = protocol.content.ru ? protocol.content.ru.substring(0, 400) + '...' : ''
   const previewContentRo = protocol.content.ro ? protocol.content.ro.substring(0, 400) + '...' : ''
 
   return {
     ...protocol.toObject(),
-    content: isAuthorized
-      ? protocol.content
-      : { ru: previewContentRu, ro: previewContentRo },
-    hasFullContentAccess: isAuthorized,
+    content: hasAccess ? protocol.content : { ru: previewContentRu, ro: previewContentRo },
+    hasFullContentAccess: hasAccess,
+    accessInfo: {
+      hasFullAccess: hasAccess,
+      userAccessLevel,
+      requiredTier,
+      isBasicTier: BASIC_TIER_MASSAGE_PROTOCOLS.includes(protocol.slug),
+    },
   }
 }
 
@@ -43,9 +85,7 @@ export const getMassageProtocolById = async (req: Request, res: Response) => {
   try {
     const slugOrId = req.params.id
 
-    const query = mongoose.Types.ObjectId.isValid(slugOrId)
-      ? { _id: slugOrId }
-      : { slug: slugOrId }
+    const query = mongoose.Types.ObjectId.isValid(slugOrId) ? { _id: slugOrId } : { slug: slugOrId }
 
     const protocol = await MassageProtocol.findOne(query)
 
@@ -53,8 +93,15 @@ export const getMassageProtocolById = async (req: Request, res: Response) => {
       return res.status(404).json({ error: { message: 'Massage protocol not found' } })
     }
 
-    const isAuthorized = isAuthorizedForFullContent(req as CustomRequest)
-    const safeProtocol = createSafeProtocol(protocol, isAuthorized)
+    const customReq = req as CustomRequest
+    const accessInfo = await hasAccessToProtocol(protocol, customReq.userId, customReq.userRole)
+
+    const safeProtocol = createSafeProtocol(
+      protocol,
+      accessInfo.hasAccess,
+      accessInfo.userAccessLevel,
+      accessInfo.requiredTier
+    )
 
     res.json(safeProtocol)
   } catch (error) {
