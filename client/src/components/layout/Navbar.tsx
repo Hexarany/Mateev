@@ -23,6 +23,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7'
 import { Language } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { useThemeMode } from '@/contexts/ThemeContext'
+import NotificationBell from '@/components/NotificationBell'
 
 const Navbar = () => {
   const { t, i18n } = useTranslation()
@@ -188,6 +189,9 @@ const Navbar = () => {
             >
               <SearchIcon />
             </IconButton>
+
+            {/* Notifications */}
+            <NotificationBell />
 
             {/* Theme Toggle */}
             <IconButton

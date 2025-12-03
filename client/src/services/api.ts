@@ -988,4 +988,81 @@ export const verifyCertificate = async (certificateNumber: string): Promise<{
   return response.data
 }
 
+// Notifications
+export interface Notification {
+  _id: string
+  userId: string
+  type: 'achievement_unlocked' | 'certificate_ready' | 'new_content' | 'quiz_reminder' | 'course_completed' | 'system_announcement' | 'assignment_graded' | 'comment_reply' | 'new_message'
+  title: {
+    ru: string
+    ro: string
+  }
+  message: {
+    ru: string
+    ro: string
+  }
+  icon?: string
+  actionUrl?: string
+  actionText?: {
+    ru: string
+    ro: string
+  }
+  metadata?: any
+  isRead: boolean
+  readAt?: string
+  sentAt: string
+  priority: 'low' | 'normal' | 'high'
+  createdAt: string
+  updatedAt: string
+}
+
+export interface NotificationsResponse {
+  notifications: Notification[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    pages: number
+  }
+  unreadCount: number
+}
+
+// Get user notifications
+export const getNotifications = async (page: number = 1, limit: number = 20, unreadOnly: boolean = false): Promise<NotificationsResponse> => {
+  const response = await api.get('/notifications', {
+    params: { page, limit, unreadOnly }
+  })
+  return response.data
+}
+
+// Get unread count
+export const getUnreadNotificationsCount = async (): Promise<{ unreadCount: number }> => {
+  const response = await api.get('/notifications/unread-count')
+  return response.data
+}
+
+// Mark notification as read
+export const markNotificationAsRead = async (notificationId: string): Promise<{ message: string; notification: Notification }> => {
+  const response = await api.patch(`/notifications/${notificationId}/read`)
+  return response.data
+}
+
+// Mark all notifications as read
+export const markAllNotificationsAsRead = async (): Promise<{ message: string }> => {
+  const response = await api.patch('/notifications/read-all')
+  return response.data
+}
+
+// Delete notification
+export const deleteNotification = async (notificationId: string): Promise<{ message: string }> => {
+  const response = await api.delete(`/notifications/${notificationId}`)
+  return response.data
+}
+
+// Delete all read notifications
+export const deleteAllReadNotifications = async (): Promise<{ message: string }> => {
+  const response = await api.delete('/notifications/read/all')
+  return response.data
+}
+
 export default api

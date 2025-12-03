@@ -9,6 +9,7 @@ import path from 'path'
 import { connectDB } from './config/database'
 import './config/cloudinary'
 import { initializeChatSocket } from './sockets/chatSocket'
+import { initializeIO } from './sockets/socketManager'
 import categoryRoutes from './routes/categoryRoutes'
 import topicRoutes from './routes/topicRoutes'
 import quizRoutes from './routes/quizRoutes'
@@ -29,6 +30,7 @@ import noteRoutes from './routes/noteRoutes'
 import resourceRoutes from './routes/resourceRoutes'
 import progressRoutes from './routes/progressRoutes'
 import certificateRoutes from './routes/certificateRoutes'
+import notificationRoutes from './routes/notificationRoutes'
 
 // Load environment variables
 dotenv.config()
@@ -56,6 +58,9 @@ const io = new Server(httpServer, {
     credentials: true,
   },
 })
+
+// Initialize Socket.IO manager
+initializeIO(io)
 
 // Initialize chat socket handlers
 initializeChatSocket(io)
@@ -123,6 +128,7 @@ app.use('/api', noteRoutes)
 app.use('/api', resourceRoutes)
 app.use('/api', progressRoutes)
 app.use('/api/certificates', certificateRoutes)
+app.use('/api/notifications', notificationRoutes)
 
 // Health check endpoints
 app.get('/health', (req, res) => {
