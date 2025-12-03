@@ -8,7 +8,7 @@ import {
   importJSON,
   previewCSV,
 } from '../controllers/importController'
-import { authenticateToken } from '../middleware/auth'
+import { authenticateToken, authorizeRole } from '../middleware/auth'
 
 const router = express.Router()
 
@@ -29,7 +29,7 @@ const upload = multer({
 })
 
 // All routes require authentication and admin/teacher role
-router.use(authenticateToken)
+router.use(authenticateToken, authorizeRole('admin', 'teacher'))
 
 // CSV Import endpoints
 router.post('/topics/csv', upload.single('file'), importTopics)
