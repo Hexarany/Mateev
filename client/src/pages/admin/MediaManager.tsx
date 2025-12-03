@@ -107,7 +107,7 @@ const MediaManager = () => {
       // Иначе формируем полный URL для локальных файлов
       const fullUrl = url.startsWith('http')
         ? url
-        : `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${url}`
+        : `${import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:3000')}${url}`
 
       await navigator.clipboard.writeText(fullUrl)
       showSnackbar('URL скопирован в буфер обмена!', 'success')

@@ -31,9 +31,9 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import CloseIcon from '@mui/icons-material/Close'
 import type { Quiz, Topic, QuizQuestion } from '@/types'
-import { createQuiz, updateQuiz, deleteQuiz, getTopics } from '@/services/api' 
+import { createQuiz, updateQuiz, deleteQuiz, getTopics } from '@/services/api'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
 
 // Тип для формы (включая вопросы)
 interface QuizFormData {
