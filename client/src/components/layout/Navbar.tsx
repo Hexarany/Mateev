@@ -23,7 +23,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7'
 import { Language } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { useThemeMode } from '@/contexts/ThemeContext'
-import NotificationBell from '@/components/NotificationBell'
+// import NotificationBell from '@/components/NotificationBell' // Temporarily disabled
 
 const Navbar = () => {
   const { t, i18n } = useTranslation()
@@ -191,7 +191,7 @@ const Navbar = () => {
             </IconButton>
 
             {/* Notifications */}
-            <NotificationBell />
+            {/* <NotificationBell /> */} {/* Temporarily disabled */}
 
             {/* Theme Toggle */}
             <IconButton
