@@ -505,4 +505,43 @@ export const searchUsers = async (query: string): Promise<any[]> => {
   return response.data
 }
 
+// Search
+export interface SearchResult {
+  type: 'topic' | 'protocol' | 'trigger_point' | 'hygiene' | 'model_3d' | 'quiz'
+  id: string
+  title: {
+    ru: string
+    ro: string
+  }
+  description?: {
+    ru: string
+    ro: string
+  }
+  slug?: string
+  category?: string
+  thumbnail?: string
+}
+
+export interface SearchResponse {
+  query: string
+  total: number
+  results: SearchResult[]
+}
+
+export const globalSearch = async (query: string, type?: string, lang?: string): Promise<SearchResponse> => {
+  const response = await api.get('/search', {
+    params: { query, type, lang },
+  })
+  return response.data
+}
+
+export const getSearchHistory = async (): Promise<string[]> => {
+  const response = await api.get('/search/history')
+  return response.data
+}
+
+export const saveSearchQuery = async (query: string): Promise<void> => {
+  await api.post('/search/history', { query })
+}
+
 export default api

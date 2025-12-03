@@ -36,7 +36,7 @@ export const initializeChatSocket = (io: Server) => {
       }
 
       // Сохраняем пользователя в сокете
-      socket.data.userId = user._id.toString()
+      socket.data.userId = String(user._id)
       socket.data.user = user
 
       next()

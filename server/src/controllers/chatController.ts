@@ -4,8 +4,13 @@ import Message from '../models/Message'
 import User from '../models/User'
 import mongoose from 'mongoose'
 
+// Расширяем стандартный тип Request для доступа к userId
+interface CustomRequest extends Request {
+  userId?: string
+}
+
 // Получить все беседы пользователя
-export const getUserConversations = async (req: Request, res: Response) => {
+export const getUserConversations = async (req: CustomRequest, res: Response) => {
   try {
     const userId = req.userId
 
@@ -31,7 +36,7 @@ export const getUserConversations = async (req: Request, res: Response) => {
 }
 
 // Получить беседу по ID
-export const getConversationById = async (req: Request, res: Response) => {
+export const getConversationById = async (req: CustomRequest, res: Response) => {
   try {
     const { conversationId } = req.params
     const userId = req.userId
@@ -64,7 +69,7 @@ export const getConversationById = async (req: Request, res: Response) => {
 }
 
 // Создать или получить приватную беседу с пользователем
-export const createOrGetPrivateConversation = async (req: Request, res: Response) => {
+export const createOrGetPrivateConversation = async (req: CustomRequest, res: Response) => {
   try {
     const userId = req.userId
     const { otherUserId } = req.body
@@ -121,7 +126,7 @@ export const createOrGetPrivateConversation = async (req: Request, res: Response
 }
 
 // Создать групповую беседу
-export const createGroupConversation = async (req: Request, res: Response) => {
+export const createGroupConversation = async (req: CustomRequest, res: Response) => {
   try {
     const userId = req.userId
     const { participantIds, name, avatar } = req.body
@@ -174,7 +179,7 @@ export const createGroupConversation = async (req: Request, res: Response) => {
 }
 
 // Получить сообщения в беседе
-export const getConversationMessages = async (req: Request, res: Response) => {
+export const getConversationMessages = async (req: CustomRequest, res: Response) => {
   try {
     const { conversationId } = req.params
     const userId = req.userId
@@ -214,7 +219,7 @@ export const getConversationMessages = async (req: Request, res: Response) => {
 }
 
 // Удалить беседу (только для создателя группы или участников приватной беседы)
-export const deleteConversation = async (req: Request, res: Response) => {
+export const deleteConversation = async (req: CustomRequest, res: Response) => {
   try {
     const { conversationId } = req.params
     const userId = req.userId
@@ -257,7 +262,7 @@ export const deleteConversation = async (req: Request, res: Response) => {
 }
 
 // Поиск пользователей для начала беседы
-export const searchUsers = async (req: Request, res: Response) => {
+export const searchUsers = async (req: CustomRequest, res: Response) => {
   try {
     const userId = req.userId
     const { query } = req.query
@@ -270,15 +275,21 @@ export const searchUsers = async (req: Request, res: Response) => {
 
     const users = await User.find({
       _id: { $ne: userId }, // Исключаем текущего пользователя
-      $or: [
-        { firstName: searchRegex },
-        { lastName: searchRegex },
-        { email: searchRegex },
-      ],
-      // Только Basic и Premium могут использовать чат
-      $or: [
-        { accessLevel: { $in: ['basic', 'premium'] } },
-        { role: { $in: ['admin', 'teacher'] } },
+      $and: [
+        {
+          $or: [
+            { firstName: searchRegex },
+            { lastName: searchRegex },
+            { email: searchRegex },
+          ],
+        },
+        // Только Basic и Premium могут использовать чат
+        {
+          $or: [
+            { accessLevel: { $in: ['basic', 'premium'] } },
+            { role: { $in: ['admin', 'teacher'] } },
+          ],
+        },
       ],
     })
       .select('firstName lastName email accessLevel role')

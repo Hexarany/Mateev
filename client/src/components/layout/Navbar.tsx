@@ -17,6 +17,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import SchoolIcon from '@mui/icons-material/School'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import SearchIcon from '@mui/icons-material/Search'
 import { Language } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -172,8 +173,16 @@ const Navbar = () => {
             ))}
           </Box>
 
-          {/* Language Selector */}
+          {/* Search Icon */}
           <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton
+              component={RouterLink}
+              to="/search"
+              sx={{ color: 'white' }}
+              aria-label="search"
+            >
+              <SearchIcon />
+            </IconButton>
             <Select
               value={i18n.language}
               onChange={handleLanguageChange}
