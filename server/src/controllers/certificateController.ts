@@ -4,6 +4,7 @@ import Certificate from '../models/Certificate'
 import Progress from '../models/Progress'
 import User from '../models/User'
 import { CustomRequest } from '../middleware/auth'
+import { sendNotification } from './notificationController'
 
 // Certificate type definitions
 const CERTIFICATE_TYPES = {
@@ -201,6 +202,37 @@ export const generateCertificate = async (req: CustomRequest, res: Response) => 
     })
 
     await certificate.save()
+
+    // Отправляем уведомление о новом сертификате
+    try {
+      await sendNotification(
+        userId.toString(),
+        'certificate_ready',
+        {
+          ru: `Сертификат готов!`,
+          ro: `Certificat gata!`,
+        },
+        {
+          ru: `Ваш сертификат "${certificate.title.ru}" готов к загрузке`,
+          ro: `Certificatul dvs. "${certificate.title.ro}" este gata pentru descărcare`,
+        },
+        {
+          icon: '🏆',
+          actionUrl: '/certificates',
+          actionText: {
+            ru: 'Скачать',
+            ro: 'Descarcă',
+          },
+          metadata: {
+            certificateId: certificate._id.toString(),
+            certificateType: certificate.certificateType,
+          },
+          priority: 'high',
+        }
+      )
+    } catch (error) {
+      console.error('Error sending certificate notification:', error)
+    }
 
     return res.status(201).json({
       message: 'Certificate generated successfully',

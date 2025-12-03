@@ -1,6 +1,7 @@
 import { Response } from 'express'
 import Progress from '../models/Progress'
 import { CustomRequest } from '../middleware/auth'
+import { sendNotification } from './notificationController'
 
 // Получить прогресс пользователя
 export const getProgress = async (req: CustomRequest, res: Response) => {
@@ -396,6 +397,36 @@ async function checkAchievements(progress: any) {
     )
     if (!alreadyUnlocked) {
       progress.achievements.push(achievement)
+
+      // Отправляем уведомление о новом достижении
+      try {
+        await sendNotification(
+          progress.userId.toString(),
+          'achievement_unlocked',
+          {
+            ru: `Новое достижение: ${achievement.title.ru}`,
+            ro: `Realizare nouă: ${achievement.title.ro}`,
+          },
+          {
+            ru: achievement.description.ru,
+            ro: achievement.description.ro,
+          },
+          {
+            icon: achievement.icon,
+            actionUrl: '/dashboard',
+            actionText: {
+              ru: 'Посмотреть',
+              ro: 'Vezi',
+            },
+            metadata: {
+              achievementId: achievement.achievementId,
+            },
+            priority: 'normal',
+          }
+        )
+      } catch (error) {
+        console.error('Error sending achievement notification:', error)
+      }
     }
   }
 
