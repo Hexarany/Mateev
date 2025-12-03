@@ -193,8 +193,8 @@ const TopicPage = () => {
       {/* Tab Panels */}
       <TabPanel value={activeTab} index={0}>
         <AccessGate
-          requiredTier="premium"
-          preview={lang === 'ru' ? 'Для просмотра полного содержания темы требуется Premium доступ.' : 'Vizualizarea conținutului complet necesită acces Premium.'}
+          requiredTier="basic"
+          preview={lang === 'ru' ? 'Для просмотра полного содержания темы требуется тариф Basic или Premium.' : 'Vizualizarea conținutului complet necesită acces Basic sau Premium.'}
           contentType={lang === 'ru' ? 'содержание темы' : 'conținut temă'}
         >
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
@@ -206,8 +206,8 @@ const TopicPage = () => {
       {has3DModel && (
         <TabPanel value={activeTab} index={modelTabIndex}>
           <AccessGate
-            requiredTier="premium"
-            preview={lang === 'ru' ? 'Для просмотра 3D модели требуется Premium доступ.' : 'Vizualizarea modelului 3D necesită acces Premium.'}
+            requiredTier="basic"
+            preview={lang === 'ru' ? 'Для просмотра 3D модели требуется тариф Basic или Premium.' : 'Vizualizarea modelului 3D necesită acces Basic sau Premium.'}
             contentType={lang === 'ru' ? '3D модель' : 'model 3D'}
           >
             <Model3DViewer modelUrl={topic.model3D.startsWith('http') ? topic.model3D : `${API_BASE_URL}${topic.model3D}`} autoRotate={true} />
@@ -218,8 +218,8 @@ const TopicPage = () => {
       {hasImages && (
         <TabPanel value={activeTab} index={imagesTabIndex}>
           <AccessGate
-            requiredTier="premium"
-            preview={lang === 'ru' ? 'Для просмотра иллюстраций требуется Premium доступ.' : 'Vizualizarea ilustrațiilor necesită acces Premium.'}
+            requiredTier="basic"
+            preview={lang === 'ru' ? 'Для просмотра иллюстраций требуется тариф Basic или Premium.' : 'Vizualizarea ilustrațiilor necesită acces Basic sau Premium.'}
             contentType={lang === 'ru' ? 'иллюстрации' : 'ilustrații'}
           >
             <Grid container spacing={3}>
@@ -265,8 +265,8 @@ const TopicPage = () => {
       {hasVideos && (
         <TabPanel value={activeTab} index={videosTabIndex}>
           <AccessGate
-            requiredTier="premium"
-            preview={lang === 'ru' ? 'Для просмотра видео требуется Premium доступ.' : 'Vizualizarea videoclipurilor necesită acces Premium.'}
+            requiredTier="basic"
+            preview={lang === 'ru' ? 'Для просмотра видео требуется тариф Basic или Premium.' : 'Vizualizarea videoclipurilor necesită acces Basic sau Premium.'}
             contentType={lang === 'ru' ? 'видео' : 'video'}
           >
             <Grid container spacing={3}>

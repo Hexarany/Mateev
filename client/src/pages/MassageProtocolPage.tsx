@@ -70,6 +70,25 @@ const MassageProtocolPage = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
+  // Определяем требуемый тариф для протокола
+  const getRequiredTier = (protocolName: string): 'basic' | 'premium' => {
+    const basicProtocols = [
+      'классический',
+      'медовый',
+      'баночный',
+      'антицеллюлитный',
+      'clasic',
+      'cu miere',
+      'cu ventuze',
+      'anticelulitic',
+    ]
+
+    const nameLower = protocolName.toLowerCase()
+    const isBasicProtocol = basicProtocols.some((name) => nameLower.includes(name))
+
+    return isBasicProtocol ? 'basic' : 'premium'
+  }
+
   useEffect(() => {
     const fetchProtocol = async () => {
       if (!protocolId) return
@@ -236,8 +255,8 @@ const MassageProtocolPage = () => {
       {/* Tab Panels */}
       <TabPanel value={activeTab} index={0}>
         <AccessGate
-          requiredTier="premium"
-          preview={lang === 'ru' ? 'Для просмотра полного описания протокола требуется Premium доступ.' : 'Vizualizarea descrierii complete necesită acces Premium.'}
+          requiredTier={getRequiredTier(protocol.name[lang])}
+          preview={lang === 'ru' ? `Для просмотра полного описания протокола требуется тариф ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic или Premium' : 'Premium'}.` : `Vizualizarea descrierii complete necesită acces ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic sau Premium' : 'Premium'}.`}
           contentType={lang === 'ru' ? 'протокол массажа' : 'protocol de masaj'}
         >
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
@@ -248,8 +267,8 @@ const MassageProtocolPage = () => {
 
       <TabPanel value={activeTab} index={benefitsTabIndex}>
         <AccessGate
-          requiredTier="premium"
-          preview={lang === 'ru' ? 'Для просмотра информации о пользе требуется Premium доступ.' : 'Vizualizarea beneficiilor necesită acces Premium.'}
+          requiredTier={getRequiredTier(protocol.name[lang])}
+          preview={lang === 'ru' ? `Для просмотра информации о пользе требуется тариф ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic или Premium' : 'Premium'}.` : `Vizualizarea beneficiilor necesită acces ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic sau Premium' : 'Premium'}.`}
           contentType={lang === 'ru' ? 'информация о пользе' : 'beneficii'}
         >
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
@@ -260,8 +279,8 @@ const MassageProtocolPage = () => {
 
       <TabPanel value={activeTab} index={contraindicationsTabIndex}>
         <AccessGate
-          requiredTier="premium"
-          preview={lang === 'ru' ? 'Для просмотра противопоказаний требуется Premium доступ.' : 'Vizualizarea contraindicațiilor necesită acces Premium.'}
+          requiredTier={getRequiredTier(protocol.name[lang])}
+          preview={lang === 'ru' ? `Для просмотра противопоказаний требуется тариф ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic или Premium' : 'Premium'}.` : `Vizualizarea contraindicațiilor necesită acces ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic sau Premium' : 'Premium'}.`}
           contentType={lang === 'ru' ? 'противопоказания' : 'contraindicații'}
         >
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
@@ -272,8 +291,8 @@ const MassageProtocolPage = () => {
 
       <TabPanel value={activeTab} index={techniqueTabIndex}>
         <AccessGate
-          requiredTier="premium"
-          preview={lang === 'ru' ? 'Для просмотра техники выполнения требуется Premium доступ.' : 'Vizualizarea tehnicii necesită acces Premium.'}
+          requiredTier={getRequiredTier(protocol.name[lang])}
+          preview={lang === 'ru' ? `Для просмотра техники выполнения требуется тариф ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic или Premium' : 'Premium'}.` : `Vizualizarea tehnicii necesită acces ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic sau Premium' : 'Premium'}.`}
           contentType={lang === 'ru' ? 'техника выполнения' : 'tehnică'}
         >
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
@@ -285,8 +304,8 @@ const MassageProtocolPage = () => {
       {hasImages && (
         <TabPanel value={activeTab} index={imagesTabIndex}>
           <AccessGate
-            requiredTier="premium"
-            preview={lang === 'ru' ? 'Для просмотра иллюстраций требуется Premium доступ.' : 'Vizualizarea ilustrațiilor necesită acces Premium.'}
+            requiredTier={getRequiredTier(protocol.name[lang])}
+            preview={lang === 'ru' ? `Для просмотра иллюстраций требуется тариф ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic или Premium' : 'Premium'}.` : `Vizualizarea ilustrațiilor necesită acces ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic sau Premium' : 'Premium'}.`}
             contentType={lang === 'ru' ? 'иллюстрации' : 'ilustrații'}
           >
             <Grid container spacing={3}>
@@ -332,8 +351,8 @@ const MassageProtocolPage = () => {
       {hasVideos && (
         <TabPanel value={activeTab} index={videosTabIndex}>
           <AccessGate
-            requiredTier="premium"
-            preview={lang === 'ru' ? 'Для просмотра видео требуется Premium доступ.' : 'Vizualizarea videoclipurilor necesită acces Premium.'}
+            requiredTier={getRequiredTier(protocol.name[lang])}
+            preview={lang === 'ru' ? `Для просмотра видео требуется тариф ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic или Premium' : 'Premium'}.` : `Vizualizarea videoclipurilor necesită acces ${getRequiredTier(protocol.name[lang]) === 'basic' ? 'Basic sau Premium' : 'Premium'}.`}
             contentType={lang === 'ru' ? 'видео' : 'video'}
           >
             <Grid container spacing={3}>

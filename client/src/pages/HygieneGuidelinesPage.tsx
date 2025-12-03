@@ -160,8 +160,8 @@ const HygieneGuidelinesPage = () => {
             </AccordionSummary>
             <AccordionDetails>
               <AccessGate
-                requiredTier="premium"
-                preview={lang === 'ru' ? 'Для просмотра рекомендаций по гигиене требуется Premium доступ.' : 'Vizualizarea recomandărilor de igienă necesită acces Premium.'}
+                requiredTier="basic"
+                preview={lang === 'ru' ? 'Для просмотра рекомендаций по гигиене требуется тариф Basic или Premium.' : 'Vizualizarea recomandărilor de igienă necesită acces Basic sau Premium.'}
                 contentType={lang === 'ru' ? 'рекомендации по гигиене' : 'recomandări de igienă'}
               >
                 {categoryGuidelines.map((guideline) => (
