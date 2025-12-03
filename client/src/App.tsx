@@ -7,7 +7,7 @@ import InstallPWA from './components/InstallPWA'
 import HomePage from './pages/HomePage'
 import CategoryPage from './pages/CategoryPage'
 import TopicPage from './pages/TopicPage'
-import QuizPage from './pages/QuizPage'
+import EnhancedQuizPage from './pages/EnhancedQuizPage'
 import AdminPage from './pages/AdminPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -46,7 +46,7 @@ function App() {
           <Route path="/payment-callback" element={<PaymentCallbackPage />} />
           <Route path="/category/:categoryId" element={<CategoryPage />} />
           <Route path="/topic/:topicId" element={<TopicPage />} />
-          <Route path="/quiz/:quizId" element={<QuizPage />} />
+          <Route path="/quiz/:quizId" element={<EnhancedQuizPage />} />
           <Route path="/massage-protocols" element={<MassageProtocolsPage />} />
           <Route path="/massage-protocols/:protocolId" element={<MassageProtocolPage />} />
           <Route path="/hygiene-guidelines" element={<HygieneGuidelinesPage />} />
