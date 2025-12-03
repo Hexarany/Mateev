@@ -141,6 +141,21 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' })
 })
 
+// Serve static files from React app in production
+if (process.env.NODE_ENV === 'production') {
+  const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist')
+  app.use(express.static(clientDistPath))
+
+  // Handle React routing - return index.html for all non-API routes
+  app.get('*', (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/health')) {
+      return next()
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'))
+  })
+}
+
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack)
@@ -151,7 +166,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   })
 })
 
-// 404 handler
+// 404 handler for API routes
 app.use((req, res) => {
   res.status(404).json({ error: { message: 'Route not found' } })
 })
