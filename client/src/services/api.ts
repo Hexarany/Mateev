@@ -682,4 +682,79 @@ export const getUserTags = async (): Promise<Array<{ tag: string; count: number 
   return response.data
 }
 
+// Resources Library
+export interface Resource {
+  _id: string
+  title: {
+    ru: string
+    ro: string
+  }
+  description: {
+    ru: string
+    ro: string
+  }
+  type: 'pdf' | 'doc' | 'book' | 'article' | 'link' | 'video'
+  category: string
+  fileUrl?: string
+  externalUrl?: string
+  thumbnail?: string
+  fileSize?: number
+  fileName?: string
+  author?: string
+  publishedYear?: number
+  accessLevel: 'free' | 'basic' | 'premium'
+  downloads: number
+  tags: string[]
+  uploadedBy: any
+  isPublished: boolean
+  order: number
+  createdAt: string
+  updatedAt: string
+}
+
+export const getResources = async (filters?: {
+  category?: string
+  type?: string
+  accessLevel?: string
+  tag?: string
+  search?: string
+}): Promise<Resource[]> => {
+  const response = await api.get('/resources', { params: filters })
+  return response.data
+}
+
+export const getResourceById = async (resourceId: string): Promise<Resource> => {
+  const response = await api.get(`/resources/${resourceId}`)
+  return response.data
+}
+
+export const createResource = async (data: Partial<Resource>): Promise<Resource> => {
+  const response = await api.post('/resources', data)
+  return response.data
+}
+
+export const updateResource = async (resourceId: string, data: Partial<Resource>): Promise<Resource> => {
+  const response = await api.put(`/resources/${resourceId}`, data)
+  return response.data
+}
+
+export const deleteResource = async (resourceId: string): Promise<void> => {
+  await api.delete(`/resources/${resourceId}`)
+}
+
+export const incrementResourceDownloads = async (resourceId: string): Promise<{ downloads: number }> => {
+  const response = await api.post(`/resources/${resourceId}/download`)
+  return response.data
+}
+
+export const getResourceCategories = async (): Promise<string[]> => {
+  const response = await api.get('/resources/categories')
+  return response.data
+}
+
+export const getResourceTags = async (): Promise<Array<{ tag: string; count: number }>> => {
+  const response = await api.get('/resources/tags')
+  return response.data
+}
+
 export default api

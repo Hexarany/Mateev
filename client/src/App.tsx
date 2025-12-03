@@ -22,6 +22,7 @@ import PricingPage from './pages/PricingPage'
 import PaymentCallbackPage from './pages/PaymentCallbackPage'
 import ChatPage from './pages/ChatPage'
 import SearchPage from './pages/SearchPage'
+import ResourcesLibraryPage from './pages/ResourcesLibraryPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/trigger-points/:id" element={<TriggerPointDetailPage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/resources" element={<ResourcesLibraryPage />} />
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

@@ -62,6 +62,7 @@ const Navbar = () => {
     { name: i18n.language === 'ru' ? 'Триггерные точки' : 'Puncte Trigger', path: '/trigger-points' },
     { name: i18n.language === 'ru' ? '3D Модели' : 'Modele 3D', path: '/anatomy-models-3d' },
     { name: i18n.language === 'ru' ? 'Гигиена и стандарты' : 'Igienă și standarde', path: '/hygiene-guidelines' },
+    { name: i18n.language === 'ru' ? 'Библиотека' : 'Bibliotecă', path: '/resources' },
   ]
 
   // Добавляем чат для Basic и Premium пользователей
