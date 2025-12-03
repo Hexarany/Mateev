@@ -466,4 +466,43 @@ export const deleteTriggerPoint = async (id: string, token: string): Promise<voi
   })
 }
 
+// Chat
+export const getUserConversations = async (): Promise<any[]> => {
+  const response = await api.get('/chat/conversations')
+  return response.data
+}
+
+export const getConversationById = async (conversationId: string): Promise<any> => {
+  const response = await api.get(`/chat/conversations/${conversationId}`)
+  return response.data
+}
+
+export const createOrGetPrivateConversation = async (otherUserId: string): Promise<any> => {
+  const response = await api.post('/chat/conversations/private', { otherUserId })
+  return response.data
+}
+
+export const createGroupConversation = async (participantIds: string[], name: string, avatar?: string): Promise<any> => {
+  const response = await api.post('/chat/conversations/group', { participantIds, name, avatar })
+  return response.data
+}
+
+export const getConversationMessages = async (conversationId: string, page = 1, limit = 50): Promise<any> => {
+  const response = await api.get(`/chat/conversations/${conversationId}/messages`, {
+    params: { page, limit },
+  })
+  return response.data
+}
+
+export const deleteConversation = async (conversationId: string): Promise<void> => {
+  await api.delete(`/chat/conversations/${conversationId}`)
+}
+
+export const searchUsers = async (query: string): Promise<any[]> => {
+  const response = await api.get('/chat/users/search', {
+    params: { query },
+  })
+  return response.data
+}
+
 export default api

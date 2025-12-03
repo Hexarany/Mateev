@@ -1,4 +1,6 @@
 import express from 'express'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 import cors from 'cors'
 import helmet from 'helmet'
 import compression from 'compression'
@@ -6,6 +8,7 @@ import dotenv from 'dotenv'
 import path from 'path'
 import { connectDB } from './config/database'
 import './config/cloudinary'
+import { initializeChatSocket } from './sockets/chatSocket'
 import categoryRoutes from './routes/categoryRoutes'
 import topicRoutes from './routes/topicRoutes'
 import quizRoutes from './routes/quizRoutes'
@@ -19,12 +22,37 @@ import anatomyModel3DRoutes from './routes/anatomyModel3DRoutes'
 import triggerPointRoutes from './routes/triggerPointRoutes'
 import tierPaymentRoutes from './routes/tierPaymentRoutes'
 import usersManagementRoutes from './routes/usersManagementRoutes'
+import chatRoutes from './routes/chatRoutes'
 
 // Load environment variables
 dotenv.config()
 
 const app = express()
+const httpServer = createServer(app)
 const PORT = process.env.PORT || 3000
+
+// Initialize Socket.io
+const io = new Server(httpServer, {
+  cors: {
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true)
+      if (process.env.NODE_ENV === 'development' && origin.includes('localhost')) {
+        return callback(null, true)
+      }
+      const allowedOrigins = process.env.CLIENT_URL
+        ? process.env.CLIENT_URL.split(',').map(url => url.trim())
+        : ['http://localhost:5173']
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+      callback(new Error('Not allowed by CORS'))
+    },
+    credentials: true,
+  },
+})
+
+// Initialize chat socket handlers
+initializeChatSocket(io)
 
 // Middleware
 app.use(helmet({
@@ -82,6 +110,7 @@ app.use('/api/anatomy-models-3d', anatomyModel3DRoutes)
 app.use('/api/trigger-points', triggerPointRoutes)
 app.use('/api/tier-payment', tierPaymentRoutes)
 app.use('/api/users-management', usersManagementRoutes)
+app.use('/api/chat', chatRoutes)
 
 // Health check endpoints
 app.get('/health', (req, res) => {
@@ -111,9 +140,10 @@ app.use((req, res) => {
 const startServer = async () => {
   try {
     await connectDB()
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`🚀 Server is running on http://localhost:${PORT}`)
       console.log(`📚 API available at http://localhost:${PORT}/api`)
+      console.log(`💬 Socket.io server is ready`)
     })
   } catch (error) {
     console.error('Failed to start server:', error)

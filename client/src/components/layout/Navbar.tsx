@@ -23,7 +23,7 @@ import { useAuth } from '@/contexts/AuthContext'
 const Navbar = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, logout, hasAccess } = useAuth()
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
 
@@ -62,6 +62,14 @@ const Navbar = () => {
     { name: i18n.language === 'ru' ? '3D Модели' : 'Modele 3D', path: '/anatomy-models-3d' },
     { name: i18n.language === 'ru' ? 'Гигиена и стандарты' : 'Igienă și standarde', path: '/hygiene-guidelines' },
   ]
+
+  // Добавляем чат для Basic и Premium пользователей
+  if (hasAccess('basic')) {
+    pages.push({
+      name: i18n.language === 'ru' ? '💬 Чат' : '💬 Chat',
+      path: '/chat',
+    })
+  }
 
   return (
     <AppBar position="sticky">

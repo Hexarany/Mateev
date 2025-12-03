@@ -20,6 +20,7 @@ import TriggerPointsPage from './pages/TriggerPointsPage'
 import TriggerPointDetailPage from './pages/TriggerPointDetailPage'
 import PricingPage from './pages/PricingPage'
 import PaymentCallbackPage from './pages/PaymentCallbackPage'
+import ChatPage from './pages/ChatPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/anatomy-models-3d/:id" element={<AnatomyModel3DViewerPage />} />
           <Route path="/trigger-points" element={<TriggerPointsPage />} />
           <Route path="/trigger-points/:id" element={<TriggerPointDetailPage />} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
