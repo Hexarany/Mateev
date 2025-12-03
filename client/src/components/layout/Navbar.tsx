@@ -256,6 +256,16 @@ const Navbar = () => {
                   <MenuItem
                     onClick={() => {
                       handleCloseUserMenu()
+                      navigate('/dashboard')
+                    }}
+                  >
+                    <Typography textAlign="center">
+                      {i18n.language === 'ru' ? 'Мой прогресс' : 'Progresul meu'}
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseUserMenu()
                       navigate('/profile')
                     }}
                   >
