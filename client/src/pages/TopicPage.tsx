@@ -36,6 +36,8 @@ import BookmarkButton from '@/components/BookmarkButton'
 import { getTopicById } from '@/services/api'
 import type { Topic } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProgress } from '@/contexts/ProgressContext'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'
 
@@ -57,7 +59,8 @@ const TopicPage = () => {
   const { topicId } = useParams<{ topicId: string }>()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { hasAccess } = useAuth()
+  const { hasAccess, isAuthenticated } = useAuth()
+  const { markTopicComplete, isTopicCompleted } = useProgress()
   const lang = i18n.language as 'ru' | 'ro'
 
   const [topic, setTopic] = useState<Topic | null>(null)
@@ -65,6 +68,7 @@ const TopicPage = () => {
   const [activeTab, setActiveTab] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [completing, setCompleting] = useState(false)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -136,6 +140,20 @@ const TopicPage = () => {
     setSelectedImageIndex((prev) => (prev < topic.images.length - 1 ? prev + 1 : 0))
   }
 
+  const handleCompleteClick = async () => {
+    if (!topicId || !isAuthenticated) return
+    try {
+      setCompleting(true)
+      await markTopicComplete(topicId, 0)
+    } catch (error) {
+      console.error('Error marking topic complete:', error)
+    } finally {
+      setCompleting(false)
+    }
+  }
+
+  const isCompleted = topicId ? isTopicCompleted(topicId) : false
+
   // Get category ID - handle both string and populated object
   const categoryId = typeof topic.categoryId === 'string'
     ? topic.categoryId
@@ -176,6 +194,21 @@ const TopicPage = () => {
                 {topic.name[lang]}
               </Typography>
               <BookmarkButton contentType="topic" contentId={topicId || ''} />
+              {isAuthenticated && (
+                <Button
+                  variant={isCompleted ? "outlined" : "contained"}
+                  color={isCompleted ? "success" : "primary"}
+                  startIcon={<CheckCircleIcon />}
+                  onClick={handleCompleteClick}
+                  disabled={completing || isCompleted}
+                  sx={{ minWidth: '180px' }}
+                >
+                  {isCompleted
+                    ? (lang === 'ru' ? 'Завершено' : 'Finalizat')
+                    : (lang === 'ru' ? 'Завершить тему' : 'Finalizează tema')
+                  }
+                </Button>
+              )}
             </Box>
             <Typography variant="body1" color="text.secondary" paragraph sx={{ mt: 1 }}>
               {topic.description[lang]}
