@@ -18,13 +18,17 @@ import MenuIcon from '@mui/icons-material/Menu'
 import SchoolIcon from '@mui/icons-material/School'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import SearchIcon from '@mui/icons-material/Search'
+import Brightness4Icon from '@mui/icons-material/Brightness4'
+import Brightness7Icon from '@mui/icons-material/Brightness7'
 import { Language } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
+import { useThemeMode } from '@/contexts/ThemeContext'
 
 const Navbar = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { user, isAuthenticated, logout, hasAccess } = useAuth()
+  const { mode, toggleTheme } = useThemeMode()
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
 
@@ -184,6 +188,20 @@ const Navbar = () => {
             >
               <SearchIcon />
             </IconButton>
+
+            {/* Theme Toggle */}
+            <IconButton
+              onClick={toggleTheme}
+              sx={{ color: 'white' }}
+              aria-label="toggle theme"
+              title={mode === 'light'
+                ? (i18n.language === 'ru' ? 'Тёмная тема' : 'Temă întunecată')
+                : (i18n.language === 'ru' ? 'Светлая тема' : 'Temă luminoasă')
+              }
+            >
+              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+            </IconButton>
+
             <Select
               value={i18n.language}
               onChange={handleLanguageChange}
