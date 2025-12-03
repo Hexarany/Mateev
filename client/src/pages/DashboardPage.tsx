@@ -19,8 +19,11 @@ import SchoolIcon from '@mui/icons-material/School'
 import QuizIcon from '@mui/icons-material/Quiz'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProgress } from '@/contexts/ProgressContext'
+import { getUserCertificates, getAvailableCertificates, type Certificate, type AvailableCertificate } from '@/services/api'
 
 const DashboardPage = () => {
   const { i18n } = useTranslation()
@@ -28,12 +31,33 @@ const DashboardPage = () => {
   const { isAuthenticated } = useAuth()
   const { progress, loading } = useProgress()
   const lang = i18n.language as 'ru' | 'ro'
+  const [certificates, setCertificates] = useState<Certificate[]>([])
+  const [availableCerts, setAvailableCerts] = useState<AvailableCertificate[]>([])
+  const [certsLoading, setCertsLoading] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
+      return
     }
+    loadCertificates()
   }, [isAuthenticated, navigate])
+
+  const loadCertificates = async () => {
+    try {
+      setCertsLoading(true)
+      const [earnedResponse, availableResponse] = await Promise.all([
+        getUserCertificates(),
+        getAvailableCertificates(),
+      ])
+      setCertificates(earnedResponse.certificates)
+      setAvailableCerts(availableResponse.certificates)
+    } catch (err) {
+      console.error('Error loading certificates:', err)
+    } finally {
+      setCertsLoading(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -291,6 +315,141 @@ const DashboardPage = () => {
               </Grid>
             ))}
           </Grid>
+        )}
+      </Paper>
+
+      {/* Certificates Section */}
+      <Paper elevation={0} sx={{ p: 3, mt: 4, border: '1px solid', borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <WorkspacePremiumIcon sx={{ verticalAlign: 'middle', mr: 1, color: 'primary.main' }} />
+            {lang === 'ru' ? 'Сертификаты' : 'Certificate'}
+            {certificates.length > 0 && (
+              <Chip
+                label={certificates.length}
+                size="small"
+                color="success"
+                sx={{ ml: 2 }}
+              />
+            )}
+          </Typography>
+          <Button
+            variant="outlined"
+            endIcon={<ArrowForwardIcon />}
+            onClick={() => navigate('/certificates')}
+          >
+            {lang === 'ru' ? 'Все сертификаты' : 'Toate certificatele'}
+          </Button>
+        </Box>
+
+        {certsLoading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : certificates.length === 0 && availableCerts.length === 0 ? (
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <WorkspacePremiumIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
+            <Typography variant="body1" color="text.secondary">
+              {lang === 'ru'
+                ? 'Продолжайте обучение, чтобы получить сертификаты!'
+                : 'Continuați să învățați pentru a obține certificate!'}
+            </Typography>
+          </Box>
+        ) : (
+          <>
+            {/* Earned Certificates */}
+            {certificates.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" gutterBottom sx={{ mb: 2 }}>
+                  {lang === 'ru' ? 'Полученные сертификаты' : 'Certificate obținute'}
+                </Typography>
+                <Grid container spacing={2}>
+                  {certificates.slice(0, 3).map((cert) => (
+                    <Grid item xs={12} sm={4} key={cert._id}>
+                      <Card
+                        elevation={0}
+                        sx={{
+                          border: '2px solid',
+                          borderColor: 'success.light',
+                          bgcolor: 'success.50',
+                          cursor: 'pointer',
+                          transition: 'transform 0.2s',
+                          '&:hover': {
+                            transform: 'scale(1.02)',
+                          },
+                        }}
+                        onClick={() => navigate('/certificates')}
+                      >
+                        <CardContent>
+                          <Box sx={{ textAlign: 'center' }}>
+                            <WorkspacePremiumIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
+                            <Typography variant="body2" fontWeight="bold" gutterBottom>
+                              {cert.title[lang]}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" display="block">
+                              {new Date(cert.issuedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'ro-RO')}
+                            </Typography>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+                {certificates.length > 3 && (
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block', textAlign: 'center' }}>
+                    {lang === 'ru' ? `+ ещё ${certificates.length - 3}` : `+ încă ${certificates.length - 3}`}
+                  </Typography>
+                )}
+              </Box>
+            )}
+
+            {/* Available Certificates Preview */}
+            {availableCerts.some(cert => cert.eligible) && (
+              <Box>
+                <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, color: 'success.main' }}>
+                  {lang === 'ru' ? 'Доступны для получения' : 'Disponibile pentru obținere'}
+                </Typography>
+                <Grid container spacing={2}>
+                  {availableCerts
+                    .filter(cert => cert.eligible && !certificates.some(ec => ec.certificateType === cert.type))
+                    .slice(0, 3)
+                    .map((cert) => (
+                      <Grid item xs={12} sm={4} key={cert.type}>
+                        <Card
+                          elevation={0}
+                          sx={{
+                            border: '2px solid',
+                            borderColor: 'primary.light',
+                            bgcolor: 'primary.50',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s',
+                            '&:hover': {
+                              transform: 'scale(1.02)',
+                            },
+                          }}
+                          onClick={() => navigate('/certificates')}
+                        >
+                          <CardContent>
+                            <Box sx={{ textAlign: 'center' }}>
+                              <WorkspacePremiumIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                              <Typography variant="body2" fontWeight="bold" gutterBottom>
+                                {cert.title[lang]}
+                              </Typography>
+                              <Chip
+                                label={lang === 'ru' ? 'Получить' : 'Obține'}
+                                size="small"
+                                color="primary"
+                                sx={{ mt: 1 }}
+                              />
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                </Grid>
+              </Box>
+            )}
+          </>
         )}
       </Paper>
     </Container>
