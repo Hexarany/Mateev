@@ -75,12 +75,20 @@ app.use(helmet({
 app.use(compression())
 app.use(cors({
   origin: (origin, callback) => {
+    console.log('🔍 CORS check - Origin:', origin, '| NODE_ENV:', process.env.NODE_ENV)
+
     // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true)
+    if (!origin) {
+      console.log('✅ CORS allowed - no origin')
+      return callback(null, true)
+    }
 
     // In development, allow any localhost origin
-    if (process.env.NODE_ENV === 'development' && origin.includes('localhost')) {
-      return callback(null, true)
+    if (process.env.NODE_ENV === 'development') {
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        console.log('✅ CORS allowed - development localhost')
+        return callback(null, true)
+      }
     }
 
     // In production, allow configured origins
@@ -89,9 +97,11 @@ app.use(cors({
       : ['http://localhost:5173']
 
     if (allowedOrigins.includes(origin)) {
+      console.log('✅ CORS allowed - in allowlist')
       return callback(null, true)
     }
 
+    console.log('❌ CORS blocked origin:', origin, '| Allowed:', allowedOrigins)
     callback(new Error('Not allowed by CORS'))
   },
   credentials: true,
@@ -189,3 +199,4 @@ const startServer = async () => {
 }
 
 startServer()
+

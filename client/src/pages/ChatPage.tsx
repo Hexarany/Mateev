@@ -30,6 +30,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSocket } from '@/hooks/useSocket'
 import {
@@ -556,27 +557,56 @@ const ChatPage = () => {
           />
 
           <List sx={{ mt: 2 }}>
-            {searchResults.map((result) => (
-              <ListItem key={result._id} disablePadding>
-                <ListItemButton onClick={() => handleStartConversation(result._id)}>
-                  <ListItemAvatar>
-                    <Avatar>
-                      {result.firstName[0]}
-                      {result.lastName[0]}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={`${result.firstName} ${result.lastName}`}
-                    secondary={result.email}
-                  />
-                  <Chip
-                    label={result.accessLevel?.toUpperCase()}
-                    size="small"
-                    color={result.accessLevel === 'premium' ? 'success' : 'primary'}
-                  />
-                </ListItemButton>
+            {searchResults.length === 0 && userSearchQuery.trim() !== '' ? (
+              <ListItem>
+                <ListItemText
+                  primary={lang === 'ru' ? 'Пользователи не найдены' : 'Nu s-au găsit utilizatori'}
+                  secondary={lang === 'ru' ? 'Попробуйте другой запрос' : 'Încercați o altă căutare'}
+                />
               </ListItem>
-            ))}
+            ) : (
+              searchResults.map((result) => (
+                <ListItem
+                  key={result._id}
+                  disablePadding
+                  secondaryAction={
+                    <IconButton
+                      edge="end"
+                      color="primary"
+                      onClick={() => handleStartConversation(result._id)}
+                      sx={{
+                        bgcolor: 'primary.main',
+                        color: 'white',
+                        '&:hover': {
+                          bgcolor: 'primary.dark',
+                        },
+                      }}
+                    >
+                      <ChatBubbleOutlineIcon />
+                    </IconButton>
+                  }
+                >
+                  <ListItemButton onClick={() => handleStartConversation(result._id)}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        {result.firstName[0]}
+                        {result.lastName[0]}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={`${result.firstName} ${result.lastName}`}
+                      secondary={result.email}
+                    />
+                    <Chip
+                      label={result.accessLevel?.toUpperCase()}
+                      size="small"
+                      color={result.accessLevel === 'premium' ? 'success' : 'primary'}
+                      sx={{ mr: 6 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))
+            )}
           </List>
         </DialogContent>
         <DialogActions>
