@@ -16,8 +16,11 @@ import {
   Alert,
   CircularProgress,
   Chip,
+  TextField,
+  InputAdornment,
+  IconButton,
 } from '@mui/material'
-import { Check as CheckIcon, Star as StarIcon } from '@mui/icons-material'
+import { Check as CheckIcon, Star as StarIcon, LocalOffer as OfferIcon } from '@mui/icons-material'
 import { useAuth } from '@/contexts/AuthContext'
 import axios from 'axios'
 
@@ -43,6 +46,10 @@ const PricingPage = () => {
   const { user, isAuthenticated, token } = useAuth()
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [promoCode, setPromoCode] = useState('')
+  const [appliedPromo, setAppliedPromo] = useState<any>(null)
+  const [promoError, setPromoError] = useState('')
+  const [validatingPromo, setValidatingPromo] = useState(false)
 
   // Определяем доступные планы
   const plans: TierPlan[] = [
@@ -117,6 +124,35 @@ const PricingPage = () => {
     },
   ]
 
+  const handleApplyPromo = async (tierId: string) => {
+    if (!promoCode.trim()) {
+      setPromoError('Введите промокод')
+      return
+    }
+
+    setValidatingPromo(true)
+    setPromoError('')
+
+    try {
+      const response = await axios.get(
+        `${API_URL}/promo-codes/validate/${promoCode}?tier=${tierId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+
+      if (response.data.valid) {
+        setAppliedPromo(response.data.promoCode)
+        setPromoError('')
+      }
+    } catch (err: any) {
+      setPromoError(err.response?.data?.error?.message || 'Промокод недействителен')
+      setAppliedPromo(null)
+    } finally {
+      setValidatingPromo(false)
+    }
+  }
+
   const handlePurchase = async (tierId: string) => {
     if (!isAuthenticated) {
       navigate('/login')
@@ -131,16 +167,24 @@ const PricingPage = () => {
     setError('')
 
     try {
-      // Create PayPal order
+      // Create PayPal order with optional promo code
       const response = await axios.post(
         `${API_URL}/tier-payment/create-order`,
-        { tierId },
+        {
+          tierId,
+          promoCode: appliedPromo ? promoCode : undefined
+        },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       )
 
-      const { approvalUrl } = response.data
+      const { approvalUrl, appliedPromoCode, originalPrice, discount, finalPrice } = response.data
+
+      // Store promo info for capture step
+      if (appliedPromoCode) {
+        sessionStorage.setItem('promoCodeId', appliedPromoCode._id)
+      }
 
       // Validate approval URL before redirect
       if (!approvalUrl) {
@@ -154,6 +198,22 @@ const PricingPage = () => {
       setError(err.response?.data?.message || err.message || 'Ошибка при создании заказа')
       setLoading(null)
     }
+  }
+
+  const calculateDiscountedPrice = (plan: TierPlan) => {
+    if (!appliedPromo) return null
+
+    const basePrice = plan.id === 'premium' && user?.accessLevel === 'basic'
+      ? (plan.upgradeFromBasic || plan.price)
+      : plan.price
+
+    const discount = appliedPromo.discountType === 'percentage'
+      ? (basePrice * appliedPromo.discountValue) / 100
+      : Math.min(appliedPromo.discountValue, basePrice)
+
+    const finalPrice = basePrice - discount
+
+    return { basePrice, discount, finalPrice }
   }
 
   const getCurrentTierIndex = () => {
@@ -212,12 +272,71 @@ const PricingPage = () => {
         </Alert>
       )}
 
+      {isAuthenticated && (
+        <Box sx={{ maxWidth: 500, mx: 'auto', mb: 4 }}>
+          <Card variant="outlined">
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <OfferIcon color="primary" />
+                <Typography variant="h6">Есть промокод?</Typography>
+              </Box>
+              <TextField
+                fullWidth
+                placeholder="Введите промокод"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                disabled={validatingPromo || !!appliedPromo}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {appliedPromo ? (
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setAppliedPromo(null)
+                            setPromoCode('')
+                          }}
+                        >
+                          Удалить
+                        </Button>
+                      ) : (
+                        <Button
+                          size="small"
+                          onClick={() => handleApplyPromo('basic')}
+                          disabled={validatingPromo || !promoCode.trim()}
+                        >
+                          {validatingPromo ? <CircularProgress size={20} /> : 'Применить'}
+                        </Button>
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              {promoError && (
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  {promoError}
+                </Alert>
+              )}
+              {appliedPromo && (
+                <Alert severity="success" sx={{ mt: 1 }}>
+                  Промокод применен!{' '}
+                  {appliedPromo.discountType === 'percentage'
+                    ? `Скидка ${appliedPromo.discountValue}%`
+                    : `Скидка $${appliedPromo.discountValue}`}
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        </Box>
+      )}
+
       <Grid container spacing={4} justifyContent="center">
         {plans.map((plan, index) => {
           const isPremium = plan.id === 'premium'
           const isPopular = plan.id === 'basic'
           const disabled =
             !canUpgrade(index) || isCurrentTier(index) || loading !== null
+          const discountInfo = calculateDiscountedPrice(plan)
 
           return (
             <Grid item xs={12} md={4} key={plan.id}>
@@ -267,17 +386,42 @@ const PricingPage = () => {
                   </Typography>
 
                   <Box sx={{ my: 3 }}>
-                    <Typography variant="h3" component="span" fontWeight={700}>
-                      ${plan.price}
-                    </Typography>
-                    <Typography variant="body1" component="span" color="text.secondary">
-                      {' '}
-                      {plan.price === 0 ? '' : '/ единоразово'}
-                    </Typography>
-                    {plan.upgradeFromBasic && user?.accessLevel === 'basic' && (
-                      <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
-                        Апгрейд с Basic: ${plan.upgradeFromBasic}
-                      </Typography>
+                    {discountInfo ? (
+                      <>
+                        <Box>
+                          <Typography
+                            variant="h5"
+                            component="span"
+                            sx={{ textDecoration: 'line-through', color: 'text.secondary' }}
+                          >
+                            ${discountInfo.basePrice}
+                          </Typography>
+                        </Box>
+                        <Typography variant="h3" component="span" fontWeight={700} color="success.main">
+                          ${discountInfo.finalPrice.toFixed(2)}
+                        </Typography>
+                        <Chip
+                          label={`Скидка $${discountInfo.discount.toFixed(2)}`}
+                          color="success"
+                          size="small"
+                          sx={{ ml: 1 }}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="h3" component="span" fontWeight={700}>
+                          ${plan.price}
+                        </Typography>
+                        <Typography variant="body1" component="span" color="text.secondary">
+                          {' '}
+                          {plan.price === 0 ? '' : '/ единоразово'}
+                        </Typography>
+                        {plan.upgradeFromBasic && user?.accessLevel === 'basic' && (
+                          <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+                            Апгрейд с Basic: ${plan.upgradeFromBasic}
+                          </Typography>
+                        )}
+                      </>
                     )}
                   </Box>
 

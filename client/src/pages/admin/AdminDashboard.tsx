@@ -21,6 +21,7 @@ import TriggerPointsManager from './TriggerPointsManager'
 import ResourcesManager from './ResourcesManager'
 import DataImportPage from './DataImportPage'
 import UsersManager from './UsersManager'
+import PromoCodesManager from './PromoCodesManager'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -97,6 +98,7 @@ const AdminDashboard = () => {
             <Tab label="Библиотека / Bibliotecă" />
             <Tab label="Импорт данных / Import date" />
             <Tab label="Медиа / Media" />
+            {user?.role === 'admin' && <Tab label="Промокоды / Coduri promoționale" />}
             {user?.role === 'admin' && <Tab label="Пользователи / Utilizatori" />}
           </Tabs>
         </Box>
@@ -133,6 +135,11 @@ const AdminDashboard = () => {
         </TabPanel>
         {user?.role === 'admin' && (
           <TabPanel value={activeTab} index={10}>
+            <PromoCodesManager />
+          </TabPanel>
+        )}
+        {user?.role === 'admin' && (
+          <TabPanel value={activeTab} index={11}>
             <UsersManager />
           </TabPanel>
         )}

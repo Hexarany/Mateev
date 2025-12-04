@@ -23,6 +23,7 @@ import anatomyModel3DRoutes from './routes/anatomyModel3DRoutes'
 import triggerPointRoutes from './routes/triggerPointRoutes'
 import tierPaymentRoutes from './routes/tierPaymentRoutes'
 import usersManagementRoutes from './routes/usersManagementRoutes'
+import promoCodeRoutes from './routes/promoCodeRoutes'
 import chatRoutes from './routes/chatRoutes'
 import searchRoutes from './routes/searchRoutes'
 import bookmarkRoutes from './routes/bookmarkRoutes'
@@ -38,7 +39,7 @@ dotenv.config()
 
 const app = express()
 const httpServer = createServer(app)
-const PORT = process.env.PORT || 3000
+const PORT = parseInt(process.env.PORT || '3000', 10)
 
 // Initialize Socket.io
 const io = new Server(httpServer, {
@@ -131,6 +132,7 @@ app.use('/api', progressRoutes)
 app.use('/api/certificates', certificateRoutes)
 app.use('/api/notifications', notificationRoutes)
 app.use('/api/import', importRoutes)
+app.use('/api/promo-codes', promoCodeRoutes)
 
 // Health check endpoints
 app.get('/health', (req, res) => {
@@ -175,9 +177,9 @@ app.use((req, res) => {
 const startServer = async () => {
   try {
     await connectDB()
-    httpServer.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server is running on http://0.0.0.0:${PORT}`)
-      console.log(`📚 API available at http://0.0.0.0:${PORT}/api`)
+    httpServer.listen(PORT, () => {
+      console.log(`🚀 Server is running on http://localhost:${PORT}`)
+      console.log(`📚 API available at http://localhost:${PORT}/api`)
       console.log(`💬 Socket.io server is ready`)
     })
   } catch (error) {

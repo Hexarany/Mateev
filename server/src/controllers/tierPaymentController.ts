@@ -2,12 +2,13 @@ import { Request, Response } from 'express'
 import { getTierPlanById } from '../config/tier-plans'
 import { createPayPalOrder, capturePayPalPayment } from '../services/paypalService'
 import User from '../models/User'
+import PromoCode, { IPromoCode } from '../models/PromoCode'
 
 // POST /api/tier-payment/create-order - Create PayPal order for tier purchase
 export const createTierOrder = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId
-    const { tierId } = req.body // 'basic' or 'premium'
+    const { tierId, promoCode } = req.body // 'basic' or 'premium', optional promo code
 
     if (!userId) {
       return res.status(401).json({ message: 'Необходима авторизация' })
@@ -25,13 +26,13 @@ export const createTierOrder = async (req: Request, res: Response) => {
     }
 
     // Check if user is trying to upgrade
-    let price = plan.price
+    let originalPrice = plan.price
     let isUpgrade = false
     const currentTier = user.accessLevel || 'free'
 
     if (tierId === 'premium' && currentTier === 'basic') {
       // Upgrade from basic to premium
-      price = plan.upgradeFromBasic || 30
+      originalPrice = plan.upgradeFromBasic || 30
       isUpgrade = true
     } else if (currentTier === 'premium') {
       return res.status(400).json({ message: 'У вас уже есть премиум доступ' })
@@ -39,17 +40,47 @@ export const createTierOrder = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'У вас уже есть этот уровень доступа' })
     }
 
-    // Create PayPal order
+    // Handle promo code if provided
+    let discount = 0
+    let appliedPromoCode = null
+    let finalPrice = originalPrice
+
+    if (promoCode) {
+      const promo = await PromoCode.findOne({ code: promoCode.toUpperCase() }) as IPromoCode | null
+
+      if (promo) {
+        const validation = promo.isValid(userId, tierId)
+
+        if (validation.valid) {
+          discount = promo.calculateDiscount(originalPrice)
+          finalPrice = originalPrice - discount
+          appliedPromoCode = {
+            code: promo.code,
+            discountType: promo.discountType,
+            discountValue: promo.discountValue,
+            _id: (promo._id as any).toString(),
+          }
+        } else {
+          // Promo code invalid, but continue without it
+          console.log(`Invalid promo code: ${validation.message}`)
+        }
+      }
+    }
+
+    // Create PayPal order with final price
     const description = isUpgrade ? `Обновление до ${plan.name.ru}` : plan.name.ru
 
-    const order = await createPayPalOrder(price, plan.currency, description, tierId)
+    const order = await createPayPalOrder(finalPrice, plan.currency, description, tierId)
 
     res.json({
       orderId: order.id,
       approvalUrl: order.links.find((link: any) => link.rel === 'approve')?.href,
       order,
-      price,
+      originalPrice,
+      discount,
+      finalPrice,
       isUpgrade,
+      appliedPromoCode,
     })
   } catch (error: any) {
     console.error('Error creating tier order:', error)
@@ -72,7 +103,7 @@ export const createTierOrder = async (req: Request, res: Response) => {
 export const captureTierOrder = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId
-    const { orderId, tierId } = req.body
+    const { orderId, tierId, promoCodeId } = req.body
 
     if (!userId) {
       return res.status(401).json({ message: 'Необходима авторизация' })
@@ -103,6 +134,20 @@ export const captureTierOrder = async (req: Request, res: Response) => {
 
     // Calculate actual amount paid
     const paidAmount = parseFloat(paymentDetails.amount.value)
+
+    // Apply promo code if provided
+    if (promoCodeId) {
+      try {
+        const promoCode = await PromoCode.findById(promoCodeId) as IPromoCode | null
+        if (promoCode) {
+          await promoCode.apply(userId)
+          console.log(`Applied promo code ${promoCode.code} for user ${userId}`)
+        }
+      } catch (error) {
+        console.error('Error applying promo code:', error)
+        // Continue with payment completion even if promo code application fails
+      }
+    }
 
     // Record payment in history
     const fromTier = user.accessLevel || 'free'

@@ -49,14 +49,24 @@ const PaymentCallbackPage = () => {
       }
 
       try {
+        // Get promo code ID from session storage if exists
+        const promoCodeId = sessionStorage.getItem('promoCodeId')
+
         // Capture the payment
         const response = await axios.post(
           `${API_URL}/tier-payment/capture-order`,
-          { orderId, tierId },
+          {
+            orderId,
+            tierId,
+            promoCodeId: promoCodeId || undefined,
+          },
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         )
+
+        // Clear promo code from session storage
+        sessionStorage.removeItem('promoCodeId')
 
         setPaymentDetails(response.data.paymentDetails)
         updateUser(response.data.user)

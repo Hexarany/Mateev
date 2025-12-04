@@ -201,7 +201,7 @@ export const generateCertificate = async (req: CustomRequest, res: Response) => 
       },
     })
 
-    await certificate.save()
+    const savedCertificate = await certificate.save()
 
     // Отправляем уведомление о новом сертификате
     try {
@@ -213,8 +213,8 @@ export const generateCertificate = async (req: CustomRequest, res: Response) => 
           ro: `Certificat gata!`,
         },
         {
-          ru: `Ваш сертификат "${certificate.title.ru}" готов к загрузке`,
-          ro: `Certificatul dvs. "${certificate.title.ro}" este gata pentru descărcare`,
+          ru: `Ваш сертификат "${savedCertificate.title.ru}" готов к загрузке`,
+          ro: `Certificatul dvs. "${savedCertificate.title.ro}" este gata pentru descărcare`,
         },
         {
           icon: '🏆',
@@ -224,8 +224,8 @@ export const generateCertificate = async (req: CustomRequest, res: Response) => 
             ro: 'Descarcă',
           },
           metadata: {
-            certificateId: String(certificate._id),
-            certificateType: certificate.certificateType,
+            certificateId: (savedCertificate._id as any).toString(),
+            certificateType: savedCertificate.certificateType,
           },
           priority: 'high',
         }
@@ -236,7 +236,7 @@ export const generateCertificate = async (req: CustomRequest, res: Response) => 
 
     return res.status(201).json({
       message: 'Certificate generated successfully',
-      certificate,
+      certificate: savedCertificate,
     })
   } catch (error: any) {
     console.error('Error generating certificate:', error)
