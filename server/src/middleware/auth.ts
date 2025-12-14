@@ -43,6 +43,11 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       ;(req as any).userId = payload.userId
       ;(req as any).userEmail = payload.email
       ;(req as any).userRole = payload.role
+      ;(req as any).user = {
+        userId: payload.userId,
+        email: payload.email,
+        role: payload.role
+      }
 
       next()
     })
@@ -70,6 +75,11 @@ export const optionalAuth = (req: Request, res: Response, next: NextFunction) =>
         ;(req as any).userId = payload.userId
         ;(req as any).userEmail = payload.email
         ;(req as any).userRole = payload.role
+        ;(req as any).user = {
+          userId: payload.userId,
+          email: payload.email,
+          role: payload.role
+        }
       }
       next()
     })
