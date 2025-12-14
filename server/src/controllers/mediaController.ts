@@ -98,6 +98,8 @@ const uploadToCloudinary = (buffer: Buffer, filename: string, mimetype: string):
         resource_type: resourceType,
         public_id: publicId,
         overwrite: true,
+        type: 'upload',
+        access_mode: 'public',
       },
       (error, result) => {
         if (error) {
