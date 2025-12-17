@@ -6,12 +6,17 @@ import {
   updateUser,
   deleteUser,
   getUserStats,
+  getUsersByRole,
 } from '../controllers/usersManagementController'
 import { authenticateToken, authorizeRole } from '../middleware/auth'
 
 const router = express.Router()
 
-// All routes require authentication and admin role
+// GET /api/users-management/by-role/:role - Get users by role (admin and teacher)
+// This route is before the admin-only middleware so teachers can access it
+router.get('/by-role/:role', authenticateToken, authorizeRole('admin', 'teacher'), getUsersByRole)
+
+// All routes below require authentication and admin role
 router.use(authenticateToken)
 router.use(authorizeRole('admin'))
 

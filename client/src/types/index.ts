@@ -274,3 +274,48 @@ export interface TriggerPoint {
   createdAt?: string | Date
   updatedAt?: string | Date
 }
+
+// User (simplified for group management)
+export interface UserBasic {
+  _id: string
+  firstName: string
+  lastName: string
+  email: string
+  name?: string // Some endpoints return combined name
+}
+
+// Group Management
+export interface Group {
+  _id: string
+  name: {
+    ru: string
+    ro: string
+  }
+  description?: {
+    ru: string
+    ro: string
+  }
+  teacher: UserBasic
+  students: UserBasic[]
+  startDate: string
+  endDate?: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateGroupDto {
+  name: {
+    ru: string
+    ro: string
+  }
+  description?: {
+    ru: string
+    ro: string
+  }
+  teacher: string // ID преподавателя
+  students?: string[] // ID студентов
+  startDate: string
+  endDate?: string
+  isActive?: boolean
+}

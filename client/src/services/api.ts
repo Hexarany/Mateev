@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Category, Topic, Quiz, SubscriptionPlan, CurrentSubscription, Subscription, MassageProtocol, HygieneGuideline, AnatomyModel3D, TriggerPoint } from '@/types'
+import type { Category, Topic, Quiz, SubscriptionPlan, CurrentSubscription, Subscription, MassageProtocol, HygieneGuideline, AnatomyModel3D, TriggerPoint, Group, CreateGroupDto, UserBasic } from '@/types'
 
 // Use relative URL in production, localhost in development
 const API_BASE_URL = import.meta.env.VITE_API_URL ||
@@ -1064,6 +1064,72 @@ export const deleteNotification = async (notificationId: string): Promise<{ mess
 // Delete all read notifications
 export const deleteAllReadNotifications = async (): Promise<{ message: string }> => {
   const response = await api.delete('/notifications/read/all')
+  return response.data
+}
+
+// ============= Groups Management =============
+
+// Get all groups (admin sees all, teacher sees only their groups)
+export const getAllGroups = async (token: string): Promise<Group[]> => {
+  const response = await api.get('/groups', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Get group by ID
+export const getGroupById = async (id: string, token: string): Promise<Group> => {
+  const response = await api.get(`/groups/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Create new group
+export const createGroup = async (groupData: CreateGroupDto, token: string): Promise<Group> => {
+  const response = await api.post('/groups', groupData, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Update group
+export const updateGroup = async (id: string, groupData: Partial<CreateGroupDto>, token: string): Promise<Group> => {
+  const response = await api.put(`/groups/${id}`, groupData, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Delete group (admin only)
+export const deleteGroup = async (id: string, token: string): Promise<{ message: string }> => {
+  const response = await api.delete(`/groups/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Add student to group
+export const addStudentToGroup = async (groupId: string, studentId: string, token: string): Promise<Group> => {
+  const response = await api.post(`/groups/${groupId}/students`, { studentId }, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Remove student from group
+export const removeStudentFromGroup = async (groupId: string, studentId: string, token: string): Promise<Group> => {
+  const response = await api.delete(`/groups/${groupId}/students/${studentId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Get users by role (for selecting teachers and students)
+export const getUsersByRole = async (role: 'teacher' | 'student', token: string): Promise<UserBasic[]> => {
+  const response = await api.get(`/users-management/by-role/${role}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
   return response.data
 }
 

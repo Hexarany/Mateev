@@ -226,3 +226,23 @@ export const getUserStats = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Ошибка при получении статистики' })
   }
 }
+
+// GET /api/users-management/by-role/:role - Get users by role (for group management)
+export const getUsersByRole = async (req: Request, res: Response) => {
+  try {
+    const { role } = req.params
+
+    if (!['teacher', 'student'].includes(role)) {
+      return res.status(400).json({ message: 'Неверная роль. Допустимые значения: teacher, student' })
+    }
+
+    const users = await User.find({ role })
+      .select('_id firstName lastName email')
+      .sort({ firstName: 1, lastName: 1 })
+
+    res.json(users)
+  } catch (error) {
+    console.error('Error fetching users by role:', error)
+    res.status(500).json({ message: 'Ошибка при получении пользователей' })
+  }
+}
