@@ -97,8 +97,14 @@ export const createQuiz = async (req: Request, res: Response) => {
     const quiz = new Quiz(req.body)
     await quiz.save()
     res.status(201).json(quiz)
-  } catch (error) {
-    res.status(400).json({ error: { message: 'Failed to create quiz' } })
+  } catch (error: any) {
+    console.error('Quiz creation error:', error)
+    res.status(400).json({
+      error: {
+        message: error.message || 'Failed to create quiz',
+        details: error.errors || error
+      }
+    })
   }
 }
 
