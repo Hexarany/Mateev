@@ -49,4 +49,37 @@ export class TelegramNotificationService {
 
     return sentCount
   }
+
+  // Notify all users with enabled notifications about new quiz
+  static async notifyNewQuiz(quizTitle: { ru: string; ro: string }, questionsCount: number) {
+    try {
+      // Find all users with Telegram notifications enabled for new content
+      const users = await User.find({
+        telegramId: { $exists: true },
+        'telegramNotifications.enabled': true,
+        'telegramNotifications.newContent': true
+      })
+
+      let sentCount = 0
+      for (const user of users) {
+        const message =
+          `📝 *Новый тест!*\n\n` +
+          `${quizTitle.ru}\n\n` +
+          `Вопросов: ${questionsCount}\n\n` +
+          `Пройти тест: /quiz`
+
+        const sent = await this.sendToUser(user._id.toString(), message)
+        if (sent) sentCount++
+
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+
+      console.log(`✅ Quiz notification sent to ${sentCount} users`)
+      return sentCount
+    } catch (error) {
+      console.error('Failed to send quiz notifications:', error)
+      return 0
+    }
+  }
 }

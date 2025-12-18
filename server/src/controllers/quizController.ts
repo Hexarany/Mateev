@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import Quiz from '../models/Quiz'
 import User from '../models/User'
+import { TelegramNotificationService } from '../services/telegram/notificationService'
 
 interface CustomRequest extends Request {
   userId?: string
@@ -96,6 +97,17 @@ export const createQuiz = async (req: Request, res: Response) => {
   try {
     const quiz = new Quiz(req.body)
     await quiz.save()
+
+    // Send Telegram notifications about new quiz (non-blocking)
+    if (process.env.TELEGRAM_BOT_TOKEN) {
+      TelegramNotificationService.notifyNewQuiz(
+        quiz.title,
+        quiz.questions?.length || 0
+      ).catch(err => {
+        console.error('Failed to send quiz notification:', err)
+      })
+    }
+
     res.status(201).json(quiz)
   } catch (error: any) {
     console.error('Quiz creation error:', error)
