@@ -4,6 +4,7 @@ import { quizCommand } from './commands/quiz'
 import { anatomyCommand } from './commands/anatomy'
 import { scheduleCommand } from './commands/schedule'
 import { initDailyScheduler } from './scheduler'
+import { handleQuizCallback } from './handlers/quizCallback'
 
 // Register commands
 bot.command('start', startCommand)
@@ -22,6 +23,9 @@ bot.command('help', (ctx) => {
     { parse_mode: 'Markdown' }
   )
 })
+
+// Register callback query handler for quizzes
+bot.on('callback_query', handleQuizCallback)
 
 // Error handling
 bot.catch((err, ctx) => {
