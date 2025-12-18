@@ -35,7 +35,7 @@ export async function initTelegramBot() {
     // Launch bot with timeout
     const launchPromise = bot.launch()
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Bot launch timeout')), 10000)
+      setTimeout(() => reject(new Error('Bot launch timeout')), 30000)
     )
 
     await Promise.race([launchPromise, timeoutPromise])
