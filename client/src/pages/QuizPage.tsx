@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -14,56 +14,76 @@ import {
   FormControl,
   LinearProgress,
   Alert,
+  CircularProgress,
 } from '@mui/material'
 import AccessGate from '@/components/AccessGate'
 import { useAuth } from '@/contexts/AuthContext'
+import axios from 'axios'
+import type { Quiz } from '@/types'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
 
 const QuizPage = () => {
   const { quizId } = useParams<{ quizId: string }>()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const lang = i18n.language as 'ru' | 'ro'
-  const { hasAccess } = useAuth()
+  const { hasAccess, token } = useAuth()
 
+  const [quiz, setQuiz] = useState<Quiz | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string>('')
   const [answers, setAnswers] = useState<number[]>([])
   const [showResults, setShowResults] = useState(false)
 
-  // Mock data
-  const quiz = {
-    title: {
-      ru: 'Тест по остеологии: Череп',
-      ro: 'Test de osteologie: Craniul',
-    },
-    questions: [
-      {
-        question: {
-          ru: 'Сколько костей входит в состав черепа человека?',
-          ro: 'Câte oase formează craniul uman?',
-        },
-        options: [
-          { ru: '20', ro: '20' },
-          { ru: '23', ro: '23' },
-          { ru: '26', ro: '26' },
-          { ru: '29', ro: '29' },
-        ],
-        correctAnswer: 1,
-      },
-      {
-        question: {
-          ru: 'Какая кость черепа является подвижной?',
-          ro: 'Care os al craniului este mobil?',
-        },
-        options: [
-          { ru: 'Лобная кость', ro: 'Osul frontal' },
-          { ru: 'Нижняя челюсть', ro: 'Mandibula' },
-          { ru: 'Затылочная кость', ro: 'Osul occipital' },
-          { ru: 'Височная кость', ro: 'Osul temporal' },
-        ],
-        correctAnswer: 1,
-      },
-    ],
+  // Load quiz from API
+  useEffect(() => {
+    const loadQuiz = async () => {
+      if (!quizId) {
+        setError('Quiz ID not provided')
+        setLoading(false)
+        return
+      }
+
+      try {
+        setLoading(true)
+        const response = await axios.get(`${API_BASE_URL}/quizzes/${quizId}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        })
+        setQuiz(response.data)
+        setError(null)
+      } catch (err: any) {
+        console.error('Error loading quiz:', err)
+        setError(err.response?.data?.error?.message || 'Failed to load quiz')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadQuiz()
+  }, [quizId, token])
+
+  if (loading) {
+    return (
+      <Container maxWidth="md" sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Container>
+    )
+  }
+
+  if (error || !quiz) {
+    return (
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Alert severity="error">
+          {error || 'Quiz not found'}
+        </Alert>
+        <Button variant="contained" onClick={() => navigate('/')} sx={{ mt: 2 }}>
+          {t('quiz.backToHome')}
+        </Button>
+      </Container>
+    )
   }
 
   const progress = ((currentQuestion + 1) / quiz.questions.length) * 100
