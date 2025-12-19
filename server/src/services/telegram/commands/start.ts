@@ -1,6 +1,14 @@
 import { Context } from 'telegraf'
 import User from '../../../models/User'
 
+// Get production URL for Web App (Telegram doesn't support localhost)
+const getWebAppUrl = () => {
+  const clientUrl = process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com'
+  // If CLIENT_URL contains multiple URLs (for CORS), use the production one
+  const urls = clientUrl.split(',').map(url => url.trim())
+  return urls.find(url => url.startsWith('https://')) || 'https://anatomia-app-docker.onrender.com'
+}
+
 export async function startCommand(ctx: Context) {
   const telegramId = ctx.from?.id.toString()
   const args = ctx.message && 'text' in ctx.message
@@ -32,7 +40,7 @@ export async function startCommand(ctx: Context) {
             inline_keyboard: [[
               {
                 text: '📚 Открыть Anatomia',
-                web_app: { url: process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com' }
+                web_app: { url: getWebAppUrl() }
               }
             ]]
           }
@@ -47,7 +55,7 @@ export async function startCommand(ctx: Context) {
             inline_keyboard: [[
               {
                 text: '📚 Открыть Anatomia',
-                web_app: { url: process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com' }
+                web_app: { url: getWebAppUrl() }
               }
             ]]
           }

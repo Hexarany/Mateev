@@ -46,7 +46,11 @@ export async function initTelegramBot() {
     console.log('✅ Telegram bot started successfully')
 
     // Set up Web App button (non-blocking)
-    const webAppUrl = process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com'
+    // Extract production URL from CLIENT_URL (which may contain multiple URLs for CORS)
+    const clientUrl = process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com'
+    const urls = clientUrl.split(',').map(url => url.trim())
+    const webAppUrl = urls.find(url => url.startsWith('https://')) || 'https://anatomia-app-docker.onrender.com'
+
     bot.telegram.setChatMenuButton({
       menuButton: {
         type: 'web_app',
