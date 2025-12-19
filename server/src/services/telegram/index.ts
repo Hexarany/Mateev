@@ -4,6 +4,7 @@ import { quizCommand } from './commands/quiz'
 import { anatomyCommand } from './commands/anatomy'
 import { scheduleCommand } from './commands/schedule'
 import { linkgroupCommand, unlinkgroupCommand, handleLinkGroupCallback } from './commands/linkgroup'
+import { homeworkCommand, submitCommand, gradesCommand } from './commands/homework'
 import { initDailyScheduler } from './scheduler'
 import { handleQuizCallback } from './handlers/quizCallback'
 
@@ -12,6 +13,9 @@ bot.command('start', startCommand)
 bot.command('quiz', quizCommand)
 bot.command('anatomy', anatomyCommand)
 bot.command('schedule', scheduleCommand)
+bot.command('homework', homeworkCommand)
+bot.command('submit', submitCommand)
+bot.command('grades', gradesCommand)
 bot.command('linkgroup', linkgroupCommand)
 bot.command('unlinkgroup', unlinkgroupCommand)
 
@@ -19,6 +23,9 @@ bot.command('help', (ctx) => {
   return ctx.reply(
     `🤖 *Доступные команды:*\n\n` +
     `/start - Привязать аккаунт\n` +
+    `/homework - Список домашних заданий\n` +
+    `/submit <ID> <ответ> - Сдать домашнюю работу\n` +
+    `/grades - Мои оценки\n` +
     `/quiz - Пройти тест\n` +
     `/anatomy <название> - Найти информацию\n` +
     `/schedule - Мои группы\n` +
