@@ -112,6 +112,17 @@ app.use(cors({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Health check endpoints - MUST be before all other routes for fast response
+app.get('/health', (req, res) => {
+  console.log('✅ Health check called')
+  res.json({ status: 'OK', message: 'Server is running', timestamp: new Date().toISOString() })
+})
+
+app.get('/api/health', (req, res) => {
+  console.log('✅ API Health check called')
+  res.json({ status: 'OK', message: 'Server is running', timestamp: new Date().toISOString() })
+})
+
 // Static files (uploads) - using absolute path with CORS
 const uploadsPath = path.join(__dirname, '..', 'uploads')
 console.log('📁 Uploads directory:', uploadsPath)
@@ -148,15 +159,6 @@ app.use('/api/import', importRoutes)
 app.use('/api/promo-codes', promoCodeRoutes)
 app.use('/api/groups', groupRoutes)
 app.use('/api/telegram', telegramRoutes)
-
-// Health check endpoints
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' })
-})
-
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' })
-})
 
 // Serve static files from React app in production
 if (process.env.NODE_ENV === 'production') {
