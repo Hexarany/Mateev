@@ -125,9 +125,13 @@ export const importQuizzes = async (req: CustomRequest, res: Response) => {
           // Find topic by slug if provided
           let topicId = null
           if (row.topic_slug) {
+            console.log(`🔍 Looking for topic with slug: "${row.topic_slug}"`)
             const topic = await Topic.findOne({ slug: row.topic_slug })
             if (topic) {
               topicId = topic._id
+              console.log(`✅ Found topic: ${topic.name.ru} (ID: ${topicId})`)
+            } else {
+              console.log(`❌ Topic not found for slug: "${row.topic_slug}"`)
             }
           }
 
@@ -144,6 +148,7 @@ export const importQuizzes = async (req: CustomRequest, res: Response) => {
             topicId: topicId,
             questions: [],
           })
+          console.log(`📝 Quiz "${row.quiz_title_ru}" will be linked to topicId: ${topicId || 'none'}`)
         }
 
         const quiz = quizzes.get(row.quiz_slug)
