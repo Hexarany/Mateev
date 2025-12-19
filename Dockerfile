@@ -1,9 +1,10 @@
 # Single-stage build (no cache issues)
+# Force rebuild: 2025-12-19 12:05 - Deleted local dist folders
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy everything
+# Copy everything (dist folders deleted locally, will be built fresh)
 COPY . .
 
 # Build client FIRST
