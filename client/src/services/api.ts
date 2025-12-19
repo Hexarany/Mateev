@@ -1133,6 +1133,66 @@ export const getUsersByRole = async (role: 'teacher' | 'student', token: string)
   return response.data
 }
 
+// ============= Group Files Management =============
+
+// Send file to group
+export const sendFileToGroup = async (
+  groupId: string,
+  mediaId: string,
+  title?: string,
+  description?: string,
+  token?: string
+): Promise<any> => {
+  const response = await api.post(
+    '/group-files/send',
+    { groupId, mediaId, title, description },
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+  return response.data
+}
+
+// Get all files for a group
+export const getGroupFiles = async (groupId: string, token?: string): Promise<any[]> => {
+  const response = await api.get(`/group-files/group/${groupId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Get group file by ID
+export const getGroupFileById = async (id: string, token?: string): Promise<any> => {
+  const response = await api.get(`/group-files/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Retry failed deliveries
+export const retryFailedDeliveries = async (id: string, token?: string): Promise<any> => {
+  const response = await api.post(
+    `/group-files/${id}/retry`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+  return response.data
+}
+
+// Delete group file
+export const deleteGroupFile = async (id: string, token?: string): Promise<any> => {
+  const response = await api.delete(`/group-files/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Get delivery statistics for a group
+export const getGroupDeliveryStats = async (groupId: string, token?: string): Promise<any> => {
+  const response = await api.get(`/group-files/group/${groupId}/stats`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
 // ========================
 // Telegram Integration
 // ========================

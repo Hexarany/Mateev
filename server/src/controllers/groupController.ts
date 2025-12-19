@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import Group from '../models/Group'
 import User from '../models/User'
+import Conversation from '../models/Conversation'
 
 export const getAllGroups = async (req: Request, res: Response) => {
   try {
@@ -95,6 +96,31 @@ export const createGroup = async (req: Request, res: Response) => {
     })
 
     await group.save()
+
+    // Автоматически создаем групповой чат для группы обучения
+    try {
+      // Собираем всех участников: учитель + студенты
+      const participants = [teacher, ...(students || [])]
+
+      // Создаем unreadCount Map для всех участников
+      const unreadCountMap = new Map()
+      participants.forEach((id: string) => unreadCountMap.set(id, 0))
+
+      // Создаем групповой чат с названием группы
+      const groupChatName = `${name.ru} / ${name.ro}`
+      await Conversation.create({
+        type: 'group',
+        participants,
+        name: groupChatName,
+        createdBy: teacher,
+        unreadCount: unreadCountMap,
+      })
+
+      console.log(`✅ Групповой чат создан для группы "${groupChatName}"`)
+    } catch (chatError) {
+      console.error('Ошибка при создании группового чата:', chatError)
+      // Не прерываем создание группы, если не удалось создать чат
+    }
 
     // Populate для возврата с полной информацией
     const populatedGroup = await Group.findById(group._id)

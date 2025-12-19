@@ -3,6 +3,7 @@ import { startCommand } from './commands/start'
 import { quizCommand } from './commands/quiz'
 import { anatomyCommand } from './commands/anatomy'
 import { scheduleCommand } from './commands/schedule'
+import { linkgroupCommand, unlinkgroupCommand, handleLinkGroupCallback } from './commands/linkgroup'
 import { initDailyScheduler } from './scheduler'
 import { handleQuizCallback } from './handlers/quizCallback'
 
@@ -11,6 +12,8 @@ bot.command('start', startCommand)
 bot.command('quiz', quizCommand)
 bot.command('anatomy', anatomyCommand)
 bot.command('schedule', scheduleCommand)
+bot.command('linkgroup', linkgroupCommand)
+bot.command('unlinkgroup', unlinkgroupCommand)
 
 bot.command('help', (ctx) => {
   return ctx.reply(
@@ -19,13 +22,26 @@ bot.command('help', (ctx) => {
     `/quiz - Пройти тест\n` +
     `/anatomy <название> - Найти информацию\n` +
     `/schedule - Мои группы\n` +
+    `/linkgroup - Привязать Telegram группу (только в групповых чатах)\n` +
+    `/unlinkgroup - Отвязать Telegram группу (только в групповых чатах)\n` +
     `/help - Эта справка`,
     { parse_mode: 'Markdown' }
   )
 })
 
-// Register callback query handler for quizzes
-bot.on('callback_query', handleQuizCallback)
+// Register callback query handlers
+bot.on('callback_query', async (ctx) => {
+  const data = ctx.callbackQuery && 'data' in ctx.callbackQuery ? ctx.callbackQuery.data : ''
+
+  if (data.startsWith('link_group:')) {
+    return handleLinkGroupCallback(ctx)
+  } else if (data.startsWith('quiz_')) {
+    return handleQuizCallback(ctx)
+  }
+
+  // Unknown callback
+  return ctx.answerCbQuery('Неизвестная команда')
+})
 
 // Error handling
 bot.catch((err, ctx) => {

@@ -23,6 +23,7 @@ import DataImportPage from './DataImportPage'
 import UsersManager from './UsersManager'
 import PromoCodesManager from './PromoCodesManager'
 import GroupsManager from './GroupsManager'
+import GroupFilesManager from './GroupFilesManager'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -100,6 +101,7 @@ const AdminDashboard = () => {
             <Tab label="Импорт данных / Import date" />
             <Tab label="Медиа / Media" />
             <Tab label="Группы / Grupuri" />
+            <Tab label="Файлы групп / Fișiere grup" />
             {user?.role === 'admin' && <Tab label="Промокоды / Coduri promoționale" />}
             {user?.role === 'admin' && <Tab label="Пользователи / Utilizatori" />}
           </Tabs>
@@ -138,13 +140,16 @@ const AdminDashboard = () => {
         <TabPanel value={activeTab} index={10}>
           <GroupsManager />
         </TabPanel>
+        <TabPanel value={activeTab} index={11}>
+          <GroupFilesManager />
+        </TabPanel>
         {user?.role === 'admin' && (
-          <TabPanel value={activeTab} index={11}>
+          <TabPanel value={activeTab} index={12}>
             <PromoCodesManager />
           </TabPanel>
         )}
         {user?.role === 'admin' && (
-          <TabPanel value={activeTab} index={12}>
+          <TabPanel value={activeTab} index={13}>
             <UsersManager />
           </TabPanel>
         )}
