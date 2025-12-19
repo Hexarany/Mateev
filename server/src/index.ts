@@ -163,7 +163,20 @@ app.use('/api/telegram', telegramRoutes)
 // Serve static files from React app in production
 if (process.env.NODE_ENV === 'production') {
   const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist')
-  app.use(express.static(clientDistPath))
+
+  // Disable caching for static files to ensure fresh content
+  app.use(express.static(clientDistPath, {
+    etag: false,
+    lastModified: false,
+    setHeaders: (res, filepath) => {
+      // Force no-cache for all static files
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+      res.setHeader('Pragma', 'no-cache')
+      res.setHeader('Expires', '0')
+      res.setHeader('Surrogate-Control', 'no-store')
+      console.log(`📦 Serving static file: ${filepath}`)
+    }
+  }))
 
   // Handle React routing - return index.html for all non-API routes
   app.get('*', (req, res, next) => {
@@ -171,6 +184,9 @@ if (process.env.NODE_ENV === 'production') {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/health')) {
       return next()
     }
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    res.setHeader('Pragma', 'no-cache')
+    res.setHeader('Expires', '0')
     res.sendFile(path.join(clientDistPath, 'index.html'))
   })
 }
