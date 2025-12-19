@@ -2,8 +2,9 @@ import { Routes, Route } from 'react-router-dom'
 import { Box } from '@mui/material'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
-import PWAUpdatePrompt from './components/PWAUpdatePrompt'
-import InstallPWA from './components/InstallPWA'
+// Temporarily disabled PWA components
+// import PWAUpdatePrompt from './components/PWAUpdatePrompt'
+// import InstallPWA from './components/InstallPWA'
 import HomePage from './pages/HomePage'
 import CategoryPage from './pages/CategoryPage'
 import TopicPage from './pages/TopicPage'
@@ -34,8 +35,8 @@ import NotFoundPage from './pages/NotFoundPage'
 function App() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <PWAUpdatePrompt />
-      <InstallPWA />
+      {/* <PWAUpdatePrompt /> */}
+      {/* <InstallPWA /> */}
       <Navbar />
       <Box component="main" sx={{ flexGrow: 1 }}>
         <Routes>
