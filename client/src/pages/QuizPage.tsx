@@ -30,6 +30,9 @@ const QuizPage = () => {
   const lang = i18n.language as 'ru' | 'ro'
   const { hasAccess, token } = useAuth()
 
+  console.log('🚀 QuizPage component loaded - NEW VERSION with API loading')
+  console.log('🔑 Quiz ID from URL:', quizId)
+
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -40,6 +43,7 @@ const QuizPage = () => {
 
   // Load quiz from API
   useEffect(() => {
+    console.log('🔄 useEffect triggered, loading quiz...')
     const loadQuiz = async () => {
       if (!quizId) {
         setError('Quiz ID not provided')
