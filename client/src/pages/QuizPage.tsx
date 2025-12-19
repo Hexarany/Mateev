@@ -52,6 +52,9 @@ const QuizPage = () => {
         const response = await axios.get(`${API_BASE_URL}/quizzes/${quizId}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         })
+        console.log('📝 Loaded quiz:', response.data.title)
+        console.log('📝 Questions count:', response.data.questions?.length)
+        console.log('📝 First question:', response.data.questions?.[0]?.question)
         setQuiz(response.data)
         setError(null)
       } catch (err: any) {
