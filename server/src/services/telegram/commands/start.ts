@@ -26,12 +26,32 @@ export async function startCommand(ctx: Context) {
       return ctx.reply(
         `✅ Аккаунт успешно привязан!\n\n` +
         `Добро пожаловать, ${user.firstName}!\n` +
-        `Используйте /help для просмотра доступных команд.`
+        `Используйте /help для просмотра доступных команд.`,
+        {
+          reply_markup: {
+            inline_keyboard: [[
+              {
+                text: '📚 Открыть Anatomia',
+                web_app: { url: process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com' }
+              }
+            ]]
+          }
+        }
       )
     } else {
       return ctx.reply(
         `❌ Код недействителен или истек.\n` +
-        `Пожалуйста, получите новый код на сайте.`
+        `Пожалуйста, получите новый код на сайте.`,
+        {
+          reply_markup: {
+            inline_keyboard: [[
+              {
+                text: '📚 Открыть Anatomia',
+                web_app: { url: process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com' }
+              }
+            ]]
+          }
+        }
       )
     }
   }
@@ -42,7 +62,17 @@ export async function startCommand(ctx: Context) {
     return ctx.reply(
       `Привет, ${existingUser.firstName}! 👋\n\n` +
       `Ваш аккаунт уже привязан.\n` +
-      `Используйте /help для просмотра команд.`
+      `Используйте /help для просмотра команд.`,
+      {
+        reply_markup: {
+          inline_keyboard: [[
+            {
+              text: '📚 Открыть Anatomia',
+              web_app: { url: process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com' }
+            }
+          ]]
+        }
+      }
     )
   }
 
@@ -52,6 +82,17 @@ export async function startCommand(ctx: Context) {
     `1. Войдите на сайт anatomia.md\n` +
     `2. Перейдите в Профиль → Настройки\n` +
     `3. Нажмите "Подключить Telegram"\n` +
-    `4. Скопируйте код и введите: /start ВАШ_КОД`
+    `4. Скопируйте код и введите: /start ВАШ_КОД\n\n` +
+    `Или откройте приложение напрямую:`,
+    {
+      reply_markup: {
+        inline_keyboard: [[
+          {
+            text: '📚 Открыть Anatomia',
+            web_app: { url: process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com' }
+          }
+        ]]
+      }
+    }
   )
 }

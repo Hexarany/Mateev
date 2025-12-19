@@ -36,29 +36,26 @@ bot.catch((err, ctx) => {
 // Initialize
 export async function initTelegramBot() {
   try {
-    // Launch bot with timeout
-    const launchPromise = bot.launch()
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Bot launch timeout')), 30000)
-    )
+    console.log('🔄 Starting Telegram bot...')
 
-    await Promise.race([launchPromise, timeoutPromise])
-    console.log('✅ Telegram bot started')
+    // Launch bot without timeout - let it take as long as needed
+    await bot.launch({
+      dropPendingUpdates: true // Skip old updates on startup
+    })
 
-    // Set up Web App button
+    console.log('✅ Telegram bot started successfully')
+
+    // Set up Web App button (non-blocking)
     const webAppUrl = process.env.CLIENT_URL || 'https://anatomia-app-docker.onrender.com'
-    try {
-      await bot.telegram.setChatMenuButton({
-        menuButton: {
-          type: 'web_app',
-          text: '📚 Открыть Anatomia',
-          web_app: { url: webAppUrl }
-        }
-      })
-      console.log('✅ Web App menu button configured:', webAppUrl)
-    } catch (err: any) {
-      console.error('❌ Failed to set Web App button:', err.message)
-    }
+    bot.telegram.setChatMenuButton({
+      menuButton: {
+        type: 'web_app',
+        text: '📚 Открыть Anatomia',
+        web_app: { url: webAppUrl }
+      }
+    })
+      .then(() => console.log('✅ Web App menu button configured:', webAppUrl))
+      .catch((err: any) => console.error('❌ Failed to set Web App button:', err.message))
 
     // Initialize daily scheduler
     initDailyScheduler()
@@ -68,6 +65,7 @@ export async function initTelegramBot() {
     process.once('SIGTERM', () => bot.stop('SIGTERM'))
   } catch (error: any) {
     console.error('❌ Failed to start Telegram bot:', error.message)
+    console.error('Full error:', error)
     console.log('⚠️  Server will continue without Telegram bot')
   }
 }
