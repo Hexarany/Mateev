@@ -44,7 +44,7 @@ function App() {
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         {/* <PWAUpdatePrompt /> */}
         {/* <InstallPWA /> */}
-        {!isInTelegram && <Navbar />}
+        <Navbar />
         <Box component="main" sx={{ flexGrow: 1 }}>
           <Routes>
             <Route path="/" element={<HomePage />} />
