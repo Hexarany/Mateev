@@ -86,6 +86,14 @@ const Navbar = () => {
     })
   }
 
+  // Добавляем группы для админов и преподавателей
+  if (user && (user.role === 'admin' || user.role === 'teacher')) {
+    pages.push({
+      name: i18n.language === 'ru' ? '👥 Группы' : '👥 Grupuri',
+      path: '/admin',
+    })
+  }
+
   return (
     <AppBar position="sticky">
       <Container maxWidth="xl">
