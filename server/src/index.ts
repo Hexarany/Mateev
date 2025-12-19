@@ -35,6 +35,7 @@ import notificationRoutes from './routes/notificationRoutes'
 import importRoutes from './routes/importRoutes'
 import groupRoutes from './routes/groupRoutes'
 import groupFileRoutes from './routes/groupFileRoutes'
+import scheduleRoutes from './routes/scheduleRoutes'
 import telegramRoutes from './routes/telegramRoutes'
 import { initTelegramBot } from './services/telegram'
 
@@ -160,6 +161,7 @@ app.use('/api/import', importRoutes)
 app.use('/api/promo-codes', promoCodeRoutes)
 app.use('/api/groups', groupRoutes)
 app.use('/api/group-files', groupFileRoutes)
+app.use('/api/schedule', scheduleRoutes)
 app.use('/api/telegram', telegramRoutes)
 
 // Serve static files from React app in production

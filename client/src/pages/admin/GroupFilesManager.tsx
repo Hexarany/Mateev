@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   getAllGroups,
-  getAllMedia,
+  getMediaList,
   sendFileToGroup,
   getGroupFiles,
   retryFailedDeliveries,
@@ -102,7 +102,7 @@ const GroupFilesManager = () => {
     try {
       const [groupsData, mediaData] = await Promise.all([
         getAllGroups(token),
-        getAllMedia(token),
+        getMediaList(token),
       ])
       setGroups(groupsData)
       setMediaList(mediaData)

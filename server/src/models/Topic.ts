@@ -13,6 +13,14 @@ interface IMediaFile {
   type: 'image' | 'video' | '3d-model'
 }
 
+interface IYouTubeVideo {
+  url: string
+  title: IMultiLangText
+  description?: IMultiLangText
+  author?: string
+  duration?: number // в минутах
+}
+
 export interface ITopic extends Document {
   categoryId: mongoose.Types.ObjectId
   name: IMultiLangText
@@ -20,6 +28,7 @@ export interface ITopic extends Document {
   content: IMultiLangText
   images: IMediaFile[]
   videos: IMediaFile[]
+  youtubeVideos: IYouTubeVideo[]
   model3D?: string
   slug: string
   order: number
@@ -45,6 +54,20 @@ const MediaFileSchema = new Schema({
   },
 })
 
+const YouTubeVideoSchema = new Schema({
+  url: { type: String, required: true },
+  title: {
+    ru: { type: String, required: true },
+    ro: { type: String, required: true },
+  },
+  description: {
+    ru: String,
+    ro: String,
+  },
+  author: String,
+  duration: Number,
+})
+
 const TopicSchema: Schema = new Schema(
   {
     categoryId: {
@@ -66,6 +89,7 @@ const TopicSchema: Schema = new Schema(
     },
     images: [MediaFileSchema],
     videos: [MediaFileSchema],
+    youtubeVideos: [YouTubeVideoSchema],
     model3D: { type: String },
     slug: { type: String, required: true, unique: true },
     order: { type: Number, default: 0 },

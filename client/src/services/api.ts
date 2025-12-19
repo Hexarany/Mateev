@@ -1193,6 +1193,56 @@ export const getGroupDeliveryStats = async (groupId: string, token?: string): Pr
   return response.data
 }
 
+// ============= Schedule Management =============
+
+// Get group schedule
+export const getGroupSchedule = async (groupId: string, token?: string): Promise<any[]> => {
+  const response = await api.get(`/schedule/group/${groupId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Get schedule by ID
+export const getScheduleById = async (id: string, token?: string): Promise<any> => {
+  const response = await api.get(`/schedule/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Create schedule lesson
+export const createSchedule = async (scheduleData: any, token?: string): Promise<any> => {
+  const response = await api.post('/schedule', scheduleData, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Generate course schedule
+export const generateCourseSchedule = async (courseData: any, token?: string): Promise<any> => {
+  const response = await api.post('/schedule/generate', courseData, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Update schedule
+export const updateSchedule = async (id: string, scheduleData: any, token?: string): Promise<any> => {
+  const response = await api.put(`/schedule/${id}`, scheduleData, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Delete schedule
+export const deleteSchedule = async (id: string, token?: string): Promise<any> => {
+  const response = await api.delete(`/schedule/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
 // ========================
 // Telegram Integration
 // ========================
