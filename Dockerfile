@@ -1,11 +1,20 @@
-# Single-stage build (no cache issues)
-# Force rebuild: 2025-12-19 12:05 - Deleted local dist folders
+# Single-stage build with explicit file copying
+# CRITICAL: Do NOT use COPY . . as it may copy dist folders
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy everything (dist folders deleted locally, will be built fresh)
-COPY . .
+# Copy only necessary files (explicitly exclude dist folders)
+COPY package*.json ./
+COPY client/package*.json ./client/
+COPY client/src ./client/src
+COPY client/public ./client/public
+COPY client/index.html ./client/
+COPY client/vite.config.ts ./client/
+COPY client/tsconfig*.json ./client/
+COPY server/package*.json ./server/
+COPY server/src ./server/src
+COPY server/tsconfig*.json ./server/
 
 # Build client FIRST
 WORKDIR /app/client
