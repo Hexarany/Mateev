@@ -41,6 +41,12 @@ export const register = async (req: Request, res: Response) => {
 
     await user.save()
 
+    // Send welcome email (non-blocking)
+    const emailService = require('../services/emailService').default
+    const userName = `${user.firstName} ${user.lastName || ''}`.trim()
+    emailService.sendWelcomeEmail(user.email, userName, 'ru')
+      .catch((err: any) => console.error('Failed to send welcome email:', err))
+
     // Генерация JWT токена
     const token = jwt.sign(
       { userId: user._id, email: user.email, role: user.role },

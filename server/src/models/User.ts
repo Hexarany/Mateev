@@ -42,6 +42,13 @@ export interface IUser extends Document {
     dailyChallenge: boolean
   }
   telegramLinkedAt?: Date
+  // Email notifications
+  emailNotifications?: {
+    enabled: boolean
+    homework: boolean
+    grades: boolean
+    schedule: boolean
+  }
   createdAt: Date
   updatedAt: Date
   // DEPRECATED: Use hasAccessToContent instead
@@ -159,6 +166,13 @@ const userSchema = new Schema<IUser>(
     },
     telegramLinkedAt: {
       type: Date,
+    },
+    // Email notifications
+    emailNotifications: {
+      enabled: { type: Boolean, default: true },
+      homework: { type: Boolean, default: true },
+      grades: { type: Boolean, default: true },
+      schedule: { type: Boolean, default: true },
     },
   },
   {

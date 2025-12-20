@@ -4,8 +4,10 @@ import Assignment from '../models/Assignment'
 import Submission from '../models/Submission'
 import Schedule from '../models/Schedule'
 import Group from '../models/Group'
+import User from '../models/User'
 import mongoose from 'mongoose'
 import { TelegramNotificationService } from '../services/telegram/notificationService'
+import emailService from '../services/emailService'
 
 // ============================================
 // ASSIGNMENTS (Домашние задания)
@@ -68,9 +70,30 @@ export const createAssignment = async (req: CustomRequest, res: Response) => {
 
     await assignment.save()
 
-    // Send notification to all students in the group (non-blocking)
+    // Send Telegram notification to all students in the group (non-blocking)
     TelegramNotificationService.notifyNewAssignment(assignment._id.toString())
-      .catch(err => console.error('Failed to send assignment notification:', err))
+      .catch(err => console.error('Failed to send Telegram assignment notification:', err))
+
+    // Send Email notification to all students in the group (non-blocking)
+    groupExists.populate('students').then(async (populatedGroup) => {
+      const students = populatedGroup.students as any[]
+      for (const student of students) {
+        if (student.emailNotifications?.enabled && student.emailNotifications?.homework) {
+          const studentName = `${student.firstName} ${student.lastName || ''}`.trim()
+          const assignmentTitle = assignment.title?.ru || assignment.title?.ro || 'Новое задание'
+          const description = assignment.description?.ru || assignment.description?.ro || ''
+
+          emailService.sendNewAssignmentEmail(
+            student.email,
+            studentName,
+            assignmentTitle,
+            new Date(assignment.deadline),
+            description,
+            'ru' // TODO: use student's language preference
+          ).catch(err => console.error(`Failed to send email to ${student.email}:`, err))
+        }
+      }
+    }).catch(err => console.error('Failed to send email notifications:', err))
 
     res.status(201).json({
       message: 'Assignment created successfully',
@@ -512,9 +535,27 @@ export const gradeSubmission = async (req: CustomRequest, res: Response) => {
     // Используем метод модели для выставления оценки
     await submission.setGrade(grade, feedback, new mongoose.Types.ObjectId(req.userId))
 
-    // Send notification to student (non-blocking)
+    // Send Telegram notification to student (non-blocking)
     TelegramNotificationService.notifySubmissionGraded(submission._id.toString())
-      .catch(err => console.error('Failed to send grade notification:', err))
+      .catch(err => console.error('Failed to send Telegram grade notification:', err))
+
+    // Send Email notification to student (non-blocking)
+    User.findById(submission.student).then(async (student) => {
+      if (student && student.emailNotifications?.enabled && student.emailNotifications?.grades) {
+        const studentName = `${student.firstName} ${student.lastName || ''}`.trim()
+        const assignmentTitle = assignment.title?.ru || assignment.title?.ro || 'Задание'
+
+        emailService.sendGradeEmail(
+          student.email,
+          studentName,
+          assignmentTitle,
+          grade,
+          assignment.maxScore,
+          feedback || '',
+          'ru' // TODO: use student's language preference
+        ).catch(err => console.error(`Failed to send grade email to ${student.email}:`, err))
+      }
+    }).catch(err => console.error('Failed to send grade email notification:', err))
 
     res.json({
       message: 'Submission graded successfully',
