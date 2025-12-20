@@ -20,6 +20,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import SearchIcon from '@mui/icons-material/Search'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import Brightness7Icon from '@mui/icons-material/Brightness7'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Language } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { useThemeMode } from '@/contexts/ThemeContext'
@@ -32,6 +33,7 @@ const Navbar = () => {
   const { mode, toggleTheme } = useThemeMode()
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
+  const [anchorElLearning, setAnchorElLearning] = useState<null | HTMLElement>(null)
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget)
@@ -49,6 +51,14 @@ const Navbar = () => {
     setAnchorElUser(null)
   }
 
+  const handleOpenLearningMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElLearning(event.currentTarget)
+  }
+
+  const handleCloseLearningMenu = () => {
+    setAnchorElLearning(null)
+  }
+
   const handleLogout = () => {
     logout()
     handleCloseUserMenu()
@@ -59,10 +69,15 @@ const Navbar = () => {
     i18n.changeLanguage(event.target.value as Language)
   }
 
-  const pages = [
+  // Main navigation items (simplified)
+  const mainPages = [
     { name: t('nav.home'), path: '/' },
     { name: t('nav.categories'), path: '/#categories' },
     { name: t('nav.quizzes'), path: '/quizzes' },
+  ]
+
+  // Learning resources (grouped in dropdown)
+  const learningResources = [
     { name: i18n.language === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj', path: '/massage-protocols' },
     { name: i18n.language === 'ru' ? 'Триггерные точки' : 'Puncte Trigger', path: '/trigger-points' },
     { name: i18n.language === 'ru' ? '3D Модели' : 'Modele 3D', path: '/anatomy-models-3d' },
@@ -70,29 +85,16 @@ const Navbar = () => {
     { name: i18n.language === 'ru' ? 'Библиотека' : 'Bibliotecă', path: '/resources' },
   ]
 
-  // Добавляем чат для Basic и Premium пользователей
+  // Conditional main menu items
+  const conditionalPages = []
   if (hasAccess('basic')) {
-    pages.push({
+    conditionalPages.push({
       name: i18n.language === 'ru' ? '💬 Чат' : '💬 Chat',
       path: '/chat',
     })
   }
 
-  // Добавляем домашние задания для всех аутентифицированных пользователей
-  if (isAuthenticated) {
-    pages.push({
-      name: i18n.language === 'ru' ? '📝 Задания' : '📝 Teme',
-      path: '/assignments',
-    })
-  }
-
-  // Добавляем группы для админов и преподавателей
-  if (user && (user.role === 'admin' || user.role === 'teacher')) {
-    pages.push({
-      name: i18n.language === 'ru' ? '👥 Группы' : '👥 Grupuri',
-      path: '/admin',
-    })
-  }
+  const allMainPages = [...mainPages, ...conditionalPages]
 
   return (
     <AppBar position="sticky">
@@ -146,7 +148,7 @@ const Navbar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {allMainPages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                   <Typography
                     textAlign="center"
@@ -155,6 +157,23 @@ const Navbar = () => {
                     sx={{ textDecoration: 'none', color: 'inherit' }}
                   >
                     {page.name}
+                  </Typography>
+                </MenuItem>
+              ))}
+              <MenuItem disabled>
+                <Typography textAlign="center" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                  {i18n.language === 'ru' ? '📚 Обучение' : '📚 Învățare'}
+                </Typography>
+              </MenuItem>
+              {learningResources.map((resource) => (
+                <MenuItem key={resource.name} onClick={handleCloseNavMenu} sx={{ pl: 3 }}>
+                  <Typography
+                    textAlign="center"
+                    component={RouterLink}
+                    to={resource.path}
+                    sx={{ textDecoration: 'none', color: 'inherit', fontSize: '0.9rem' }}
+                  >
+                    {resource.name}
                   </Typography>
                 </MenuItem>
               ))}
@@ -181,22 +200,69 @@ const Navbar = () => {
           </Typography>
 
           {/* Desktop Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, gap: 0.5 }}>
+            {allMainPages.map((page) => (
               <Button
                 key={page.name}
                 component={RouterLink}
                 to={page.path}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{
+                  my: 2,
+                  color: 'white',
+                  display: 'block',
+                  fontSize: '0.875rem',
+                  px: 1.5,
+                }}
               >
                 {page.name}
               </Button>
             ))}
+
+            {/* Learning Resources Dropdown */}
+            <Button
+              onClick={handleOpenLearningMenu}
+              endIcon={<ArrowDropDownIcon />}
+              sx={{
+                my: 2,
+                color: 'white',
+                display: 'block',
+                fontSize: '0.875rem',
+                px: 1.5,
+              }}
+            >
+              {i18n.language === 'ru' ? '📚 Обучение' : '📚 Învățare'}
+            </Button>
+            <Menu
+              anchorEl={anchorElLearning}
+              open={Boolean(anchorElLearning)}
+              onClose={handleCloseLearningMenu}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+            >
+              {learningResources.map((resource) => (
+                <MenuItem
+                  key={resource.name}
+                  onClick={() => {
+                    handleCloseLearningMenu()
+                    navigate(resource.path)
+                  }}
+                >
+                  {resource.name}
+                </MenuItem>
+              ))}
+            </Menu>
           </Box>
 
-          {/* Search Icon */}
-          <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* Right side icons and menus */}
+          <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Search Icon */}
             <IconButton
               component={RouterLink}
               to="/search"
@@ -222,6 +288,7 @@ const Navbar = () => {
               {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
             </IconButton>
 
+            {/* Language Selector */}
             <Select
               value={i18n.language}
               onChange={handleLanguageChange}
@@ -239,11 +306,11 @@ const Navbar = () => {
                 },
               }}
             >
-              <MenuItem value="ru">Русский</MenuItem>
-              <MenuItem value="ro">Română</MenuItem>
+              <MenuItem value="ru">RU</MenuItem>
+              <MenuItem value="ro">RO</MenuItem>
             </Select>
 
-            {/* Auth buttons */}
+            {/* Auth buttons / User menu */}
             {isAuthenticated ? (
               <>
                 <IconButton
@@ -269,7 +336,7 @@ const Navbar = () => {
                   onClose={handleCloseUserMenu}
                 >
                   <MenuItem disabled>
-                    <Typography textAlign="center">
+                    <Typography textAlign="center" sx={{ fontWeight: 600 }}>
                       {user?.firstName} {user?.lastName}
                     </Typography>
                   </MenuItem>
@@ -283,6 +350,28 @@ const Navbar = () => {
                       {i18n.language === 'ru' ? 'Мой прогресс' : 'Progresul meu'}
                     </Typography>
                   </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseUserMenu()
+                      navigate('/assignments')
+                    }}
+                  >
+                    <Typography textAlign="center">
+                      {i18n.language === 'ru' ? '📝 Задания' : '📝 Teme'}
+                    </Typography>
+                  </MenuItem>
+                  {(user?.role === 'admin' || user?.role === 'teacher') && (
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu()
+                        navigate('/admin')
+                      }}
+                    >
+                      <Typography textAlign="center">
+                        {i18n.language === 'ru' ? '👥 Группы' : '👥 Grupuri'}
+                      </Typography>
+                    </MenuItem>
+                  )}
                   <MenuItem
                     onClick={() => {
                       handleCloseUserMenu()
@@ -337,9 +426,9 @@ const Navbar = () => {
                 <Button
                   component={RouterLink}
                   to="/login"
-                  sx={{ color: 'white' }}
+                  sx={{ color: 'white', fontSize: '0.875rem' }}
                 >
-                  Вход
+                  {i18n.language === 'ru' ? 'Вход' : 'Autentificare'}
                 </Button>
                 <Button
                   component={RouterLink}
@@ -348,13 +437,14 @@ const Navbar = () => {
                   sx={{
                     color: 'white',
                     borderColor: 'white',
+                    fontSize: '0.875rem',
                     '&:hover': {
                       borderColor: 'white',
                       backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     },
                   }}
                 >
-                  Регистрация
+                  {i18n.language === 'ru' ? 'Регистрация' : 'Înregistrare'}
                 </Button>
               </>
             )}
