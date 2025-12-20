@@ -364,7 +364,7 @@ const Navbar = () => {
                     <MenuItem
                       onClick={() => {
                         handleCloseUserMenu()
-                        navigate('/admin')
+                        navigate('/admin?tab=10')
                       }}
                     >
                       <Typography textAlign="center">

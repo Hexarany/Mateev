@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   Container,
@@ -52,7 +52,19 @@ function TabPanel(props: TabPanelProps) {
 const AdminDashboard = () => {
   const { user, isAuthenticated } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState(0)
+
+  // Check URL for tab parameter
+  useEffect(() => {
+    const tabParam = searchParams.get('tab')
+    if (tabParam) {
+      const tabIndex = parseInt(tabParam, 10)
+      if (!isNaN(tabIndex) && tabIndex >= 0) {
+        setActiveTab(tabIndex)
+      }
+    }
+  }, [searchParams])
 
   if (!isAuthenticated) {
     navigate('/login')
