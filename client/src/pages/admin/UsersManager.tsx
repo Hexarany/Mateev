@@ -27,14 +27,18 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  Checkbox,
+  Toolbar,
 } from '@mui/material'
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Refresh as RefreshIcon,
+  Email as EmailIcon,
 } from '@mui/icons-material'
 import axios from 'axios'
 import { useAuth } from '@/contexts/AuthContext'
+import SendEmailDialog from '@/components/admin/SendEmailDialog'
 
 const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
 
@@ -98,6 +102,11 @@ const UsersManager = () => {
 
   // Диалог удаления
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  // Email functionality
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false)
+  const [emailRecipients, setEmailRecipients] = useState<User[]>([])
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
 
   // Загрузка статистики
@@ -204,6 +213,36 @@ const UsersManager = () => {
     } catch (err: any) {
       setError(err.response?.data?.message || 'Ошибка удаления пользователя')
     }
+  }
+
+  // Email functions
+  const handleSelectUser = (userId: string) => {
+    setSelectedUserIds(prev =>
+      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    )
+  }
+
+  const handleSelectAll = () => {
+    if (selectedUserIds.length === users.length) {
+      setSelectedUserIds([])
+    } else {
+      setSelectedUserIds(users.map(u => u._id))
+    }
+  }
+
+  const handleSendEmailToUser = (user: User) => {
+    setEmailRecipients([user])
+    setEmailDialogOpen(true)
+  }
+
+  const handleSendEmailToSelected = () => {
+    const selected = users.filter(u => selectedUserIds.includes(u._id))
+    setEmailRecipients(selected)
+    setEmailDialogOpen(true)
+  }
+
+  const handleEmailSuccess = () => {
+    setSelectedUserIds([])
   }
 
   // Цвета для chip
@@ -344,11 +383,34 @@ const UsersManager = () => {
         </Grid>
       </Paper>
 
+      {/* Toolbar для массовых действий */}
+      {selectedUserIds.length > 0 && (
+        <Toolbar sx={{ mb: 2, bgcolor: 'action.selected', borderRadius: 1 }}>
+          <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1">
+            Выбрано: {selectedUserIds.length}
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<EmailIcon />}
+            onClick={handleSendEmailToSelected}
+          >
+            Отправить Email
+          </Button>
+        </Toolbar>
+      )}
+
       {/* Таблица пользователей */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  indeterminate={selectedUserIds.length > 0 && selectedUserIds.length < users.length}
+                  checked={users.length > 0 && selectedUserIds.length === users.length}
+                  onChange={handleSelectAll}
+                />
+              </TableCell>
               <TableCell>Имя</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Роль</TableCell>
@@ -361,19 +423,25 @@ const UsersManager = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} align="center">
+                <TableCell colSpan={8} align="center">
                   <CircularProgress />
                 </TableCell>
               </TableRow>
             ) : users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} align="center">
+                <TableCell colSpan={8} align="center">
                   Пользователи не найдены
                 </TableCell>
               </TableRow>
             ) : (
               users.map((user) => (
-                <TableRow key={user._id}>
+                <TableRow key={user._id} hover>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedUserIds.includes(user._id)}
+                      onChange={() => handleSelectUser(user._id)}
+                    />
+                  </TableCell>
                   <TableCell>
                     {user.firstName} {user.lastName}
                   </TableCell>
@@ -391,6 +459,14 @@ const UsersManager = () => {
                   <TableCell>${user.paymentAmount || 0}</TableCell>
                   <TableCell>{new Date(user.createdAt).toLocaleDateString('ru-RU')}</TableCell>
                   <TableCell align="right">
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={() => handleSendEmailToUser(user)}
+                      title="Отправить Email"
+                    >
+                      <EmailIcon fontSize="small" />
+                    </IconButton>
                     <IconButton size="small" onClick={() => handleEditClick(user)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -505,6 +581,14 @@ const UsersManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Диалог отправки Email */}
+      <SendEmailDialog
+        open={emailDialogOpen}
+        onClose={() => setEmailDialogOpen(false)}
+        users={emailRecipients}
+        onSuccess={handleEmailSuccess}
+      />
     </Box>
   )
 }

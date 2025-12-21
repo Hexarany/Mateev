@@ -1426,4 +1426,44 @@ export const updateEmailNotificationSettings = async (
   return response.data
 }
 
+// ============================================
+// CUSTOM EMAIL SENDING (Admin)
+// ============================================
+
+export interface SendEmailRequest {
+  userId: string
+  subject: string
+  message: string
+  language?: 'ru' | 'ro'
+}
+
+export interface SendBulkEmailRequest {
+  userIds: string[]
+  subject: string
+  message: string
+  language?: 'ru' | 'ro'
+}
+
+// Send email to single user
+export const sendEmailToUser = async (
+  data: SendEmailRequest,
+  token: string
+): Promise<{ message: string; recipient: { name: string; email: string } }> => {
+  const response = await api.post('/users-management/send-email', data, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Send bulk email to multiple users
+export const sendBulkEmail = async (
+  data: SendBulkEmailRequest,
+  token: string
+): Promise<{ message: string; recipientsCount: number; recipients: Array<{ name: string; email: string }> }> => {
+  const response = await api.post('/users-management/send-bulk-email', data, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
 export default api
