@@ -116,7 +116,9 @@ export async function homeworkCommand(ctx: Context) {
 
 /**
  * Команда /submit - сдать домашнее задание
- * Использование: /submit <assignment_id> <ответ>
+ * Использование:
+ * - Текст: /submit <assignment_id> <ответ>
+ * - Файл: Отправить файл с подписью /submit <assignment_id>
  */
 export async function submitCommand(ctx: Context) {
   const telegramId = ctx.from?.id.toString()
@@ -130,24 +132,75 @@ export async function submitCommand(ctx: Context) {
     )
   }
 
-  // Парсим аргументы команды
-  const text = (ctx.message && 'text' in ctx.message) ? ctx.message.text : ''
-  const args = text.split(' ').slice(1) // Убираем /submit
+  const message = ctx.message as any
+  let assignmentId = ''
+  let answer = ''
+  let fileUrl: string | null = null
 
-  if (args.length < 2) {
-    return ctx.reply(
-      '❌ *Неверный формат команды*\n\n' +
-      '*Использование:*\n' +
-      '`/submit <ID задания> <ваш ответ>`\n\n' +
-      '*Пример:*\n' +
-      '`/submit 507f1f77bcf86cd799439011 Мышца начинается от...`\n\n' +
-      'Для получения ID используйте команду /homework',
-      { parse_mode: 'Markdown' }
-    )
+  // Проверяем, есть ли файл (фото или документ)
+  if (message?.photo || message?.document) {
+    // Файл с подписью: /submit <ID>
+    const caption = message.caption || ''
+    const captionArgs = caption.split(' ').slice(1) // Убираем /submit
+
+    if (captionArgs.length < 1) {
+      return ctx.reply(
+        '❌ *Неверный формат*\n\n' +
+        'При отправке файла используйте подпись:\n' +
+        '`/submit <ID задания>`\n\n' +
+        'ID можно получить командой /homework',
+        { parse_mode: 'Markdown' }
+      )
+    }
+
+    assignmentId = captionArgs[0]
+
+    // Получаем информацию о файле
+    try {
+      let fileId: string
+      let fileName: string
+
+      if (message.photo) {
+        // Берем фото наибольшего размера
+        const photo = message.photo[message.photo.length - 1]
+        fileId = photo.file_id
+        fileName = `photo_${Date.now()}.jpg`
+      } else {
+        fileId = message.document.file_id
+        fileName = message.document.file_name || `document_${Date.now()}`
+      }
+
+      // Получаем ссылку на файл от Telegram
+      const fileLink = await ctx.telegram.getFileLink(fileId)
+      fileUrl = fileLink.href
+      answer = `Файл: ${fileName}`
+    } catch (error) {
+      console.error('[Telegram] Error getting file:', error)
+      return ctx.reply('❌ Ошибка при обработке файла.')
+    }
+  } else {
+    // Текстовый ответ: /submit <ID> <текст>
+    const text = (message && 'text' in message) ? message.text : ''
+    const args = text.split(' ').slice(1) // Убираем /submit
+
+    if (args.length < 2) {
+      return ctx.reply(
+        '❌ *Неверный формат команды*\n\n' +
+        '*Текстовый ответ:*\n' +
+        '`/submit <ID задания> <ваш ответ>`\n\n' +
+        '*Файл:*\n' +
+        'Отправьте файл или фото с подписью:\n' +
+        '`/submit <ID задания>`\n\n' +
+        '*Пример:*\n' +
+        '`/submit 507f1f77bcf86cd799439011 Мышца начинается от...`\n\n' +
+        'Для получения ID используйте команду /homework',
+        { parse_mode: 'Markdown' }
+      )
+    }
+
+    assignmentId = args[0]
+    answer = args.slice(1).join(' ')
   }
-
-  const assignmentId = args[0]
-  const answer = args.slice(1).join(' ')
 
   // Проверяем валидность ID
   if (!mongoose.Types.ObjectId.isValid(assignmentId)) {
@@ -188,21 +241,27 @@ export async function submitCommand(ctx: Context) {
     }
 
     // Создаём сдачу
-    const submission = new Submission({
+    const submissionData: any = {
       assignment: assignmentId,
       student: user._id,
       textAnswer: answer,
-      files: [],
+      files: fileUrl ? [fileUrl] : [],
       status: isLate ? 'late' : 'submitted',
       isLate,
       submittedAt: new Date()
-    })
+    }
 
+    const submission = new Submission(submissionData)
     await submission.save()
 
     let response = '✅ *Работа сдана успешно!*\n\n'
     response += `*Задание:* ${assignment.title.ru}\n`
-    response += `*Ваш ответ:* ${answer.substring(0, 200)}${answer.length > 200 ? '...' : ''}\n`
+
+    if (fileUrl) {
+      response += `📎 *Файл:* ${answer}\n`
+    } else {
+      response += `*Ваш ответ:* ${answer.substring(0, 200)}${answer.length > 200 ? '...' : ''}\n`
+    }
 
     if (isLate) {
       response += '\n⚠️ Работа сдана с опозданием'
