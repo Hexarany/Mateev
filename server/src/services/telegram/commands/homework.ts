@@ -32,13 +32,18 @@ export async function homeworkCommand(ctx: Context) {
     // Получаем ID заданий, которые уже сданы
     const submittedAssignmentIds = submissions.map(s => s.assignment._id)
 
-    // Получаем все активные задания для групп студента
-    const userGroups = await User.findById(user._id)
-      .select('groups')
-      .lean()
+    // Находим все группы, в которых состоит студент
+    const Group = (await import('../../../models/Group')).default
+    const userGroups = await Group.find({
+      students: user._id,
+      isActive: true
+    }).select('_id').lean()
 
+    const groupIds = userGroups.map(g => g._id)
+
+    // Получаем все активные задания для групп студента
     const allAssignments = await Assignment.find({
-      group: { $in: (userGroups as any)?.groups || [] },
+      group: { $in: groupIds },
       deadline: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } // За последний месяц
     })
       .populate('group', 'name')
