@@ -9,6 +9,27 @@ const getWebAppUrl = () => {
   return urls.find(url => url.startsWith('https://')) || 'https://anatomia-app-docker.onrender.com'
 }
 
+// Get appropriate button based on chat type
+// web_app buttons only work in private chats and open embedded Telegram Web App
+// url buttons work everywhere but open in browser
+const getAnatomiaButton = (chatType?: string) => {
+  const isPrivateChat = chatType === 'private'
+
+  if (isPrivateChat) {
+    // In private chats, use web_app for embedded experience
+    return {
+      text: '📚 Открыть Anatomia',
+      web_app: { url: getWebAppUrl() }
+    }
+  } else {
+    // In groups, use regular url
+    return {
+      text: '📚 Открыть Anatomia',
+      url: getWebAppUrl()
+    }
+  }
+}
+
 export async function startCommand(ctx: Context) {
   try {
     console.log('[Telegram Bot] /start command called by:', ctx.from?.id)
@@ -47,10 +68,7 @@ export async function startCommand(ctx: Context) {
           {
             reply_markup: {
               inline_keyboard: [[
-                {
-                  text: '📚 Открыть Anatomia',
-                  url: getWebAppUrl()
-                }
+                getAnatomiaButton(ctx.chat?.type)
               ]]
             }
           }
@@ -63,10 +81,7 @@ export async function startCommand(ctx: Context) {
           {
             reply_markup: {
               inline_keyboard: [[
-                {
-                  text: '📚 Открыть Anatomia',
-                  url: getWebAppUrl()
-                }
+                getAnatomiaButton(ctx.chat?.type)
               ]]
             }
           }
@@ -87,10 +102,7 @@ export async function startCommand(ctx: Context) {
         {
           reply_markup: {
             inline_keyboard: [[
-              {
-                text: '📚 Открыть Anatomia',
-                url: getWebAppUrl()
-              }
+              getAnatomiaButton(ctx.chat?.type)
             ]]
           }
         }
@@ -109,10 +121,7 @@ export async function startCommand(ctx: Context) {
       {
         reply_markup: {
           inline_keyboard: [[
-            {
-              text: '📚 Открыть Anatomia',
-              url: getWebAppUrl()
-            }
+            getAnatomiaButton(ctx.chat?.type)
           ]]
         }
       }
