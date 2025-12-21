@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import User from '../models/User'
 import mongoose from 'mongoose'
+import emailService from '../services/emailService'
 
 interface CustomRequest extends Request {
   userId?: string
@@ -244,5 +245,103 @@ export const getUsersByRole = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching users by role:', error)
     res.status(500).json({ message: 'Ошибка при получении пользователей' })
+  }
+}
+
+// POST /api/users-management/send-email - Send email to single user
+export const sendEmailToUser = async (req: CustomRequest, res: Response) => {
+  try {
+    const { userId, subject, message, language = 'ru' } = req.body
+
+    // Validation
+    if (!userId || !subject || !message) {
+      return res.status(400).json({
+        error: { message: 'userId, subject, and message are required' }
+      })
+    }
+
+    // Find user
+    const user = await User.findById(userId).select('email firstName lastName')
+    if (!user) {
+      return res.status(404).json({ error: { message: 'User not found' } })
+    }
+
+    // Send email
+    const success = await emailService.sendCustomEmail(
+      user.email,
+      subject,
+      message,
+      language as 'ru' | 'ro'
+    )
+
+    if (success) {
+      res.json({
+        message: 'Email sent successfully',
+        recipient: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email
+        }
+      })
+    } else {
+      res.status(500).json({ error: { message: 'Failed to send email' } })
+    }
+  } catch (error: any) {
+    console.error('Error sending email to user:', error)
+    res.status(500).json({ error: { message: 'Server error', details: error.message } })
+  }
+}
+
+// POST /api/users-management/send-bulk-email - Send email to multiple users
+export const sendBulkEmail = async (req: CustomRequest, res: Response) => {
+  try {
+    const { userIds, subject, message, language = 'ru' } = req.body
+
+    // Validation
+    if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({
+        error: { message: 'userIds must be a non-empty array' }
+      })
+    }
+
+    if (!subject || !message) {
+      return res.status(400).json({
+        error: { message: 'subject and message are required' }
+      })
+    }
+
+    // Find users
+    const users = await User.find({ _id: { $in: userIds } })
+      .select('email firstName lastName')
+
+    if (users.length === 0) {
+      return res.status(404).json({ error: { message: 'No users found' } })
+    }
+
+    // Collect email addresses
+    const emailAddresses = users.map(u => u.email)
+
+    // Send emails
+    const success = await emailService.sendCustomEmail(
+      emailAddresses,
+      subject,
+      message,
+      language as 'ru' | 'ro'
+    )
+
+    if (success) {
+      res.json({
+        message: 'Bulk email sent successfully',
+        recipientsCount: users.length,
+        recipients: users.map(u => ({
+          name: `${u.firstName} ${u.lastName}`,
+          email: u.email
+        }))
+      })
+    } else {
+      res.status(500).json({ error: { message: 'Failed to send bulk email' } })
+    }
+  } catch (error: any) {
+    console.error('Error sending bulk email:', error)
+    res.status(500).json({ error: { message: 'Server error', details: error.message } })
   }
 }

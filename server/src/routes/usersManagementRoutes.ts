@@ -7,6 +7,8 @@ import {
   deleteUser,
   getUserStats,
   getUsersByRole,
+  sendEmailToUser,
+  sendBulkEmail,
 } from '../controllers/usersManagementController'
 import { authenticateToken, authorizeRole } from '../middleware/auth'
 
@@ -50,5 +52,29 @@ router.put(
 
 // DELETE /api/users-management/:id - Delete user
 router.delete('/:id', deleteUser)
+
+// POST /api/users-management/send-email - Send email to single user
+router.post(
+  '/send-email',
+  [
+    body('userId').notEmpty().withMessage('userId is required'),
+    body('subject').trim().notEmpty().withMessage('Subject is required'),
+    body('message').trim().notEmpty().withMessage('Message is required'),
+    body('language').optional().isIn(['ru', 'ro']).withMessage('Language must be ru or ro'),
+  ],
+  sendEmailToUser
+)
+
+// POST /api/users-management/send-bulk-email - Send email to multiple users
+router.post(
+  '/send-bulk-email',
+  [
+    body('userIds').isArray({ min: 1 }).withMessage('userIds must be a non-empty array'),
+    body('subject').trim().notEmpty().withMessage('Subject is required'),
+    body('message').trim().notEmpty().withMessage('Message is required'),
+    body('language').optional().isIn(['ru', 'ro']).withMessage('Language must be ru or ro'),
+  ],
+  sendBulkEmail
+)
 
 export default router

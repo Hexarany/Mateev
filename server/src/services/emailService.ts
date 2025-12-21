@@ -427,6 +427,78 @@ class EmailService {
     return this.sendEmail({ to, subject, html })
   }
 
+  /**
+   * Send custom email to user(s)
+   * For admin messaging functionality
+   */
+  async sendCustomEmail(
+    to: string | string[],
+    subject: string,
+    message: string,
+    language: 'ru' | 'ro' = 'ru'
+  ): Promise<boolean> {
+    const isRussian = language === 'ru'
+
+    // Convert message to HTML with line breaks
+    const formattedMessage = message.replace(/\n/g, '<br>')
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
+    .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { padding: 30px; }
+    .message { background: #f8f9fa; border-left: 4px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📧 ${subject}</h1>
+    </div>
+    <div class="content">
+      <p>${isRussian ? 'Здравствуйте' : 'Salut'}!</p>
+
+      <div class="message">
+        ${formattedMessage}
+      </div>
+
+      <p style="margin-top: 30px; color: #666;">
+        ${isRussian
+          ? 'Это сообщение отправлено администратором платформы Anatomia Interactive.'
+          : 'Acest mesaj a fost trimis de administratorul platformei Anatomia Interactive.'}
+      </p>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${process.env.CLIENT_URL}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+          ${isRussian ? '🚀 Перейти на платформу' : '🚀 Mergi pe platformă'}
+        </a>
+      </div>
+    </div>
+    <div class="footer">
+      <p>Anatomia Interactive Team</p>
+    </div>
+  </div>
+</body>
+</html>
+    `
+
+    // If 'to' is an array, send to multiple recipients
+    if (Array.isArray(to)) {
+      const results = await Promise.all(
+        to.map(email => this.sendEmail({ to: email, subject, html }))
+      )
+      return results.every(result => result)
+    }
+
+    return this.sendEmail({ to, subject, html })
+  }
+
   // Test email connection
   async testConnection(): Promise<boolean> {
     if (!this.transporter) {
