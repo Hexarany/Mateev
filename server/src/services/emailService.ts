@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'
 import type { Transporter } from 'nodemailer'
 import sgMail from '@sendgrid/mail'
+import { Resend } from 'resend'
 
 // Email configuration interface
 interface EmailConfig {
@@ -26,19 +27,42 @@ class EmailService {
   private from: string
   private useSendGrid: boolean = false
   private sendGridConfigured: boolean = false
+  private resendClient: Resend | null = null
+  private useResend: boolean = false
 
   constructor() {
-    this.from = process.env.EMAIL_FROM || process.env.SENDGRID_FROM_EMAIL || 'noreply@anatomia.app'
+    this.from = process.env.EMAIL_FROM || process.env.SENDGRID_FROM_EMAIL || process.env.RESEND_FROM_EMAIL || 'noreply@anatomia.app'
     this.initializeEmailService()
   }
 
   private initializeEmailService() {
     const emailService = process.env.EMAIL_SERVICE || 'smtp'
 
-    if (emailService === 'sendgrid') {
+    if (emailService === 'resend') {
+      this.initializeResend()
+    } else if (emailService === 'sendgrid') {
       this.initializeSendGrid()
     } else {
       this.initializeSmtp()
+    }
+  }
+
+  private initializeResend() {
+    try {
+      const apiKey = process.env.RESEND_API_KEY
+
+      if (!apiKey) {
+        console.warn('⚠️  Resend API key not configured. Email notifications will be disabled.')
+        return
+      }
+
+      this.resendClient = new Resend(apiKey)
+      this.useResend = true
+      this.from = process.env.RESEND_FROM_EMAIL || this.from
+
+      console.log('✅ Email service initialized (Resend)')
+    } catch (error) {
+      console.error('❌ Failed to initialize Resend:', error)
     }
   }
 
@@ -89,6 +113,10 @@ class EmailService {
 
   // Send email
   async sendEmail(options: SendEmailOptions): Promise<boolean> {
+    if (this.useResend && this.resendClient) {
+      return this.sendEmailWithResend(options)
+    }
+
     if (this.useSendGrid && this.sendGridConfigured) {
       return this.sendEmailWithSendGrid(options)
     }
@@ -110,6 +138,24 @@ class EmailService {
       return true
     } catch (error) {
       console.error(`❌ Failed to send email to ${options.to}:`, error)
+      return false
+    }
+  }
+
+  private async sendEmailWithResend(options: SendEmailOptions): Promise<boolean> {
+    if (!this.resendClient) return false
+
+    try {
+      await this.resendClient.emails.send({
+        from: this.from,
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+      })
+      console.log(`✅ Email sent via Resend to ${options.to}: ${options.subject}`)
+      return true
+    } catch (error: any) {
+      console.error(`❌ Failed to send email via Resend to ${options.to}:`, error)
       return false
     }
   }
