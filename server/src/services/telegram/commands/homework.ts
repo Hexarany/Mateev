@@ -294,6 +294,138 @@ export async function submitCommand(ctx: Context) {
 }
 
 /**
+ * Команда /resubmit - повторная сдача работы
+ * Использование: /resubmit <assignment_id> <новый ответ>
+ */
+export async function resubmitCommand(ctx: Context) {
+  const telegramId = ctx.from?.id.toString()
+  const user = await User.findOne({ telegramId })
+
+  if (!user) {
+    return ctx.reply(
+      '❌ *Аккаунт не привязан*\n\n' +
+      'Используйте команду /start для привязки аккаунта.',
+      { parse_mode: 'Markdown' }
+    )
+  }
+
+  const message = ctx.message as any
+  let assignmentId = ''
+  let answer = ''
+  let fileUrl: string | null = null
+
+  // Проверяем, есть ли файл
+  if (message?.photo || message?.document) {
+    const caption = message.caption || ''
+    const captionArgs = caption.split(' ').slice(1)
+
+    if (captionArgs.length < 1) {
+      return ctx.reply(
+        '❌ *Неверный формат*\n\n' +
+        'При отправке файла используйте подпись:\n' +
+        '`/resubmit <ID задания>`',
+        { parse_mode: 'Markdown' }
+      )
+    }
+
+    assignmentId = captionArgs[0]
+
+    try {
+      let fileId: string
+      let fileName: string
+
+      if (message.photo) {
+        const photo = message.photo[message.photo.length - 1]
+        fileId = photo.file_id
+        fileName = `photo_${Date.now()}.jpg`
+      } else {
+        fileId = message.document.file_id
+        fileName = message.document.file_name || `document_${Date.now()}`
+      }
+
+      const fileLink = await ctx.telegram.getFileLink(fileId)
+      fileUrl = fileLink.href
+      answer = `Файл: ${fileName}`
+    } catch (error) {
+      console.error('[Telegram] Error getting file:', error)
+      return ctx.reply('❌ Ошибка при обработке файла.')
+    }
+  } else {
+    const text = (message && 'text' in message) ? message.text : ''
+    const args = text.split(' ').slice(1)
+
+    if (args.length < 2) {
+      return ctx.reply(
+        '❌ *Неверный формат команды*\n\n' +
+        '*Текстовый ответ:*\n' +
+        '`/resubmit <ID задания> <новый ответ>`\n\n' +
+        '*Файл:*\n' +
+        'Отправьте файл с подписью:\n' +
+        '`/resubmit <ID задания>`\n\n' +
+        'Для получения ID используйте /homework',
+        { parse_mode: 'Markdown' }
+      )
+    }
+
+    assignmentId = args[0]
+    answer = args.slice(1).join(' ')
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(assignmentId)) {
+    return ctx.reply('❌ Неверный ID задания.')
+  }
+
+  try {
+    const assignment = await Assignment.findById(assignmentId)
+    if (!assignment) {
+      return ctx.reply('❌ Задание не найдено.')
+    }
+
+    // Найти существующую сдачу
+    const existingSubmission = await Submission.findOne({
+      assignment: assignmentId,
+      student: user._id
+    })
+
+    if (!existingSubmission) {
+      return ctx.reply(
+        '❌ *Вы еще не сдавали это задание*\n\n' +
+        'Используйте `/submit` для первой сдачи.',
+        { parse_mode: 'Markdown' }
+      )
+    }
+
+    // Обновляем сдачу
+    existingSubmission.textAnswer = answer
+    existingSubmission.files = fileUrl ? [fileUrl] : existingSubmission.files
+    existingSubmission.status = 'submitted'
+    existingSubmission.submittedAt = new Date()
+    existingSubmission.grade = undefined
+    existingSubmission.feedback = undefined
+    existingSubmission.gradedBy = undefined
+    existingSubmission.gradedAt = undefined
+
+    await existingSubmission.save()
+
+    let response = '✅ *Работа пересдана успешно!*\n\n'
+    response += `*Задание:* ${assignment.title.ru}\n`
+
+    if (fileUrl) {
+      response += `📎 *Файл:* ${answer}\n`
+    } else {
+      response += `*Новый ответ:* ${answer.substring(0, 200)}${answer.length > 200 ? '...' : ''}\n`
+    }
+
+    response += '\n_Предыдущая оценка сброшена. Ждите новой проверки._'
+
+    return ctx.reply(response, { parse_mode: 'Markdown' })
+  } catch (error) {
+    console.error('[Telegram] Error in resubmitCommand:', error)
+    return ctx.reply('❌ Произошла ошибка при пересдаче работы.')
+  }
+}
+
+/**
  * Команда /grades - показать оценки
  */
 export async function gradesCommand(ctx: Context) {

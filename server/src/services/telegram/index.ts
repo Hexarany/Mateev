@@ -4,7 +4,7 @@ import { quizCommand } from './commands/quiz'
 import { anatomyCommand } from './commands/anatomy'
 import { scheduleCommand } from './commands/schedule'
 import { linkgroupCommand, unlinkgroupCommand, handleLinkGroupCallback } from './commands/linkgroup'
-import { homeworkCommand, submitCommand, gradesCommand } from './commands/homework'
+import { homeworkCommand, submitCommand, resubmitCommand, gradesCommand } from './commands/homework'
 import { initDailyScheduler } from './scheduler'
 import { handleQuizCallback } from './handlers/quizCallback'
 import { showMainMenu, handleMainMenuCallback, handleCommandCallback, handleSubmitCallback } from './handlers/menuCallback'
@@ -17,15 +17,18 @@ bot.command('anatomy', anatomyCommand)
 bot.command('schedule', scheduleCommand)
 bot.command('homework', homeworkCommand)
 bot.command('submit', submitCommand)
+bot.command('resubmit', resubmitCommand)
 bot.command('grades', gradesCommand)
 bot.command('linkgroup', linkgroupCommand)
 bot.command('unlinkgroup', unlinkgroupCommand)
 
-// Handle file submissions with /submit caption
+// Handle file submissions with /submit or /resubmit caption
 bot.on(['document', 'photo'], async (ctx) => {
   const caption = (ctx.message as any)?.caption || ''
   if (caption.startsWith('/submit')) {
     return submitCommand(ctx)
+  } else if (caption.startsWith('/resubmit')) {
+    return resubmitCommand(ctx)
   }
 })
 
@@ -37,6 +40,7 @@ bot.command('help', (ctx) => {
     `/schedule - Расписание занятий\n` +
     `/homework - Список домашних заданий\n` +
     `/submit <ID> <ответ> - Сдать домашнюю работу\n` +
+    `/resubmit <ID> <ответ> - Пересдать работу\n` +
     `/grades - Мои оценки\n` +
     `/quiz - Пройти тест\n` +
     `/anatomy <название> - Найти информацию\n` +
