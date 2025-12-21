@@ -21,6 +21,14 @@ bot.command('grades', gradesCommand)
 bot.command('linkgroup', linkgroupCommand)
 bot.command('unlinkgroup', unlinkgroupCommand)
 
+// Handle file submissions with /submit caption
+bot.on(['document', 'photo'], async (ctx) => {
+  const caption = (ctx.message as any)?.caption || ''
+  if (caption.startsWith('/submit')) {
+    return submitCommand(ctx)
+  }
+})
+
 bot.command('help', (ctx) => {
   return ctx.reply(
     `🤖 *Доступные команды:*\n\n` +
