@@ -110,6 +110,10 @@ export class TelegramNotificationService {
         `Описание: ${assignment.description.ru.substring(0, 150)}${assignment.description.ru.length > 150 ? '...' : ''}\n\n` +
         `Просмотреть: /homework`
 
+      // Send to linked Telegram group chat
+      const sentToGroup = await this.sendToTelegramGroup(group._id.toString(), message)
+
+      // Also send to individual students with personal notifications enabled
       let sentCount = 0
       for (const studentId of group.students) {
         const sent = await this.sendToUser(studentId.toString(), message)
@@ -117,7 +121,7 @@ export class TelegramNotificationService {
         await new Promise(resolve => setTimeout(resolve, 50))
       }
 
-      console.log(`✅ New assignment notification sent to ${sentCount} students`)
+      console.log(`✅ New assignment notification: group chat=${sentToGroup}, individual=${sentCount}`)
       return sentCount
     } catch (error) {
       console.error('Failed to send new assignment notifications:', error)
