@@ -264,7 +264,21 @@ export const getGroupAssignments = async (req: CustomRequest, res: Response) => 
       return res.json(assignmentsWithSubmissions)
     }
 
-    res.json(assignments)
+    // Для преподавателя/админа: добавляем количество сдач
+    const assignmentsWithCounts = await Promise.all(
+      assignments.map(async (assignment) => {
+        const submissionsCount = await Submission.countDocuments({
+          assignment: assignment._id,
+        })
+
+        return {
+          ...assignment.toObject(),
+          submissionsCount,
+        }
+      })
+    )
+
+    res.json(assignmentsWithCounts)
   } catch (error: any) {
     console.error('Error fetching group assignments:', error)
     res.status(500).json({ message: 'Server error', error: error.message })

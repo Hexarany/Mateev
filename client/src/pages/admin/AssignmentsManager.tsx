@@ -264,11 +264,8 @@ const AssignmentsManager = () => {
       if (!token) return
       setUploadingFile(true)
 
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await uploadMedia(formData, token)
-      const fileUrl = response.fileUrl
+      const response = await uploadMedia(file, token)
+      const fileUrl = response.url || response.fileUrl
 
       setAssignmentForm(prev => ({
         ...prev,
@@ -277,7 +274,7 @@ const AssignmentsManager = () => {
 
       showSnackbar('Файл загружен', 'success')
     } catch (error: any) {
-      showSnackbar(error.response?.data?.message || 'Ошибка загрузки файла', 'error')
+      showSnackbar(error.response?.data?.error?.message || error.response?.data?.message || 'Ошибка загрузки файла', 'error')
     } finally {
       setUploadingFile(false)
     }
@@ -446,6 +443,12 @@ const AssignmentsManager = () => {
                       </TableCell>
                       <TableCell>{assignment.maxScore}</TableCell>
                       <TableCell>
+                        <Chip
+                          label={assignment.submissionsCount || 0}
+                          color={assignment.submissionsCount > 0 ? 'primary' : 'default'}
+                          size="small"
+                          sx={{ mr: 1 }}
+                        />
                         <Button
                           size="small"
                           startIcon={<VisibilityIcon />}
