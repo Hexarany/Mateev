@@ -167,6 +167,20 @@ export const uploadMedia = async (file: File, token: string): Promise<any> => {
   return response.data
 }
 
+// Upload homework file (for students/teachers)
+export const uploadHomeworkFile = async (file: File, token: string): Promise<any> => {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const response = await api.post('/media/upload-homework', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
 export const getMediaList = async (token: string): Promise<any[]> => {
   const response = await api.get('/media/list', {
     headers: {

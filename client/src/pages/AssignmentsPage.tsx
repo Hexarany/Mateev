@@ -5,7 +5,7 @@ import {
   getMySubmissions,
   submitAssignment,
   updateSubmission,
-  uploadMedia,
+  uploadHomeworkFile,
 } from '@/services/api'
 import {
   Box,
@@ -115,11 +115,8 @@ const AssignmentsPage = () => {
       if (!token) return
       setUploadingFile(true)
 
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await uploadMedia(formData, token)
-      const fileUrl = response.fileUrl
+      const response = await uploadHomeworkFile(file, token)
+      const fileUrl = response.url || response.fileUrl
 
       setSubmissionForm(prev => ({
         ...prev,
@@ -128,7 +125,7 @@ const AssignmentsPage = () => {
 
       showSnackbar('Файл загружен', 'success')
     } catch (error: any) {
-      showSnackbar(error.response?.data?.message || 'Ошибка загрузки файла', 'error')
+      showSnackbar(error.response?.data?.error?.message || error.response?.data?.message || 'Ошибка загрузки файла', 'error')
     } finally {
       setUploadingFile(false)
     }

@@ -44,6 +44,15 @@ router.post(
   uploadMedia
 )
 
+// STUDENT/TEACHER: Загрузка файлов для домашних заданий
+router.post(
+  '/upload-homework',
+  authenticateToken,
+  upload.single('file'), // 'file' - имя поля в FormData
+  handleMulterError,
+  uploadMedia
+)
+
 // ADMIN ONLY: Защищенный маршрут для получения списка файлов
 router.get('/list', authenticateToken, authorizeRole('admin'), getMediaList)
 
