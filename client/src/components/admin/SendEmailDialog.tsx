@@ -39,7 +39,15 @@ const SendEmailDialog = ({ open, onClose, users, onSuccess }: SendEmailDialogPro
   const isBulk = users.length > 1
 
   const handleSend = async () => {
-    if (!token) return
+    console.log('handleSend called')
+    console.log('Token:', token ? 'exists' : 'missing')
+    console.log('Users:', users)
+
+    if (!token) {
+      console.error('No token available')
+      setError('Ошибка авторизации: токен отсутствует')
+      return
+    }
 
     // Validation
     if (!subject.trim()) {
@@ -57,14 +65,19 @@ const SendEmailDialog = ({ open, onClose, users, onSuccess }: SendEmailDialogPro
     setSuccess('')
 
     try {
+      console.log('Starting email send...')
       if (isBulk) {
         // Send to multiple users
         const userIds = users.map(u => u._id)
-        await sendBulkEmail({ userIds, subject, message, language }, token)
+        console.log('Sending bulk email to:', userIds)
+        const result = await sendBulkEmail({ userIds, subject, message, language }, token)
+        console.log('Bulk email result:', result)
         setSuccess(`Email успешно отправлен ${users.length} пользователям!`)
       } else {
         // Send to single user
-        await sendEmailToUser({ userId: users[0]._id, subject, message, language }, token)
+        console.log('Sending email to single user:', users[0]._id)
+        const result = await sendEmailToUser({ userId: users[0]._id, subject, message, language }, token)
+        console.log('Single email result:', result)
         setSuccess(`Email успешно отправлен пользователю ${users[0].firstName} ${users[0].lastName}`)
       }
 
@@ -79,7 +92,9 @@ const SendEmailDialog = ({ open, onClose, users, onSuccess }: SendEmailDialogPro
       }, 2000)
     } catch (err: any) {
       console.error('Error sending email:', err)
-      setError(err.response?.data?.error?.message || 'Ошибка при отправке email')
+      console.error('Error response:', err.response)
+      console.error('Error data:', err.response?.data)
+      setError(err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Ошибка при отправке email')
     } finally {
       setLoading(false)
     }

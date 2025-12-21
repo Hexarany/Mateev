@@ -251,28 +251,36 @@ export const getUsersByRole = async (req: Request, res: Response) => {
 // POST /api/users-management/send-email - Send email to single user
 export const sendEmailToUser = async (req: CustomRequest, res: Response) => {
   try {
+    console.log('📧 sendEmailToUser called')
+    console.log('Request body:', req.body)
     const { userId, subject, message, language = 'ru' } = req.body
 
     // Validation
     if (!userId || !subject || !message) {
+      console.log('❌ Validation failed:', { userId: !!userId, subject: !!subject, message: !!message })
       return res.status(400).json({
         error: { message: 'userId, subject, and message are required' }
       })
     }
 
     // Find user
+    console.log('🔍 Looking for user:', userId)
     const user = await User.findById(userId).select('email firstName lastName')
     if (!user) {
+      console.log('❌ User not found:', userId)
       return res.status(404).json({ error: { message: 'User not found' } })
     }
+    console.log('✅ User found:', user.email)
 
     // Send email
+    console.log('📨 Sending email to:', user.email)
     const success = await emailService.sendCustomEmail(
       user.email,
       subject,
       message,
       language as 'ru' | 'ro'
     )
+    console.log('Email send result:', success)
 
     if (success) {
       res.json({
@@ -283,10 +291,12 @@ export const sendEmailToUser = async (req: CustomRequest, res: Response) => {
         }
       })
     } else {
+      console.log('❌ Email service returned false')
       res.status(500).json({ error: { message: 'Failed to send email' } })
     }
   } catch (error: any) {
-    console.error('Error sending email to user:', error)
+    console.error('❌ Error sending email to user:', error)
+    console.error('Error stack:', error.stack)
     res.status(500).json({ error: { message: 'Server error', details: error.message } })
   }
 }
@@ -294,31 +304,39 @@ export const sendEmailToUser = async (req: CustomRequest, res: Response) => {
 // POST /api/users-management/send-bulk-email - Send email to multiple users
 export const sendBulkEmail = async (req: CustomRequest, res: Response) => {
   try {
+    console.log('📧📧 sendBulkEmail called')
+    console.log('Request body:', req.body)
     const { userIds, subject, message, language = 'ru' } = req.body
 
     // Validation
     if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+      console.log('❌ Validation failed: userIds invalid')
       return res.status(400).json({
         error: { message: 'userIds must be a non-empty array' }
       })
     }
 
     if (!subject || !message) {
+      console.log('❌ Validation failed:', { subject: !!subject, message: !!message })
       return res.status(400).json({
         error: { message: 'subject and message are required' }
       })
     }
 
     // Find users
+    console.log('🔍 Looking for users:', userIds)
     const users = await User.find({ _id: { $in: userIds } })
       .select('email firstName lastName')
 
     if (users.length === 0) {
+      console.log('❌ No users found')
       return res.status(404).json({ error: { message: 'No users found' } })
     }
+    console.log(`✅ Found ${users.length} users`)
 
     // Collect email addresses
     const emailAddresses = users.map(u => u.email)
+    console.log('📨 Sending bulk email to:', emailAddresses)
 
     // Send emails
     const success = await emailService.sendCustomEmail(
@@ -327,6 +345,7 @@ export const sendBulkEmail = async (req: CustomRequest, res: Response) => {
       message,
       language as 'ru' | 'ro'
     )
+    console.log('Bulk email send result:', success)
 
     if (success) {
       res.json({
@@ -338,10 +357,13 @@ export const sendBulkEmail = async (req: CustomRequest, res: Response) => {
         }))
       })
     } else {
+      console.log('❌ Email service returned false')
       res.status(500).json({ error: { message: 'Failed to send bulk email' } })
     }
   } catch (error: any) {
-    console.error('Error sending bulk email:', error)
+    console.error('❌ Error sending bulk email:', error)
+    console.error('Error stack:', error.stack)
     res.status(500).json({ error: { message: 'Server error', details: error.message } })
   }
 }
+// reload
