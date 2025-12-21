@@ -1391,4 +1391,39 @@ export const deleteSubmission = async (submissionId: string, token?: string): Pr
   return response.data
 }
 
+// ============================================
+// EMAIL NOTIFICATION SETTINGS
+// ============================================
+
+export interface EmailNotificationSettings {
+  enabled: boolean
+  homework: boolean
+  grades: boolean
+  schedule: boolean
+}
+
+export interface EmailNotificationResponse {
+  email: string
+  emailNotifications: EmailNotificationSettings
+}
+
+// Get email notification settings for current user
+export const getEmailNotificationSettings = async (token: string): Promise<EmailNotificationResponse> => {
+  const response = await api.get('/users/me/email-notifications', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
+// Update email notification settings for current user
+export const updateEmailNotificationSettings = async (
+  settings: Partial<EmailNotificationSettings>,
+  token: string
+): Promise<{ message: string; emailNotifications: EmailNotificationSettings }> => {
+  const response = await api.patch('/users/me/email-notifications', settings, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
 export default api

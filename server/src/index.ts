@@ -23,6 +23,7 @@ import anatomyModel3DRoutes from './routes/anatomyModel3DRoutes'
 import triggerPointRoutes from './routes/triggerPointRoutes'
 import tierPaymentRoutes from './routes/tierPaymentRoutes'
 import usersManagementRoutes from './routes/usersManagementRoutes'
+import userRoutes from './routes/userRoutes'
 import promoCodeRoutes from './routes/promoCodeRoutes'
 import chatRoutes from './routes/chatRoutes'
 import searchRoutes from './routes/searchRoutes'
@@ -150,6 +151,7 @@ app.use('/api/anatomy-models-3d', anatomyModel3DRoutes)
 app.use('/api/trigger-points', triggerPointRoutes)
 app.use('/api/tier-payment', tierPaymentRoutes)
 app.use('/api/users-management', usersManagementRoutes)
+app.use('/api/users', userRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api', searchRoutes)
 app.use('/api', bookmarkRoutes)
