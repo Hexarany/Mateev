@@ -280,6 +280,8 @@ export class TelegramNotificationService {
       const scheduleDate = new Date(schedule.date)
       const topic = schedule.topic as any
 
+      const clientUrl = process.env.CLIENT_URL?.split(',')[0].trim() || 'https://anatomia-app-docker.onrender.com'
+
       const message =
         `📅 *Новое занятие!*\n\n` +
         `*Урок ${schedule.lessonNumber}: ${schedule.title.ru}*\n\n` +
@@ -291,7 +293,7 @@ export class TelegramNotificationService {
         (topic ? `📚 Тема: ${topic.name.ru}\n\n` : '') +
         (schedule.description?.ru ? `📝 ${schedule.description.ru}\n\n` : '') +
         (schedule.homework?.ru ? `📖 *Домашнее задание:*\n${schedule.homework.ru}\n\n` : '') +
-        `Подробнее на сайте anatomia.md`
+        `Подробнее: ${clientUrl}`
 
       // Send to linked Telegram group chat
       const sentToGroup = await this.sendToTelegramGroup(group._id.toString(), message)
