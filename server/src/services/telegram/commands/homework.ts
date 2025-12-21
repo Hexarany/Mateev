@@ -1,4 +1,5 @@
 import { Context } from 'telegraf'
+import { Markup } from 'telegraf'
 import User from '../../../models/User'
 import Assignment from '../../../models/Assignment'
 import Submission from '../../../models/Submission'
@@ -75,6 +76,8 @@ export async function homeworkCommand(ctx: Context) {
     let response = '📚 *Домашние задания*\n\n'
 
     // Активные задания
+    const buttons: any[] = []
+
     if (activeAssignments.length > 0) {
       response += '📝 *Активные:*\n\n'
       activeAssignments.forEach((assignment, index) => {
@@ -87,6 +90,16 @@ export async function homeworkCommand(ctx: Context) {
         response += `Дедлайн: ${deadline.toLocaleDateString('ru-RU')} ${deadline.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}\n`
         response += `Осталось: ${daysLeft} ${daysLeft === 1 ? 'день' : daysLeft < 5 ? 'дня' : 'дней'}\n`
         response += `ID: \`${assignment._id}\`\n\n`
+
+        // Добавляем кнопку для каждого задания
+        if (index < 5) { // Ограничиваем до 5 кнопок
+          buttons.push([
+            Markup.button.callback(
+              `✍️ Сдать: ${assignment.title.ru.substring(0, 25)}...`,
+              `submit_${assignment._id}`
+            )
+          ])
+        }
       })
     }
 
@@ -107,7 +120,13 @@ export async function homeworkCommand(ctx: Context) {
     response += '\n_Для сдачи работы используйте:_\n'
     response += '`/submit <ID> <текст или файл>`'
 
-    return ctx.reply(response, { parse_mode: 'Markdown' })
+    // Добавляем кнопку возврата в главное меню
+    buttons.push([Markup.button.callback('🏠 Главное меню', 'main_menu')])
+
+    return ctx.reply(response, {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard(buttons)
+    })
   } catch (error) {
     console.error('[Telegram] Error in homeworkCommand:', error)
     return ctx.reply('❌ Произошла ошибка при получении списка заданий.')

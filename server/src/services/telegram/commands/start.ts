@@ -1,4 +1,5 @@
 import { Context } from 'telegraf'
+import { Markup } from 'telegraf'
 import User from '../../../models/User'
 
 // Get production URL for Web App (Telegram doesn't support localhost)
@@ -64,12 +65,13 @@ export async function startCommand(ctx: Context) {
         return ctx.reply(
           `✅ Аккаунт успешно привязан!\n\n` +
           `Добро пожаловать, ${user.firstName}!\n` +
-          `Используйте /help для просмотра доступных команд.`,
+          `Используйте /menu для открытия главного меню.`,
           {
             reply_markup: {
-              inline_keyboard: [[
-                getAnatomiaButton(ctx.chat?.type)
-              ]]
+              inline_keyboard: [
+                [getAnatomiaButton(ctx.chat?.type)],
+                [Markup.button.callback('📋 Главное меню', 'main_menu')]
+              ]
             }
           }
         )
@@ -98,12 +100,13 @@ export async function startCommand(ctx: Context) {
       return ctx.reply(
         `Привет, ${existingUser.firstName}! 👋\n\n` +
         `Ваш аккаунт уже привязан.\n` +
-        `Используйте /help для просмотра команд.`,
+        `Используйте /menu для открытия главного меню.`,
         {
           reply_markup: {
-            inline_keyboard: [[
-              getAnatomiaButton(ctx.chat?.type)
-            ]]
+            inline_keyboard: [
+              [getAnatomiaButton(ctx.chat?.type)],
+              [Markup.button.callback('📋 Главное меню', 'main_menu')]
+            ]
           }
         }
       )

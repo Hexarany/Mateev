@@ -7,9 +7,11 @@ import { linkgroupCommand, unlinkgroupCommand, handleLinkGroupCallback } from '.
 import { homeworkCommand, submitCommand, gradesCommand } from './commands/homework'
 import { initDailyScheduler } from './scheduler'
 import { handleQuizCallback } from './handlers/quizCallback'
+import { showMainMenu, handleMainMenuCallback, handleCommandCallback, handleSubmitCallback } from './handlers/menuCallback'
 
 // Register commands
 bot.command('start', startCommand)
+bot.command('menu', showMainMenu)
 bot.command('quiz', quizCommand)
 bot.command('anatomy', anatomyCommand)
 bot.command('schedule', scheduleCommand)
@@ -23,6 +25,7 @@ bot.command('help', (ctx) => {
   return ctx.reply(
     `🤖 *Доступные команды:*\n\n` +
     `/start - Привязать аккаунт\n` +
+    `/menu - Главное меню с кнопками\n` +
     `/schedule - Расписание занятий\n` +
     `/homework - Список домашних заданий\n` +
     `/submit <ID> <ответ> - Сдать домашнюю работу\n` +
@@ -44,6 +47,12 @@ bot.on('callback_query', async (ctx) => {
     return handleLinkGroupCallback(ctx)
   } else if (data.startsWith('quiz_')) {
     return handleQuizCallback(ctx)
+  } else if (data === 'main_menu') {
+    return handleMainMenuCallback(ctx)
+  } else if (data.startsWith('cmd_')) {
+    return handleCommandCallback(ctx)
+  } else if (data.startsWith('submit_')) {
+    return handleSubmitCallback(ctx)
   }
 
   // Unknown callback
