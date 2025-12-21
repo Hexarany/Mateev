@@ -49,7 +49,7 @@ export async function startCommand(ctx: Context) {
               inline_keyboard: [[
                 {
                   text: '📚 Открыть Anatomia',
-                  web_app: { url: getWebAppUrl() }
+                  url: getWebAppUrl()
                 }
               ]]
             }
@@ -65,7 +65,7 @@ export async function startCommand(ctx: Context) {
               inline_keyboard: [[
                 {
                   text: '📚 Открыть Anatomia',
-                  web_app: { url: getWebAppUrl() }
+                  url: getWebAppUrl()
                 }
               ]]
             }
@@ -89,7 +89,7 @@ export async function startCommand(ctx: Context) {
             inline_keyboard: [[
               {
                 text: '📚 Открыть Anatomia',
-                web_app: { url: getWebAppUrl() }
+                url: getWebAppUrl()
               }
             ]]
           }
@@ -111,7 +111,7 @@ export async function startCommand(ctx: Context) {
           inline_keyboard: [[
             {
               text: '📚 Открыть Anatomia',
-              web_app: { url: getWebAppUrl() }
+              url: getWebAppUrl()
             }
           ]]
         }
