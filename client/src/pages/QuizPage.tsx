@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -97,7 +97,7 @@ const QuizPage = () => {
     setSelectedAnswer(event.target.value)
   }
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     const answerIndex = parseInt(selectedAnswer)
     const newAnswers = [...answers, answerIndex]
     setAnswers(newAnswers)
@@ -108,7 +108,7 @@ const QuizPage = () => {
     } else {
       setShowResults(true)
     }
-  }, [selectedAnswer, answers, currentQuestion, quiz])
+  }
 
   const calculateScore = () => {
     return answers.reduce((score, answer, index) => {
@@ -116,12 +116,12 @@ const QuizPage = () => {
     }, 0)
   }
 
-  const handleRetry = useCallback(() => {
+  const handleRetry = () => {
     setCurrentQuestion(0)
     setAnswers([])
     setSelectedAnswer('')
     setShowResults(false)
-  }, [])
+  }
 
   // Telegram MainButton integration - During quiz
   useEffect(() => {
@@ -132,28 +132,46 @@ const QuizPage = () => {
       ? t('quiz.finish')
       : t('quiz.next')
 
+    const handleClick = () => {
+      const answerIndex = parseInt(selectedAnswer)
+      const newAnswers = [...answers, answerIndex]
+      setAnswers(newAnswers)
+
+      if (currentQuestion < quiz.questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1)
+        setSelectedAnswer('')
+      } else {
+        setShowResults(true)
+      }
+    }
+
     setMainButton({
       text: buttonText,
-      onClick: handleNext,
+      onClick: handleClick,
       disabled: !selectedAnswer
     })
 
     return () => hideMainButton()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInTelegram, quiz, showResults, loading, currentQuestion, selectedAnswer, t, handleNext])
+  }, [isInTelegram, quiz, showResults, loading, currentQuestion, selectedAnswer, answers, t, setMainButton, hideMainButton])
 
   // Telegram MainButton integration - Results screen
   useEffect(() => {
     if (!isInTelegram || !quiz || !showResults) return
 
+    const handleClick = () => {
+      setCurrentQuestion(0)
+      setAnswers([])
+      setSelectedAnswer('')
+      setShowResults(false)
+    }
+
     setMainButton({
       text: t('quiz.tryAgain'),
-      onClick: handleRetry
+      onClick: handleClick
     })
 
     return () => hideMainButton()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInTelegram, quiz, showResults, t, handleRetry])
+  }, [isInTelegram, quiz, showResults, t, setMainButton, hideMainButton])
 
   if (showResults) {
     const score = calculateScore()
