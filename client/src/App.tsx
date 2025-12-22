@@ -35,6 +35,8 @@ import DashboardPage from './pages/DashboardPage'
 import CertificatesPage from './pages/CertificatesPage'
 import NotificationsPage from './pages/NotificationsPage'
 import AssignmentsPage from './pages/AssignmentsPage'
+import MyGroupsPage from './pages/MyGroupsPage'
+import GradesPage from './pages/GradesPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -57,6 +59,8 @@ function App() {
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/assignments" element={<AssignmentsPage />} />
+            <Route path="/my-groups" element={<MyGroupsPage />} />
+            <Route path="/grades" element={<GradesPage />} />
             <Route path="/subscription" element={<SubscriptionPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/payment-callback" element={<PaymentCallbackPage />} />

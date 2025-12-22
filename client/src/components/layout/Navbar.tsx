@@ -394,6 +394,30 @@ const Navbar = () => {
                       {i18n.language === 'ru' ? '📝 Задания' : '📝 Teme'}
                     </Typography>
                   </MenuItem>
+                  {user?.role === 'student' && (
+                    <>
+                      <MenuItem
+                        onClick={() => {
+                          handleCloseUserMenu()
+                          navigate('/my-groups')
+                        }}
+                      >
+                        <Typography textAlign="center">
+                          {i18n.language === 'ru' ? '👥 Мои группы' : '👥 Grupele mele'}
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleCloseUserMenu()
+                          navigate('/grades')
+                        }}
+                      >
+                        <Typography textAlign="center">
+                          {i18n.language === 'ru' ? '📊 Мои оценки' : '📊 Notele mele'}
+                        </Typography>
+                      </MenuItem>
+                    </>
+                  )}
                   {(user?.role === 'admin' || user?.role === 'teacher') && (
                     <MenuItem
                       onClick={() => {

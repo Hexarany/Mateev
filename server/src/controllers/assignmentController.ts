@@ -450,16 +450,18 @@ export const getMySubmissions = async (req: CustomRequest, res: Response) => {
       .populate({
         path: 'assignment',
         populate: [
-          { path: 'schedule' },
-          { path: 'group' },
-          { path: 'createdBy', select: 'firstName lastName email' },
+          { path: 'schedule', options: { strictPopulate: false } },
+          { path: 'group', options: { strictPopulate: false } },
+          { path: 'createdBy', select: 'firstName lastName email', options: { strictPopulate: false } },
         ],
+        options: { strictPopulate: false }
       })
       .populate('gradedBy', 'firstName lastName email')
       .sort({ submittedAt: -1 })
+      .lean()
 
     // Filter out submissions with deleted assignments
-    const validSubmissions = submissions.filter(s => s.assignment !== null)
+    const validSubmissions = submissions.filter((s: any) => s.assignment !== null && s.assignment !== undefined)
 
     res.json(validSubmissions)
   } catch (error: any) {

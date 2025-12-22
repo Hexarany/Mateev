@@ -2,6 +2,29 @@ import { Request, Response } from 'express'
 import Group from '../models/Group'
 import User from '../models/User'
 import Conversation from '../models/Conversation'
+import { CustomRequest } from '../middleware/auth'
+
+/**
+ * Получить мои группы (для студентов)
+ */
+export const getMyGroups = async (req: CustomRequest, res: Response) => {
+  try {
+    const userId = req.userId
+
+    const groups = await Group.find({
+      students: userId,
+      isActive: true
+    })
+      .populate('teacher', 'firstName lastName email')
+      .populate('students', 'firstName lastName email')
+      .sort({ startDate: -1 })
+
+    res.json(groups)
+  } catch (error) {
+    console.error('Error fetching my groups:', error)
+    res.status(500).json({ error: { message: 'Ошибка при получении списка групп' } })
+  }
+}
 
 export const getAllGroups = async (req: Request, res: Response) => {
   try {

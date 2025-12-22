@@ -1091,6 +1091,14 @@ export const getAllGroups = async (token: string): Promise<Group[]> => {
   return response.data
 }
 
+// Get my groups (for students)
+export const getMyGroups = async (token: string): Promise<Group[]> => {
+  const response = await api.get('/groups/my', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  return response.data
+}
+
 // Get group by ID
 export const getGroupById = async (id: string, token: string): Promise<Group> => {
   const response = await api.get(`/groups/${id}`, {

@@ -2,6 +2,7 @@ import express from 'express'
 import {
   createGroup,
   getAllGroups,
+  getMyGroups,
   getGroupById,
   updateGroup,
   deleteGroup,
@@ -14,6 +15,9 @@ const router = express.Router()
 
 // Admin + Teacher могут создавать группы
 router.post('/', authenticateToken, authorizeRole('admin', 'teacher'), createGroup)
+
+// Студенты могут просматривать свои группы
+router.get('/my', authenticateToken, getMyGroups)
 
 // Admin + Teacher могут просматривать группы (teacher видит только свои)
 router.get('/', authenticateToken, authorizeRole('admin', 'teacher'), getAllGroups)
