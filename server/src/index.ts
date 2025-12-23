@@ -6,6 +6,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import dotenv from 'dotenv'
 import path from 'path'
+import fs from 'fs'
 import { connectDB } from './config/database'
 import './config/cloudinary'
 import { initializeChatSocket } from './sockets/chatSocket'
@@ -170,26 +171,27 @@ app.use('/api/telegram', telegramRoutes)
 
 // Serve static files from React app in production
 if (process.env.NODE_ENV === 'production') {
-  const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist')
+  const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist');
 
-  // Serve static files with caching for performance
+  if (!fs.existsSync(clientDistPath)) {
+    throw new Error(
+      `Client dist folder not found (${clientDistPath}). Run "npm run build --prefix client" before deploying.`,
+    );
+  }
+
   app.use(express.static(clientDistPath, {
-    maxAge: '1y', // Cache static assets for 1 year (they have content hashes)
-    immutable: true
-  }))
+    maxAge: '1y',
+    immutable: true,
+  }));
 
-  // Handle React routing - return index.html for all non-API routes
   app.get('*', (req, res, next) => {
-    // Skip API routes
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/health')) {
-      return next()
+      return next();
     }
-    // Don't cache index.html (it references the hashed assets)
-    res.setHeader('Cache-Control', 'no-cache')
-    res.sendFile(path.join(clientDistPath, 'index.html'))
-  })
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
 }
-
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack)
