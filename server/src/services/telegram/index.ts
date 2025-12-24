@@ -132,6 +132,7 @@ const safeStopBot = (signal: string) => {
 export async function initTelegramBot() {
   try {
     console.log('[Telegram Bot] Starting Telegram bot...')
+    console.log('[Telegram Bot] Webhook path:', telegramWebhookPath)
 
     const webhookUrl = resolveWebhookUrl()
     if (webhookUrl) {
