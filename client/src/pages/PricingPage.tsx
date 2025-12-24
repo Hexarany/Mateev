@@ -41,6 +41,10 @@ interface TierPlan {
     ru: string[]
     ro: string[]
   }
+  billing?: {
+    ru: string
+    ro: string
+  }
 }
 
 const PricingPage = () => {
@@ -63,16 +67,17 @@ const PricingPage = () => {
       name: { ru: 'Free', ro: 'Gratuit' },
       price: 0,
       currency: 'USD',
+      billing: { ru: '', ro: '' },
       features: {
         ru: [
-          'Превью всех материалов (400 символов)',
-          'Доступ к базовой информации',
-          'Ознакомительный режим',
+          'Ознакомление со структурой курса',
+          'Без доступа к урокам и материалам',
+          'Без практики и тестов',
         ],
         ro: [
-          'Previzualizare a tuturor materialelor (400 caractere)',
-          'Acces la informații de bază',
-          'Mod demonstrativ',
+          'Vizualizare structură curs',
+          'Fără acces la lecții și materiale',
+          'Fără practică și teste',
         ],
       },
     },
@@ -81,24 +86,19 @@ const PricingPage = () => {
       name: { ru: 'Basic', ro: 'De bază' },
       price: 20,
       currency: 'USD',
+      billing: { ru: '3 месяца', ro: '3 luni' },
       features: {
         ru: [
-          'Полный доступ к разделу Анатомия',
-          'Полный доступ к Гигиене и стандартам',
-          '4 основных протокола массажа:',
-          '  • Классический массаж всего тела',
-          '  • Медовый массаж',
-          '  • Баночный (вакуумный) массаж',
-          '  • Антицеллюлитный массаж',
+          '4 протокола массажа: классический, баночный, антицеллюлитный, медовый',
+          'Ключевые анатомические разделы',
+          'Гигиена',
+          'Сопровождение в Telegram',
         ],
         ro: [
-          'Acces complet la secțiunea Anatomie',
-          'Acces complet la Igienă și standarde',
-          '4 protocoale de bază de masaj:',
-          '  • Masaj clasic de corp întreg',
-          '  • Masaj cu miere',
-          '  • Masaj cu ventuze (vacuum)',
-          '  • Masaj anticelulitic',
+          '4 protocoale de masaj: clasic, cu ventuze, anticelulitic și cu miere',
+          'Secțiuni anatomice esențiale',
+          'Igienă',
+          'Suport în Telegram',
         ],
       },
     },
@@ -108,6 +108,7 @@ const PricingPage = () => {
       price: 50,
       upgradeFromBasic: 30,
       currency: 'USD',
+      billing: { ru: 'год', ro: 'an' },
       features: {
         ru: [
           'Всё из Basic +',
@@ -368,6 +369,7 @@ const PricingPage = () => {
           const disabled =
             !canUpgrade(index) || isCurrentTier(index) || loading !== null
           const discountInfo = calculateDiscountedPrice(plan)
+          const billingLabel = plan.billing?.ru
 
           return (
             <Grid item xs={12} md={4} key={plan.id}>
@@ -450,16 +452,17 @@ const PricingPage = () => {
                         <Typography variant="h3" component="span" fontWeight={700}>
                           ${plan.price}
                         </Typography>
-                        <Typography variant="body1" component="span" color="text.secondary">
-                          {' '}
-                          {plan.price === 0 ? '' : '/ единоразово'}
-                        </Typography>
                         {plan.upgradeFromBasic && user?.accessLevel === 'basic' && (
                           <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
                             Апгрейд с Basic: ${plan.upgradeFromBasic}
                           </Typography>
                         )}
                       </>
+                    )}
+                    {plan.price !== 0 && billingLabel && (
+                      <Typography variant="body2" color="text.secondary">
+                        / {billingLabel}
+                      </Typography>
                     )}
                   </Box>
 

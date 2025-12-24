@@ -15,7 +15,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import SchoolIcon from '@mui/icons-material/School'
+import SpaIcon from '@mui/icons-material/Spa'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import SearchIcon from '@mui/icons-material/Search'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
@@ -26,10 +26,19 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useThemeMode } from '@/contexts/ThemeContext'
 // import NotificationBell from '@/components/NotificationBell' // Temporarily disabled
 
+type NavItem = {
+  name: string
+  to?: string
+  href?: string
+  external?: boolean
+}
+
+const TELEGRAM_LINK = 'https://t.me/AnatomiaAppBot'
+
 const Navbar = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { user, isAuthenticated, logout, hasAccess } = useAuth()
+  const { user, isAuthenticated, logout } = useAuth()
   const { mode, toggleTheme } = useThemeMode()
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
@@ -69,45 +78,120 @@ const Navbar = () => {
     i18n.changeLanguage(event.target.value as Language)
   }
 
-  // Main navigation items (simplified)
-  const mainPages = [
-    { name: t('nav.home'), path: '/' },
-    { name: t('nav.categories'), path: '/categories' },
-    { name: t('nav.quizzes'), path: '/quizzes' },
+  const mainPages: NavItem[] = [
+    { name: t('nav.home'), to: '/' },
+    { name: t('nav.programs'), href: '/#programs' },
+    { name: t('nav.practice'), to: '/assignments' },
+    { name: t('nav.anatomy'), to: '/categories' },
+    { name: t('nav.quizzes'), to: '/quizzes' },
+    { name: t('nav.telegram'), href: TELEGRAM_LINK, external: true },
   ]
 
-  // Learning resources (grouped in dropdown)
-  const learningResources = [
-    { name: i18n.language === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj', path: '/massage-protocols' },
-    { name: i18n.language === 'ru' ? 'Триггерные точки' : 'Puncte Trigger', path: '/trigger-points' },
-    { name: i18n.language === 'ru' ? '3D Модели' : 'Modele 3D', path: '/anatomy-models-3d' },
-    { name: i18n.language === 'ru' ? 'Гигиена и стандарты' : 'Igienă și standarde', path: '/hygiene-guidelines' },
-    { name: i18n.language === 'ru' ? 'Библиотека' : 'Bibliotecă', path: '/resources' },
+  const learningResources: NavItem[] = [
+    { name: i18n.language === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj', to: '/massage-protocols' },
+    { name: i18n.language === 'ru' ? 'Домашки и тесты' : 'Teme și teste', to: '/assignments' },
+    { name: i18n.language === 'ru' ? '3D модели и атласы' : 'Modele 3D și atlase', to: '/anatomy-models-3d' },
+    { name: i18n.language === 'ru' ? 'Гигиена и безопасность' : 'Igienă și siguranță', to: '/hygiene-guidelines' },
+    { name: i18n.language === 'ru' ? 'Библиотека ресурсов' : 'Bibliotecă', to: '/resources' },
+    { name: 'Telegram', href: TELEGRAM_LINK, external: true },
   ]
 
-  const allMainPages = [...mainPages]
+  const BrandLogo = ({ compact = false }: { compact?: boolean }) => {
+    const tagline = t('app.tagline')
+
+    return (
+      <Box
+        component={RouterLink}
+        to="/"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textDecoration: 'none',
+          color: 'inherit',
+          gap: 1,
+          mr: compact ? 0 : 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+          }}
+        >
+          <SpaIcon sx={{ color: '#fff', fontSize: 22 }} />
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <Typography sx={{ fontWeight: 700, lineHeight: 1.1, fontSize: compact ? '1rem' : '1.05rem' }}>
+            {t('app.title')}
+          </Typography>
+          {!compact && tagline.trim() && (
+            <Typography variant="caption" sx={{ lineHeight: 1.2, opacity: 0.85 }}>
+              {tagline}
+            </Typography>
+          )}
+        </Box>
+      </Box>
+    )
+  }
+
+  const renderNavButton = (page: NavItem) => {
+    const commonStyles = {
+      color: 'white',
+      fontSize: '0.95rem',
+      px: 2.5,
+      py: 1,
+      textTransform: 'none' as const,
+      fontWeight: 500,
+      borderRadius: 2,
+      transition: 'all 0.2s ease',
+      '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.12)',
+        transform: 'translateY(-1px)',
+      },
+    }
+
+    if (page.href) {
+      return (
+        <Button
+          key={page.name}
+          component="a"
+          href={page.href}
+          target={page.external ? '_blank' : undefined}
+          rel={page.external ? 'noopener noreferrer' : undefined}
+          sx={commonStyles}
+        >
+          {page.name}
+        </Button>
+      )
+    }
+
+    return (
+      <Button
+        key={page.name}
+        component={RouterLink}
+        to={page.to || '/'}
+        onClick={handleCloseNavMenu}
+        sx={commonStyles}
+      >
+        {page.name}
+      </Button>
+    )
+  }
 
   return (
     <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Desktop Logo */}
-          <SchoolIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component={RouterLink}
-            to="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontWeight: 700,
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            {t('app.title')}
-          </Typography>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+            <BrandLogo />
+          </Box>
 
           {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -138,84 +222,82 @@ const Navbar = () => {
               sx={{
                 display: { xs: 'block', md: 'none' },
               }}
+              MenuListProps={{
+                sx: { py: 0.5 },
+              }}
+              PaperProps={{
+                sx: {
+                  mt: 1,
+                  borderRadius: 2,
+                  minWidth: 240,
+                  overflow: 'hidden',
+                },
+              }}
             >
-              {allMainPages.map((page) => (
-                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <Typography
-                    textAlign="center"
-                    component={RouterLink}
-                    to={page.path}
-                    sx={{ textDecoration: 'none', color: 'inherit' }}
+              {mainPages.map((page) => {
+                const linkProps = page.href
+                  ? {
+                      component: 'a' as const,
+                      href: page.href,
+                      target: page.external ? '_blank' : undefined,
+                      rel: page.external ? 'noopener noreferrer' : undefined,
+                    }
+                  : {
+                      component: RouterLink,
+                      to: page.to || '/',
+                    }
+
+                return (
+                  <MenuItem
+                    key={page.name}
+                    onClick={handleCloseNavMenu}
+                    {...linkProps}
+                    sx={{ textDecoration: 'none', color: 'inherit', py: 1 }}
                   >
                     {page.name}
-                  </Typography>
-                </MenuItem>
-              ))}
+                  </MenuItem>
+                )
+              })}
               <MenuItem disabled>
                 <Typography textAlign="center" sx={{ fontWeight: 600, fontSize: '0.85rem', color: 'text.secondary' }}>
-                  {i18n.language === 'ru' ? 'Обучение' : 'Învățare'}
+                  {t('nav.learning')}
                 </Typography>
               </MenuItem>
-              {learningResources.map((resource) => (
-                <MenuItem key={resource.name} onClick={handleCloseNavMenu} sx={{ pl: 3 }}>
-                  <Typography
-                    textAlign="center"
-                    component={RouterLink}
-                    to={resource.path}
-                    sx={{ textDecoration: 'none', color: 'inherit', fontSize: '0.9rem' }}
+              {learningResources.map((resource) => {
+                const linkProps = resource.href
+                  ? {
+                      component: 'a' as const,
+                      href: resource.href,
+                      target: resource.external ? '_blank' : undefined,
+                      rel: resource.external ? 'noopener noreferrer' : undefined,
+                    }
+                  : {
+                      component: RouterLink,
+                      to: resource.to || '/',
+                    }
+
+                return (
+                  <MenuItem
+                    key={resource.name}
+                    onClick={handleCloseNavMenu}
+                    sx={{ pl: 3, py: 0.75, textDecoration: 'none', color: 'inherit', fontSize: '0.9rem' }}
+                    {...linkProps}
                   >
                     {resource.name}
-                  </Typography>
-                </MenuItem>
-              ))}
+                  </MenuItem>
+                )
+              })}
             </Menu>
           </Box>
 
           {/* Mobile Logo */}
-          <SchoolIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component={RouterLink}
-            to="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontWeight: 700,
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            {t('app.title')}
-          </Typography>
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexGrow: 1 }}>
+            <BrandLogo compact />
+          </Box>
 
           {/* Desktop Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, gap: 1.5, alignItems: 'center', ml: 3 }}>
-            {allMainPages.map((page) => (
-              <Button
-                key={page.name}
-                component={RouterLink}
-                to={page.path}
-                onClick={handleCloseNavMenu}
-                sx={{
-                  color: 'white',
-                  fontSize: '0.95rem',
-                  px: 2.5,
-                  py: 1,
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  borderRadius: 2,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                    transform: 'translateY(-1px)',
-                  },
-                }}
-              >
-                {page.name}
-              </Button>
-            ))}
+            {mainPages.map(renderNavButton)}
 
             {/* Learning Resources Dropdown */}
             <Button
@@ -237,7 +319,7 @@ const Navbar = () => {
                 },
               }}
             >
-              {i18n.language === 'ru' ? 'Обучение' : 'Învățare'}
+              {t('nav.learning')}
             </Button>
             <Menu
               anchorEl={anchorElLearning}
@@ -253,15 +335,28 @@ const Navbar = () => {
               }}
             >
               {learningResources.map((resource) => (
-                <MenuItem
-                  key={resource.name}
-                  onClick={() => {
-                    handleCloseLearningMenu()
-                    navigate(resource.path)
-                  }}
-                >
-                  {resource.name}
-                </MenuItem>
+                resource.href ? (
+                  <MenuItem
+                    key={resource.name}
+                    component="a"
+                    href={resource.href}
+                    target={resource.external ? '_blank' : undefined}
+                    rel={resource.external ? 'noopener noreferrer' : undefined}
+                    onClick={handleCloseLearningMenu}
+                  >
+                    {resource.name}
+                  </MenuItem>
+                ) : (
+                  <MenuItem
+                    key={resource.name}
+                    onClick={() => {
+                      handleCloseLearningMenu()
+                      navigate(resource.to || '/')
+                    }}
+                  >
+                    {resource.name}
+                  </MenuItem>
+                )
               ))}
             </Menu>
           </Box>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   Box,
+  Avatar,
   Container,
   Typography,
   Button,
@@ -26,7 +27,6 @@ import View3DIcon from '@mui/icons-material/ViewInAr'
 import QuizIcon from '@mui/icons-material/Quiz'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import SpaIcon from '@mui/icons-material/Spa'
-import GpsFixedIcon from '@mui/icons-material/GpsFixed'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks'
 import PeopleIcon from '@mui/icons-material/People'
@@ -36,6 +36,11 @@ import TelegramIcon from '@mui/icons-material/Telegram'
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'
 import ChatIcon from '@mui/icons-material/Chat'
 import CheckIcon from '@mui/icons-material/Check'
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
+import ForumIcon from '@mui/icons-material/Forum'
+import SelfImprovementIcon from '@mui/icons-material/SelfImprovement'
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import { getCategories } from '@/services/api'
 import type { Category } from '@/types'
 
@@ -122,6 +127,115 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true)
 
   const lang = i18n.language as 'ru' | 'ro'
+  const anatomyHighlights = categories.slice(0, 3)
+
+  const heroHighlights = [
+    {
+      icon: <SpaIcon sx={{ fontSize: 40 }} />,
+      title: t('home.hero.modules.practice.title'),
+      description: t('home.hero.modules.practice.description'),
+      color: theme.palette.mode === 'dark' ? '#81c784' : '#2e7d32',
+    },
+    {
+      icon: <LibraryBooksIcon sx={{ fontSize: 40 }} />,
+      title: t('home.hero.modules.anatomy.title'),
+      description: t('home.hero.modules.anatomy.description'),
+      color: theme.palette.mode === 'dark' ? '#4fc3f7' : '#0277bd',
+    },
+    {
+      icon: <QuizIcon sx={{ fontSize: 40 }} />,
+      title: t('home.hero.modules.homework.title'),
+      description: t('home.hero.modules.homework.description'),
+      color: theme.palette.mode === 'dark' ? '#ffb74d' : '#ef6c00',
+    },
+    {
+      icon: <TelegramIcon sx={{ fontSize: 40 }} />,
+      title: t('home.hero.modules.telegram.title'),
+      description: t('home.hero.modules.telegram.description'),
+      color: theme.palette.mode === 'dark' ? '#90caf9' : '#0088cc',
+    },
+  ]
+
+  const programModules = [
+    {
+      key: 'foundations',
+      icon: <SpaIcon sx={{ fontSize: 36 }} />,
+      title: t('home.modules.items.foundations.title'),
+      description: t('home.modules.items.foundations.description'),
+      path: '/massage-protocols',
+      color: theme.palette.mode === 'dark' ? '#f48fb1' : '#c2185b',
+    },
+    {
+      key: 'anatomy',
+      icon: <View3DIcon sx={{ fontSize: 36 }} />,
+      title: t('home.modules.items.anatomy.title'),
+      description: t('home.modules.items.anatomy.description'),
+      path: '/categories',
+      color: theme.palette.mode === 'dark' ? '#4dd0e1' : '#0288d1',
+    },
+    {
+      key: 'practice',
+      icon: <QuizIcon sx={{ fontSize: 36 }} />,
+      title: t('home.modules.items.practice.title'),
+      description: t('home.modules.items.practice.description'),
+      path: '/assignments',
+      color: theme.palette.mode === 'dark' ? '#ffd54f' : '#f57c00',
+    },
+    {
+      key: 'support',
+      icon: <LocalHospitalIcon sx={{ fontSize: 36 }} />,
+      title: t('home.modules.items.support.title'),
+      description: t('home.modules.items.support.description'),
+      path: '/hygiene-guidelines',
+      color: theme.palette.mode === 'dark' ? '#ba68c8' : '#7b1fa2',
+    },
+  ]
+
+  const learningSteps = t('home.steps.items', { returnObjects: true }) as Array<{ title: string; description: string }>
+  const audienceSegments = t('home.audience.items', { returnObjects: true }) as Array<{ title: string; description: string }>
+  const stepIcons = [
+    <PlayCircleOutlineIcon sx={{ fontSize: 40 }} />,
+    <AssignmentTurnedInIcon sx={{ fontSize: 40 }} />,
+    <ForumIcon sx={{ fontSize: 40 }} />,
+  ]
+  const audienceIcons = [
+    <SelfImprovementIcon sx={{ fontSize: 40 }} />,
+    <SpaIcon sx={{ fontSize: 40 }} />,
+    <WorkspacePremiumIcon sx={{ fontSize: 40 }} />,
+  ]
+  const subscriptionPlans = t('home.subscription.plans', { returnObjects: true }) as Array<{
+    name: string
+    price: string
+    description: string
+    features: string[]
+    highlighted?: boolean
+  }>
+  const testimonials = t('home.testimonials.items', { returnObjects: true }) as Array<{
+    name: string
+    role: string
+    quote: string
+    progress: string
+  }>
+  const planColors = [
+    theme.palette.mode === 'dark' ? '#757575' : '#9e9e9e',
+    theme.palette.primary.main,
+    theme.palette.mode === 'dark' ? '#ffb74d' : '#f57c00',
+  ]
+  const avatarColors = [
+    theme.palette.mode === 'dark' ? '#90caf9' : '#1976d2',
+    theme.palette.mode === 'dark' ? '#f48fb1' : '#c2185b',
+    theme.palette.mode === 'dark' ? '#a5d6a7' : '#388e3c',
+  ]
+
+  const getInitials = (name: string) => name
+    .split(' ')
+    .filter(Boolean)
+    .map(part => part[0])
+    .join('')
+    .toUpperCase()
+
+  const heroPrimaryCta = isAuthenticated ? t('home.hero.ctaAuthed') : t('home.hero.ctaGuest')
+  const heroSecondaryCta = t('home.hero.ctaSecondary')
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -196,7 +310,7 @@ const HomePage = () => {
                 textShadow: '0 2px 10px rgba(0,0,0,0.2)',
               }}
             >
-              {t('home.welcome')}
+              {t('home.hero.title')}
             </Typography>
           </Fade>
           <Fade in timeout={1000}>
@@ -209,41 +323,110 @@ const HomePage = () => {
                 fontWeight: 400,
               }}
             >
-              {t('home.description')}
+              {t('home.hero.subtitle')}
             </Typography>
           </Fade>
           <Fade in timeout={1200}>
-            <Button
-              variant="contained"
-              size="large"
-              color="secondary"
-              component={RouterLink}
-              to={isAuthenticated ? '/dashboard' : '/register'}
-              endIcon={<ArrowForwardIcon />}
+            <Box
               sx={{
-                px: { xs: 4, md: 5 },
-                py: { xs: 1.5, md: 2 },
-                fontSize: { xs: '1rem', md: '1.1rem' },
-                borderRadius: 2,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 25px rgba(0,0,0,0.35)',
-                },
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              {isAuthenticated
-                ? (i18n.language === 'ru' ? 'Мой прогресс' : 'Progresul meu')
-                : (i18n.language === 'ru' ? 'Начать обучение' : 'Începe învățarea')
-              }
-            </Button>
+              <Button
+                variant="contained"
+                size="large"
+                color="secondary"
+                component={RouterLink}
+                to={isAuthenticated ? '/dashboard' : '/register'}
+                endIcon={<ArrowForwardIcon />}
+                sx={{
+                  px: { xs: 4, md: 5 },
+                  py: { xs: 1.5, md: 2 },
+                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  borderRadius: 2,
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 25px rgba(0,0,0,0.35)',
+                  },
+                }}
+              >
+                {heroPrimaryCta}
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                component={RouterLink}
+                to="/categories"
+                sx={{
+                  borderColor: 'rgba(255,255,255,0.8)',
+                  color: 'white',
+                  borderRadius: 2,
+                  px: { xs: 4, md: 5 },
+                  py: { xs: 1.4, md: 2 },
+                  '&:hover': {
+                    borderColor: 'white',
+                    bgcolor: 'rgba(255,255,255,0.15)',
+                  },
+                }}
+              >
+                {heroSecondaryCta}
+              </Button>
+            </Box>
           </Fade>
+          <Grid container spacing={2} sx={{ mt: { xs: 5, md: 7 }, alignItems: 'stretch' }}>
+            {heroHighlights.map((item, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index} sx={{ display: 'flex' }}>
+                <Box
+                  sx={{
+                    p: 3,
+                    borderRadius: 3,
+                    textAlign: 'left',
+                    bgcolor: alpha('#ffffff', 0.1),
+                    border: `1px solid ${alpha(item.color, 0.5)}`,
+                    minHeight: 200,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 1.5,
+                    flex: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 52,
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '50%',
+                      bgcolor: alpha(item.color, 0.2),
+                      color: item.color,
+                      mb: 2,
+                    }}
+                  >
+                    {item.icon}
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                    {item.title}
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                    {item.description}
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         </Container>
       </Box>
 
-      {/* Quick Access Section */}
-      <Container maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
+      {/* Program Modules Section */}
+      <Container id="programs" maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
         <Typography
           variant="h4"
           component="h2"
@@ -255,45 +438,17 @@ const HomePage = () => {
             fontWeight: 700,
           }}
         >
-          {i18n.language === 'ru' ? 'Быстрый доступ к обучению' : 'Acces rapid la învățare'}
+          {t('home.modules.title')}
         </Typography>
         <Grid container spacing={2}>
-          {[
-            {
-              title: i18n.language === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj',
-              description: i18n.language === 'ru' ? 'Полные инструкции по техникам массажа' : 'Instrucțiuni complete pentru tehnicile de masaj',
-              icon: <SpaIcon sx={{ fontSize: 40 }} />,
-              path: '/massage-protocols',
-              color: theme.palette.mode === 'dark' ? '#81c784' : '#388e3c',
-            },
-            {
-              title: i18n.language === 'ru' ? 'Триггерные точки' : 'Puncte Trigger',
-              description: i18n.language === 'ru' ? 'Атлас триггерных точек для массажа' : 'Atlas de puncte trigger pentru masaj',
-              icon: <GpsFixedIcon sx={{ fontSize: 40 }} />,
-              path: '/trigger-points',
-              color: theme.palette.mode === 'dark' ? '#f06292' : '#c2185b',
-            },
-            {
-              title: i18n.language === 'ru' ? '3D Модели' : 'Modele 3D',
-              description: i18n.language === 'ru' ? 'Интерактивные 3D модели анатомии' : 'Modele 3D interactive de anatomie',
-              icon: <View3DIcon sx={{ fontSize: 40 }} />,
-              path: '/anatomy-models-3d',
-              color: theme.palette.mode === 'dark' ? '#4fc3f7' : '#0288d1',
-            },
-            {
-              title: i18n.language === 'ru' ? 'Гигиена и стандарты' : 'Igienă și standarde',
-              description: i18n.language === 'ru' ? 'Правила гигиены и безопасности' : 'Reguli de igienă și siguranță',
-              icon: <LocalHospitalIcon sx={{ fontSize: 40 }} />,
-              path: '/hygiene-guidelines',
-              color: theme.palette.mode === 'dark' ? '#ba68c8' : '#7b1fa2',
-            },
-          ].map((item, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+          {programModules.map((item, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index} sx={{ display: 'flex' }}>
               <Card
                 component={RouterLink}
                 to={item.path}
                 sx={{
                   height: '100%',
+                  flex: 1,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -302,12 +457,13 @@ const HomePage = () => {
                   borderRadius: 3,
                   textDecoration: 'none',
                   border: `2px solid transparent`,
-                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
                   '&:hover': {
-                    transform: 'translateY(-6px)',
+                    transform: 'translateY(-6px) scale(1.02)',
                     boxShadow: theme.palette.mode === 'dark'
-                      ? '0 10px 30px rgba(0,0,0,0.5)'
-                      : '0 10px 30px rgba(0,0,0,0.15)',
+                      ? '0 12px 30px rgba(0,0,0,0.45)'
+                      : '0 12px 30px rgba(0,0,0,0.18)',
                     borderColor: item.color,
                   },
                 }}
@@ -315,7 +471,11 @@ const HomePage = () => {
                 <Box
                   sx={{
                     mb: 2,
-                    p: 2,
+                    width: 56,
+                    height: 56,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     borderRadius: '50%',
                     bgcolor: alpha(item.color, 0.1),
                     color: item.color,
@@ -329,6 +489,98 @@ const HomePage = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
                   {item.description}
                 </Typography>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+
+      {/* Subscription Overview */}
+      <Container maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
+        <Typography
+          variant="h3"
+          component="h2"
+          align="center"
+          gutterBottom
+          sx={{
+            mb: 2,
+            fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
+            fontWeight: 700,
+          }}
+        >
+          {t('home.subscription.title')}
+        </Typography>
+        <Typography align="center" color="text.secondary" sx={{ mb: 5, maxWidth: 720, mx: 'auto' }}>
+          {t('home.subscription.subtitle')}
+        </Typography>
+        <Grid container spacing={3} alignItems="stretch">
+          {subscriptionPlans.map((plan, index) => (
+            <Grid item xs={12} md={4} key={plan.name} sx={{ display: 'flex' }}>
+              <Card
+                sx={{
+                  flex: 1,
+                  borderRadius: 3,
+                  p: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  border: plan.highlighted ? `2px solid ${planColors[index]}` : '1px solid transparent',
+                  boxShadow: plan.highlighted
+                    ? theme.palette.mode === 'dark'
+                      ? '0 14px 32px rgba(0,0,0,0.45)'
+                      : '0 14px 32px rgba(0,0,0,0.18)'
+                    : theme.palette.mode === 'dark'
+                      ? '0 10px 25px rgba(0,0,0,0.35)'
+                      : '0 8px 20px rgba(0,0,0,0.12)',
+                  position: 'relative',
+                  transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                  '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: theme.palette.mode === 'dark'
+                      ? '0 16px 36px rgba(0,0,0,0.5)'
+                      : '0 16px 36px rgba(0,0,0,0.2)',
+                  },
+                }}
+              >
+                {plan.highlighted && (
+                  <Chip
+                    label={t('home.subscription.popular')}
+                    color="secondary"
+                    size="small"
+                    sx={{ position: 'absolute', top: 16, right: 16, fontWeight: 600 }}
+                  />
+                )}
+                <Typography variant="h6" fontWeight={700}>
+                  {plan.name}
+                </Typography>
+                <Box sx={{ my: 2 }}>
+                  <Typography variant="h3" component="span" sx={{ color: planColors[index], fontWeight: 700 }}>
+                    ${plan.price}
+                  </Typography>
+                </Box>
+                <Typography color="text.secondary" sx={{ mb: 3 }}>
+                  {plan.description}
+                </Typography>
+                <List dense sx={{ textAlign: 'left', mb: 3 }}>
+                  {plan.features.map((feature) => (
+                    <ListItem key={feature} sx={{ px: 0, py: 0.5 }}>
+                      <ListItemIcon sx={{ minWidth: 32 }}>
+                        <CheckIcon color="primary" fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText primary={feature} primaryTypographyProps={{ variant: 'body2' }} />
+                    </ListItem>
+                  ))}
+                </List>
+                <Box sx={{ mt: 'auto' }}>
+                  <Button
+                    component={RouterLink}
+                    to="/pricing"
+                    variant={plan.highlighted ? 'contained' : 'outlined'}
+                    size="medium"
+                    sx={{ borderRadius: 2, fontWeight: 600 }}
+                  >
+                    {i18n.language === 'ru' ? 'Смотреть тарифы' : 'Vezi planurile'}
+                  </Button>
+                </Box>
               </Card>
             </Grid>
           ))}
@@ -418,9 +670,9 @@ const HomePage = () => {
         </Container>
       </Box>
 
-      {/* Categories Section */}
+      {/* Anatomy Module Highlights */}
       <Box
-        id="categories"
+        id="anatomy"
         sx={{
           bgcolor: theme.palette.mode === 'dark'
             ? alpha(theme.palette.background.paper, 0.4)
@@ -435,20 +687,23 @@ const HomePage = () => {
             align="center"
             gutterBottom
             sx={{
-              mb: { xs: 4, md: 6 },
+              mb: 2,
               fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
               fontWeight: 700,
             }}
           >
-            {t('nav.categories')}
+            {t('home.anatomyModule.title')}
+          </Typography>
+          <Typography align="center" color="text.secondary" sx={{ mb: 5, maxWidth: 720, mx: 'auto' }}>
+            {t('home.anatomyModule.description')}
           </Typography>
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress size={60} />
             </Box>
           ) : (
-            <Grid container spacing={3}>
-              {categories.map((category, index) => (
+            <Grid container spacing={3} alignItems="stretch">
+              {anatomyHighlights.map((category, index) => (
                 <CategoryCard
                   key={category._id}
                   category={category}
@@ -461,10 +716,20 @@ const HomePage = () => {
               ))}
             </Grid>
           )}
+          <Box sx={{ textAlign: 'center', mt: 5 }}>
+            <Button
+              variant="outlined"
+              component={RouterLink}
+              to="/categories"
+              sx={{ px: 4, py: 1.4, borderRadius: 2, fontWeight: 600 }}
+            >
+              {t('home.anatomyModule.cta')}
+            </Button>
+          </Box>
         </Container>
       </Box>
 
-      {/* Pricing Overview Section */}
+      {/* Learning Journey */}
       <Container maxWidth="lg" sx={{ py: { xs: 6, sm: 8, md: 10 } }}>
         <Typography
           variant="h3"
@@ -472,139 +737,175 @@ const HomePage = () => {
           align="center"
           gutterBottom
           sx={{
-            mb: { xs: 4, md: 6 },
+            mb: { xs: 3, md: 5 },
             fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
             fontWeight: 700,
           }}
         >
-          {i18n.language === 'ru' ? 'Выберите свой тариф' : 'Alegeți planul'}
+          {t('home.steps.title')}
         </Typography>
-        <Grid container spacing={3} justifyContent="center">
-          {[
-            {
-              name: 'Free',
-              price: '0',
-              description: i18n.language === 'ru'
-                ? 'Базовый доступ к материалам'
-                : 'Acces de bază la materiale',
-              features: i18n.language === 'ru'
-                ? ['Превью всех материалов', 'Ознакомительный режим']
-                : ['Previzualizare materiale', 'Mod demonstrativ'],
-              color: theme.palette.mode === 'dark' ? '#757575' : '#9e9e9e',
-              highlighted: false,
-            },
-            {
-              name: 'Basic',
-              price: '20',
-              description: i18n.language === 'ru'
-                ? 'Полный доступ к основам'
-                : 'Acces complet la bază',
-              features: i18n.language === 'ru'
-                ? ['Все уроки по анатомии', '4 протокола массажа', 'Гигиена и стандарты']
-                : ['Toate lecțiile de anatomie', '4 protocoale masaj', 'Igienă și standarde'],
-              color: theme.palette.primary.main,
-              highlighted: true,
-            },
-            {
-              name: 'Premium',
-              price: '50',
-              description: i18n.language === 'ru'
-                ? 'Весь контент платформы'
-                : 'Tot conținutul platformei',
-              features: i18n.language === 'ru'
-                ? ['Всё из Basic', 'Все протоколы массажа', 'Триггерные точки', '3D модели']
-                : ['Tot din Basic', 'Toate protocoalele', 'Puncte trigger', 'Modele 3D'],
-              color: theme.palette.mode === 'dark' ? '#ffb74d' : '#f57c00',
-              highlighted: false,
-            },
-          ].map((plan, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+        <Grid container spacing={3}>
+          {learningSteps.map((step, index) => (
+            <Grid item xs={12} md={4} key={step.title}>
               <Card
                 sx={{
                   height: '100%',
+                  borderRadius: 3,
+                  p: 3,
                   display: 'flex',
                   flexDirection: 'column',
-                  borderRadius: 3,
-                  border: plan.highlighted ? `3px solid ${plan.color}` : '2px solid transparent',
-                  transform: plan.highlighted ? 'scale(1.05)' : 'none',
-                  boxShadow: plan.highlighted
-                    ? theme.palette.mode === 'dark'
-                      ? '0 8px 32px rgba(0,0,0,0.5)'
-                      : '0 8px 32px rgba(0,0,0,0.15)'
-                    : undefined,
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    boxShadow: theme.palette.mode === 'dark'
-                      ? '0 8px 32px rgba(0,0,0,0.5)'
-                      : '0 8px 32px rgba(0,0,0,0.15)',
-                  },
+                  gap: 2,
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? '0 10px 25px rgba(0,0,0,0.4)'
+                    : '0 10px 30px rgba(0,0,0,0.1)',
                 }}
               >
-                <CardContent sx={{ flexGrow: 1, p: 3, textAlign: 'center' }}>
-                  {plan.highlighted && (
-                    <Chip
-                      label={i18n.language === 'ru' ? 'Популярный' : 'Popular'}
-                      color="primary"
-                      size="small"
-                      sx={{ mb: 2 }}
-                    />
-                  )}
-                  <Typography variant="h5" component="h3" gutterBottom fontWeight={700}>
-                    {plan.name}
-                  </Typography>
-                  <Box sx={{ my: 3 }}>
-                    <Typography
-                      variant="h3"
-                      component="span"
-                      fontWeight={700}
-                      sx={{ color: plan.color }}
-                    >
-                      ${plan.price}
-                    </Typography>
-                    {plan.price !== '0' && (
-                      <Typography variant="body2" color="text.secondary">
-                        {i18n.language === 'ru' ? 'единоразово' : 'unică plată'}
-                      </Typography>
-                    )}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Chip
+                    label={`0${index + 1}`}
+                    color="primary"
+                    sx={{ fontWeight: 600, fontSize: '1rem', px: 1 }}
+                  />
+                  <Box sx={{ color: 'primary.main' }}>
+                    {stepIcons[index]}
                   </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                    {plan.description}
-                  </Typography>
-                  <List dense sx={{ textAlign: 'left' }}>
-                    {plan.features.map((feature, idx) => (
-                      <ListItem key={idx} sx={{ px: 0, py: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          <CheckIcon color="primary" fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={feature}
-                          primaryTypographyProps={{ variant: 'body2' }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </CardContent>
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  {step.title}
+                </Typography>
+                <Typography color="text.secondary">
+                  {step.description}
+                </Typography>
               </Card>
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Button
-            component={RouterLink}
-            to="/pricing"
-            variant="outlined"
-            size="large"
+      </Container>
+
+      {/* Audience Section */}
+      <Box
+        sx={{
+          bgcolor: theme.palette.mode === 'dark'
+            ? alpha(theme.palette.primary.dark, 0.25)
+            : alpha(theme.palette.primary.light, 0.15),
+          py: { xs: 6, sm: 8, md: 10 },
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography
+            variant="h3"
+            component="h2"
+            align="center"
+            gutterBottom
             sx={{
-              px: 4,
-              py: 1.5,
-              borderRadius: 2,
-              fontWeight: 600,
+              mb: { xs: 3, md: 5 },
+              fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
+              fontWeight: 700,
             }}
           >
-            {i18n.language === 'ru' ? 'Посмотреть все тарифы' : 'Vezi toate planurile'}
-          </Button>
-        </Box>
+            {t('home.audience.title')}
+          </Typography>
+          <Grid container spacing={3}>
+            {audienceSegments.map((segment, index) => (
+              <Grid item xs={12} md={4} key={segment.title}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    borderRadius: 3,
+                    p: 3,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    boxShadow: theme.palette.mode === 'dark'
+                      ? '0 10px 25px rgba(0,0,0,0.35)'
+                      : '0 10px 25px rgba(0,0,0,0.12)',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      p: 1.5,
+                      borderRadius: '50%',
+                      bgcolor: alpha(theme.palette.primary.main, 0.15),
+                      color: theme.palette.primary.main,
+                    }}
+                  >
+                    {audienceIcons[index]}
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    {segment.title}
+                  </Typography>
+                  <Typography color="text.secondary">
+                    {segment.description}
+                  </Typography>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Testimonials */}
+      <Container maxWidth="lg" sx={{ py: { xs: 6, sm: 8, md: 10 } }}>
+        <Typography
+          variant="h3"
+          component="h2"
+          align="center"
+          gutterBottom
+          sx={{
+            mb: { xs: 3, md: 5 },
+            fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' },
+            fontWeight: 700,
+          }}
+        >
+          {t('home.testimonials.title')}
+        </Typography>
+        <Grid container spacing={3} alignItems="stretch">
+          {testimonials.map((item, index) => (
+            <Grid item xs={12} md={4} key={item.name} sx={{ display: 'flex' }}>
+              <Card
+                sx={{
+                  flex: 1,
+                  borderRadius: 3,
+                  p: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? '0 12px 28px rgba(0,0,0,0.4)'
+                    : '0 12px 28px rgba(0,0,0,0.12)',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Avatar sx={{ bgcolor: avatarColors[index % avatarColors.length] }}>
+                    {getInitials(item.name)}
+                  </Avatar>
+                  <Box>
+                    <Typography fontWeight={700}>{item.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {item.role}
+                    </Typography>
+                  </Box>
+                  <Chip
+                    label={item.progress}
+                    size="small"
+                    color="primary"
+                    sx={{ ml: 'auto', fontWeight: 600 }}
+                  />
+                </Box>
+                <Typography variant="body1" color="text.secondary">
+                  “{item.quote}”
+                </Typography>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </Container>
 
       {/* Telegram Bot Promotion Section */}

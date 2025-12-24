@@ -1,38 +1,170 @@
 {
   "app": {
-    "title": "Anatomia Interactive",
-    "subtitle": "Studiu interactiv al anatomiei"
+    "title": "MateevMassage",
+    "subtitle": "Studiu interactiv al anatomiei",
+    "tagline": ""
   },
   "nav": {
     "home": "Acasă",
-    "categories": "Categorii",
+    "categories": "Anatomie",
     "quizzes": "Teste",
     "admin": "Admin",
-    "language": "Limba"
+    "language": "Limba",
+    "programs": "Modulele cursului",
+    "anatomy": "Modul de anatomie",
+    "telegram": "Telegram",
+    "learning": "Învățare",
+    "practice": "Practică"
   },
   "home": {
-    "welcome": "Bun venit la aplicația interactivă de anatomie",
-    "description": "Studiați anatomia umană cu ajutorul modelelor 3D, atlaselor detaliate, videoclipurilor și testelor",
-    "getStarted": "Începeți să învățați",
-    "features": {
-      "title": "Caracteristicile aplicației",
-      "3d": {
-        "title": "Modele 3D",
-        "description": "Modele 3D interactive ale oaselor, mușchilor și organelor"
-      },
-      "atlas": {
-        "title": "Atlase Anatomice",
-        "description": "Imagini detaliate cu etichete în rusă și română"
-      },
-      "quiz": {
-        "title": "Teste și Chestionare",
-        "description": "Testați-vă cunoștințele cu teste interactive"
-      },
-      "video": {
-        "title": "Materiale Video",
-        "description": "Videoclipuri educaționale și animații pentru o mai bună înțelegere"
+    "hero": {
+      "title": "Platformă completă de formare în masaj",
+      "subtitle": "Învățați masajul de la bază până la lucru cu clienții: practică, anatomie, protocoale și suport pe Telegram – totul într-un singur loc.",
+      "ctaAuthed": "Continuă studiul",
+      "ctaGuest": "Începe cursul",
+      "ctaSecondary": "Vezi modulele",
+      "modules": {
+        "practice": {
+          "title": "Tehnici și practică",
+          "description": "Protocoale pas cu pas și materiale video."
+        },
+        "anatomy": {
+          "title": "Anatomie pentru maseuri",
+          "description": "Modele 3D, atlase și teste tematice."
+        },
+        "homework": {
+          "title": "Teme și control",
+          "description": "Sarcini, încărcare de rapoarte și progres urmărit."
+        },
+        "telegram": {
+          "title": "Suport pe Telegram",
+          "description": "Notificări, bot și chat cu instructorii."
+        }
       }
-    }
+    },
+    "anatomyModule": {
+      "title": "Modulul „Anatomia maseurului”",
+      "description": "Lucrează pe sisteme ale corpului pentru a înțelege ce face fiecare tehnică. Toate capitolele se deschid rapid pentru recapitulare.",
+      "cta": "Vezi toate categoriile"
+    },
+    "steps": {
+      "title": "Cum decurge procesul",
+      "items": [
+        {
+          "title": "Privește și repetă",
+          "description": "Urmărești lecția, studiezi modelele 3D și repeți protocolul pas cu pas."
+        },
+        {
+          "title": "Fă temele",
+          "description": "Fă temele și practică mișcările învățate, urmând protocolul."
+        },
+        {
+          "title": "Primești feedback",
+          "description": "Profesorul comentează tehnica, oferă corecții și deblochează blocul următor."
+        }
+      ]
+    },
+    "audience": {
+      "title": "Pentru cine este cursul",
+      "items": [
+        {
+          "title": "Studenți",
+          "description": "Începători sau elevi de colegiu care vor o bază clară și structurată."
+        },
+        {
+          "title": "Practicieni",
+          "description": "Maseuri activi care vor să-și actualizeze tehnicile și să adauge protocoale noi."
+        },
+        {
+          "title": "Instructori",
+          "description": "Coordonatori și proprietari de școli ce caută un sistem gata cu teme și control."
+        }
+      ]
+    },
+    "subscription": {
+      "title": "Ce primești în abonament",
+      "subtitle": "Compară nivelurile de acces și alege varianta potrivită.",
+      "popular": "Recomandat",
+      "plans": [
+        {
+          "name": "Free",
+          "price": "0",
+          "description": "Acces închis la conținut, doar structură.",
+          "features": [
+            "Vizualizare structură curs",
+            "Fără acces la lecții și materiale",
+            "Fără practică și teste"
+          ]
+        },
+        {
+          "name": "Basic",
+          "price": "20",
+          "description": "Acces 3 luni: baza pentru practică și anatomie.",
+          "highlighted": true,
+          "features": [
+            "4 protocoale de masaj: clasic, cu ventuze, anticelulitic și cu miere",
+            "Secțiuni anatomice esențiale",
+            "Igienă",
+            "Suport în Telegram"
+          ]
+        },
+        {
+          "name": "Premium",
+          "price": "50",
+          "description": "Acces complet la întreaga platformă.",
+          "features": [
+            "Toate protocoalele și exercițiile practice",
+            "Teme, evaluări și certificate",
+            "Suport prin Telegram"
+          ]
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Povești ale studenților",
+      "items": [
+        {
+          "name": "Svetlana",
+          "role": "Maseur la început",
+          "quote": "Am parcurs 12 lecții și fac masaj clasic cu încredere. Totul este clar structurat.",
+          "progress": "12 lecții"
+        },
+        {
+          "name": "Andrei",
+          "role": "Practician",
+          "quote": "Am adăugat protocoale noi și mi-am îmbunătățit tehnica. Feedbackul rapid m-a ajutat mult.",
+          "progress": "4 protocoale"
+        },
+        {
+          "name": "Marina",
+          "role": "Instructor",
+          "quote": "Folosesc platforma pentru grupuri de studenți – e ușor să urmăresc progresul.",
+          "progress": "3 grupe"
+        }
+      ]
+    },
+    "modules": {
+      "title": "Modulele cursului",
+      "items": {
+        "foundations": {
+          "title": "Tehnici de bază ale masajului",
+          "description": "Mișcări fundamentale, poziții corecte și protocoale pentru zone cheie."
+        },
+        "anatomy": {
+          "title": "Anatomia ca instrument",
+          "description": "Categorii pe sisteme, modele 3D, atlase ilustrate și teste."
+        },
+        "practice": {
+          "title": "Practica, teme și examene",
+          "description": "Teme trimise profesorilor, feedback și monitorizarea progresului."
+        },
+        "support": {
+          "title": "Suport și siguranță",
+          "description": "Ghiduri de igienă, checklist-uri pentru lucru cu clienții și ajutor prin Telegram."
+        }
+      }
+    },
+    "getStarted": "Începeți să învățați"
   },
   "categories": {
     "osteology": {
@@ -92,7 +224,7 @@
     "cancel": "Anulați"
   },
   "footer": {
-    "copyright": "© 2024 Anatomia Interactive. Toate drepturile rezervate.",
+    "copyright": "© 2024 MateevMassage. Toate drepturile rezervate.",
     "description": "Platformă educațională pentru studiul anatomiei umane"
   },
   "contentLock": {
