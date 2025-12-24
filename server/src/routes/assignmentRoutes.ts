@@ -61,6 +61,12 @@ router.get('/group/:groupId', getGroupAssignments)
 router.get('/schedule/:scheduleId', getScheduleAssignment)
 
 /**
+ * GET /api/assignments/my/submissions
+ * Получить все мои сданные работы (student)
+ */
+router.get('/my/submissions', getMySubmissions)
+
+/**
  * GET /api/assignments/:id/submissions
  * Получить все сдачи задания (teacher, admin)
  */
@@ -79,12 +85,6 @@ router.get(
  * Сдать домашнее задание (student)
  */
 router.post('/:id/submit', submitAssignment)
-
-/**
- * GET /api/assignments/my/submissions
- * Получить все мои сданные работы (student)
- */
-router.get('/my/submissions', getMySubmissions)
 
 /**
  * PUT /api/assignments/submissions/:submissionId

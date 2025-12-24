@@ -11,6 +11,9 @@ import {
   Container,
   Button,
   MenuItem,
+  Divider,
+  ListItemIcon,
+  ListItemText,
   Select,
   SelectChangeEvent,
 } from '@mui/material'
@@ -40,6 +43,17 @@ const Navbar = () => {
   const navigate = useNavigate()
   const { user, isAuthenticated, logout } = useAuth()
   const { mode, toggleTheme } = useThemeMode()
+  const isRu = i18n.language === 'ru'
+  const mobileLabels = {
+    settings: isRu ? 'Настройки' : 'Setari',
+    search: isRu ? 'Поиск' : 'Cautare',
+    theme: mode === 'light'
+      ? (isRu ? 'Темная тема' : 'Tema intunecata')
+      : (isRu ? 'Светлая тема' : 'Tema luminoasa'),
+    language: isRu ? 'Язык' : 'Limba',
+    login: isRu ? 'Вход' : 'Autentificare',
+    register: isRu ? 'Регистрация' : 'Inregistrare',
+  }
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
   const [anchorElLearning, setAnchorElLearning] = useState<null | HTMLElement>(null)
@@ -126,8 +140,25 @@ const Navbar = () => {
         >
           <SpaIcon sx={{ color: '#fff', fontSize: 22 }} />
         </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <Typography sx={{ fontWeight: 700, lineHeight: 1.1, fontSize: compact ? '1rem' : '1.05rem' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            minWidth: 0,
+          }}
+        >
+          <Typography
+            noWrap
+            sx={{
+              fontWeight: 700,
+              lineHeight: 1.1,
+              fontSize: compact ? '1rem' : '1.05rem',
+              maxWidth: compact ? 140 : 'none',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {t('app.title')}
           </Typography>
           {!compact && tagline.trim() && (
@@ -224,13 +255,16 @@ const Navbar = () => {
               }}
               MenuListProps={{
                 sx: { py: 0.5 },
+                dense: true,
               }}
               PaperProps={{
                 sx: {
                   mt: 1,
                   borderRadius: 2,
                   minWidth: 240,
-                  overflow: 'hidden',
+                  maxWidth: 'calc(100vw - 32px)',
+                  maxHeight: 'calc(100vh - 140px)',
+                  overflowY: 'auto',
                 },
               }}
             >
@@ -287,6 +321,75 @@ const Navbar = () => {
                   </MenuItem>
                 )
               })}
+              <Divider sx={{ my: 0.5 }} />
+              <MenuItem disabled>
+                <Typography textAlign="center" sx={{ fontWeight: 600, fontSize: '0.85rem', color: 'text.secondary' }}>
+                  {mobileLabels.settings}
+                </Typography>
+              </MenuItem>
+              <MenuItem
+                component={RouterLink}
+                to="/search"
+                onClick={handleCloseNavMenu}
+              >
+                <ListItemIcon>
+                  <SearchIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary={mobileLabels.search} />
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  toggleTheme()
+                  handleCloseNavMenu()
+                }}
+              >
+                <ListItemIcon>
+                  {mode === 'light' ? <Brightness4Icon fontSize="small" /> : <Brightness7Icon fontSize="small" />}
+                </ListItemIcon>
+                <ListItemText primary={mobileLabels.theme} />
+              </MenuItem>
+              <MenuItem disabled>
+                <Typography textAlign="center" sx={{ fontWeight: 600, fontSize: '0.85rem', color: 'text.secondary' }}>
+                  {mobileLabels.language}
+                </Typography>
+              </MenuItem>
+              <MenuItem
+                selected={i18n.language === 'ru'}
+                onClick={() => {
+                  i18n.changeLanguage('ru')
+                  handleCloseNavMenu()
+                }}
+              >
+                <ListItemText primary="RU" />
+              </MenuItem>
+              <MenuItem
+                selected={i18n.language === 'ro'}
+                onClick={() => {
+                  i18n.changeLanguage('ro')
+                  handleCloseNavMenu()
+                }}
+              >
+                <ListItemText primary="RO" />
+              </MenuItem>
+              {!isAuthenticated && (
+                <>
+                  <Divider sx={{ my: 0.5 }} />
+                  <MenuItem
+                    component={RouterLink}
+                    to="/login"
+                    onClick={handleCloseNavMenu}
+                  >
+                    <ListItemText primary={mobileLabels.login} />
+                  </MenuItem>
+                  <MenuItem
+                    component={RouterLink}
+                    to="/register"
+                    onClick={handleCloseNavMenu}
+                  >
+                    <ListItemText primary={mobileLabels.register} />
+                  </MenuItem>
+                </>
+              )}
             </Menu>
           </Box>
 
@@ -369,6 +472,7 @@ const Navbar = () => {
               to="/search"
               sx={{
                 color: 'white',
+                display: { xs: 'none', md: 'inline-flex' },
                 transition: 'all 0.2s ease',
                 '&:hover': {
                   backgroundColor: 'rgba(255, 255, 255, 0.12)',
@@ -388,6 +492,7 @@ const Navbar = () => {
               onClick={toggleTheme}
               sx={{
                 color: 'white',
+                display: { xs: 'none', md: 'inline-flex' },
                 transition: 'all 0.2s ease',
                 '&:hover': {
                   backgroundColor: 'rgba(255, 255, 255, 0.12)',
@@ -410,6 +515,7 @@ const Navbar = () => {
               size="small"
               sx={{
                 color: 'white',
+                display: { xs: 'none', md: 'inline-flex' },
                 borderRadius: 1.5,
                 transition: 'all 0.2s ease',
                 '.MuiOutlinedInput-notchedOutline': {
@@ -581,6 +687,7 @@ const Navbar = () => {
                   to="/login"
                   sx={{
                     color: 'white',
+                    display: { xs: 'none', md: 'inline-flex' },
                     fontSize: '0.9rem',
                     px: 2,
                     py: 0.75,
@@ -602,6 +709,7 @@ const Navbar = () => {
                   sx={{
                     color: 'white',
                     borderColor: 'rgba(255, 255, 255, 0.7)',
+                    display: { xs: 'none', md: 'inline-flex' },
                     fontSize: '0.9rem',
                     px: 2.5,
                     py: 0.75,
