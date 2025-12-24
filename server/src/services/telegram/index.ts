@@ -117,6 +117,17 @@ const resolveWebhookUrl = () => {
   return `${domain.replace(/\/$/, '')}${TELEGRAM_WEBHOOK_PATH}`
 }
 
+const safeStopBot = (signal: string) => {
+  try {
+    bot.stop(signal)
+  } catch (error: any) {
+    if (error?.message === 'Bot is not running!') {
+      return
+    }
+    console.warn('[Telegram Bot] Failed to stop gracefully:', error?.message || error)
+  }
+}
+
 // Initialize
 export async function initTelegramBot() {
   try {
@@ -153,8 +164,8 @@ export async function initTelegramBot() {
     initDailyScheduler()
 
     // Graceful stop
-    process.once('SIGINT', () => bot.stop('SIGINT'))
-    process.once('SIGTERM', () => bot.stop('SIGTERM'))
+    process.once('SIGINT', () => safeStopBot('SIGINT'))
+    process.once('SIGTERM', () => safeStopBot('SIGTERM'))
   } catch (error: any) {
     console.error('[Telegram Bot] Failed to start Telegram bot:', error.message)
     console.error('[Telegram Bot] Full error:', error)
