@@ -1,6 +1,8 @@
 export type TelegramLang = 'ru' | 'ro'
 
-type MessageDict = Record<string, string | MessageDict>
+interface MessageDict {
+  [key: string]: string | MessageDict
+}
 
 const messages: Record<TelegramLang, MessageDict> = {
   ru: {

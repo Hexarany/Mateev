@@ -114,7 +114,7 @@ const resolveWebhookUrl = () => {
     process.env.RENDER_EXTERNAL_URL ||
     process.env.PUBLIC_URL
   if (!domain) return null
-  return `${domain.replace(/\\/$/, '')}${TELEGRAM_WEBHOOK_PATH}`
+  return `${domain.replace(/\/$/, '')}${TELEGRAM_WEBHOOK_PATH}`
 }
 
 // Initialize
