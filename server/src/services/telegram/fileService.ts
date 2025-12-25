@@ -54,6 +54,27 @@ const resolveMediaUrl = (url: string) => {
   return `${baseUrl}${path}`
 }
 
+const getFilenameFromUrl = (url: string, fallback = 'file') => {
+  try {
+    const parsed = new URL(url)
+    const name = parsed.pathname.split('/').filter(Boolean).pop()
+    if (name) return decodeURIComponent(name)
+  } catch {
+    const name = url.split('/').filter(Boolean).pop()
+    if (name) return name
+  }
+  return fallback
+}
+
+const downloadFileBuffer = async (url: string) => {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Failed to download file: ${response.status} ${response.statusText}`)
+  }
+  const arrayBuffer = await response.arrayBuffer()
+  return Buffer.from(arrayBuffer)
+}
+
 const buildCaption = (
   lang: 'ru' | 'ro',
   title?: string,
@@ -84,10 +105,12 @@ export class TelegramFileService {
     userId: string,
     fileUrl: string,
     caption?: string,
-    mimetype?: string
+    mimetype?: string,
+    filename?: string
   ): Promise<{ success: boolean; error?: string; messageId?: number }> {
     try {
       const resolvedUrl = resolveMediaUrl(fileUrl)
+      const resolvedFilename = filename || getFilenameFromUrl(resolvedUrl, 'document')
       const user = await User.findById(userId)
 
       if (!user?.telegramId) {
@@ -107,7 +130,11 @@ export class TelegramFileService {
           caption,
         })
       } else {
-        result = await bot.telegram.sendDocument(user.telegramId, resolvedUrl, {
+        const fileBuffer = await downloadFileBuffer(resolvedUrl)
+        result = await bot.telegram.sendDocument(user.telegramId, {
+          source: fileBuffer,
+          filename: resolvedFilename,
+        }, {
           caption,
         })
       }
@@ -169,7 +196,8 @@ export class TelegramFileService {
           student._id.toString(),
           media.url,
           caption,
-          media.mimetype
+          media.mimetype,
+          media.originalName
         )
 
         const deliveryRecord = {
@@ -231,7 +259,8 @@ export class TelegramFileService {
             delivery.student.toString(),
             media.url,
             caption,
-            media.mimetype
+            media.mimetype,
+            media.originalName
           )
 
           groupFile.deliveryStatus[i].delivered = result.success
@@ -272,6 +301,7 @@ export class TelegramFileService {
 
       const media = groupFile.media as any
       const resolvedUrl = resolveMediaUrl(media.url)
+      const resolvedFilename = media.originalName || getFilenameFromUrl(resolvedUrl, 'document')
       const caption = buildCaption('ru', groupFile.title, groupFile.description, media)
 
       let result
@@ -284,7 +314,11 @@ export class TelegramFileService {
           caption,
         })
       } else {
-        result = await bot.telegram.sendDocument(chatId, resolvedUrl, {
+        const fileBuffer = await downloadFileBuffer(resolvedUrl)
+        result = await bot.telegram.sendDocument(chatId, {
+          source: fileBuffer,
+          filename: resolvedFilename,
+        }, {
           caption,
         })
       }
