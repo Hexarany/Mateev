@@ -192,7 +192,7 @@ const TelegramSettings = () => {
                   <Typography variant="body2" sx={{ mt: 2 }}>
                     1. Откройте Telegram
                     <br />
-                    2. Найдите @{botUsername || 'AnatomiaBot'}
+                    2. Найдите @{botUsername || 'MateevMassageBot'}
                     <br />
                     3. Отправьте команду: /start {linkCode}
                     <br />

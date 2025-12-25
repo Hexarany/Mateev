@@ -1,6 +1,7 @@
 import { Container, Box, Typography, Button, Card, CardContent, Grid } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import TelegramIcon from '@mui/icons-material/Telegram'
+import { TELEGRAM_BOT_LINK } from '@/config/telegram'
 import ChatIcon from '@mui/icons-material/Chat'
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'
 import GroupIcon from '@mui/icons-material/Group'
@@ -48,7 +49,7 @@ const ChatPage = () => {
         <Button
           variant="contained"
           size="large"
-          href="https://t.me/AnatomiaAppBot"
+          href={TELEGRAM_BOT_LINK}
           target="_blank"
           rel="noopener noreferrer"
           startIcon={<TelegramIcon />}

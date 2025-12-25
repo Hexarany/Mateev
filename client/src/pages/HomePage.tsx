@@ -43,6 +43,7 @@ import SelfImprovementIcon from '@mui/icons-material/SelfImprovement'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import { getCategories } from '@/services/api'
 import type { Category } from '@/types'
+import { TELEGRAM_BOT_LINK, TELEGRAM_BOT_QR, TELEGRAM_BOT_USERNAME } from '@/config/telegram'
 
 // Memoized CategoryCard component for better performance
 interface CategoryCardProps {
@@ -1001,7 +1002,7 @@ const HomePage = () => {
                     }}
                   >
                     <img
-                      src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://t.me/AnatomiaAppBot"
+                      src={TELEGRAM_BOT_QR}
                       alt="QR Code for Telegram Bot"
                       style={{ display: 'block', width: 180, height: 180 }}
                     />
@@ -1015,7 +1016,7 @@ const HomePage = () => {
                   <Button
                     variant="contained"
                     size="large"
-                    href="https://t.me/AnatomiaAppBot"
+                    href={TELEGRAM_BOT_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
                     startIcon={<TelegramIcon />}
@@ -1033,7 +1034,7 @@ const HomePage = () => {
                     {i18n.language === 'ru' ? 'Открыть в Telegram' : 'Deschide în Telegram'}
                   </Button>
                   <Typography variant="caption" sx={{ display: 'block', mt: 2, opacity: 0.8 }}>
-                    @AnatomiaAppBot
+                    @{TELEGRAM_BOT_USERNAME}
                   </Typography>
                 </Box>
               </Grid>

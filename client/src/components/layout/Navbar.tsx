@@ -27,6 +27,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Language } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { useThemeMode } from '@/contexts/ThemeContext'
+import { TELEGRAM_BOT_LINK } from '@/config/telegram'
 // import NotificationBell from '@/components/NotificationBell' // Temporarily disabled
 
 type NavItem = {
@@ -35,8 +36,6 @@ type NavItem = {
   href?: string
   external?: boolean
 }
-
-const TELEGRAM_LINK = 'https://t.me/AnatomiaAppBot'
 
 const Navbar = () => {
   const { t, i18n } = useTranslation()
@@ -98,7 +97,7 @@ const Navbar = () => {
     { name: t('nav.practice'), to: '/assignments' },
     { name: t('nav.anatomy'), to: '/categories' },
     { name: t('nav.quizzes'), to: '/quizzes' },
-    { name: t('nav.telegram'), href: TELEGRAM_LINK, external: true },
+    { name: t('nav.telegram'), href: TELEGRAM_BOT_LINK, external: true },
   ]
 
   const learningResources: NavItem[] = [
@@ -107,7 +106,7 @@ const Navbar = () => {
     { name: i18n.language === 'ru' ? '3D модели и атласы' : 'Modele 3D și atlase', to: '/anatomy-models-3d' },
     { name: i18n.language === 'ru' ? 'Гигиена и безопасность' : 'Igienă și siguranță', to: '/hygiene-guidelines' },
     { name: i18n.language === 'ru' ? 'Библиотека ресурсов' : 'Bibliotecă', to: '/resources' },
-    { name: 'Telegram', href: TELEGRAM_LINK, external: true },
+    { name: 'Telegram', href: TELEGRAM_BOT_LINK, external: true },
   ]
 
   const BrandLogo = ({ compact = false }: { compact?: boolean }) => {
