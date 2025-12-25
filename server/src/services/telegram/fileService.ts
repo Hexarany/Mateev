@@ -54,17 +54,25 @@ const resolveMediaUrl = (url: string) => {
   return `${baseUrl}${path}`
 }
 
-const buildCaption = (lang: 'ru' | 'ro', title?: string, description?: string, media?: any) => {
+const buildCaption = (
+  lang: 'ru' | 'ro',
+  title?: string,
+  description?: string,
+  media?: any,
+  format: 'plain' | 'markdown' = 'plain'
+) => {
   const lines: string[] = []
+  const escape = format === 'markdown' ? escapeMarkdown : (value: string) => value
 
   if (title) {
-    lines.push(`*${escapeMarkdown(title)}*`)
+    const safeTitle = escape(title)
+    lines.push(format === 'markdown' ? `*${safeTitle}*` : safeTitle)
   }
   if (description) {
-    lines.push(escapeMarkdown(description))
+    lines.push(escape(description))
   }
   if (media) {
-    lines.push(`${t(lang, 'labels.file')}: ${escapeMarkdown(media.originalName)}`)
+    lines.push(`${t(lang, 'labels.file')}: ${escape(media.originalName)}`)
     lines.push(`${t(lang, 'labels.size')}: ${(media.size / 1024 / 1024).toFixed(2)} MB`)
   }
 
@@ -93,17 +101,14 @@ export class TelegramFileService {
       if (mimetype?.startsWith('image/')) {
         result = await bot.telegram.sendPhoto(user.telegramId, resolvedUrl, {
           caption,
-          parse_mode: 'Markdown',
         })
       } else if (mimetype?.startsWith('video/')) {
         result = await bot.telegram.sendVideo(user.telegramId, resolvedUrl, {
           caption,
-          parse_mode: 'Markdown',
         })
       } else {
         result = await bot.telegram.sendDocument(user.telegramId, resolvedUrl, {
           caption,
-          parse_mode: 'Markdown',
         })
       }
 
@@ -273,17 +278,14 @@ export class TelegramFileService {
       if (media.mimetype?.startsWith('image/')) {
         result = await bot.telegram.sendPhoto(chatId, resolvedUrl, {
           caption,
-          parse_mode: 'Markdown',
         })
       } else if (media.mimetype?.startsWith('video/')) {
         result = await bot.telegram.sendVideo(chatId, resolvedUrl, {
           caption,
-          parse_mode: 'Markdown',
         })
       } else {
         result = await bot.telegram.sendDocument(chatId, resolvedUrl, {
           caption,
-          parse_mode: 'Markdown',
         })
       }
 
