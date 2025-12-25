@@ -179,38 +179,51 @@ export const deleteMedia = async (req: Request, res: Response) => {
     }
 
     // Определяем тип ресурса для удаления
+    const mimetype = media.mimetype || ''
+    const originalName = media.originalName || ''
+    const originalNameLower = originalName.toLowerCase()
+    const cloudinaryId = media.cloudinaryPublicId || media.filename || ''
+    const isRawId = cloudinaryId.includes('/raws/')
+    const isVideoId = cloudinaryId.includes('/videos/')
+
     let resourceType: 'image' | 'video' | 'raw' = 'image'
-    if (media.mimetype.startsWith('video/')) {
+    if (isVideoId || mimetype.startsWith('video/')) {
       resourceType = 'video'
     } else if (
-      media.mimetype === 'model/gltf-binary' ||
-      media.mimetype === 'application/pdf' ||
-      media.mimetype.includes('document') ||
-      media.mimetype.includes('spreadsheet') ||
-      media.mimetype.includes('presentation') ||
-      media.mimetype === 'text/plain' ||
-      media.mimetype.includes('zip') ||
-      media.mimetype.includes('rar') ||
-      media.originalName.endsWith('.glb') ||
-      media.originalName.endsWith('.pdf') ||
-      media.originalName.endsWith('.doc') ||
-      media.originalName.endsWith('.docx') ||
-      media.originalName.endsWith('.xls') ||
-      media.originalName.endsWith('.xlsx') ||
-      media.originalName.endsWith('.ppt') ||
-      media.originalName.endsWith('.pptx') ||
-      media.originalName.endsWith('.txt') ||
-      media.originalName.endsWith('.zip') ||
-      media.originalName.endsWith('.rar')
+      isRawId ||
+      mimetype === 'application/octet-stream' ||
+      mimetype === 'model/gltf-binary' ||
+      mimetype === 'application/pdf' ||
+      mimetype.includes('document') ||
+      mimetype.includes('spreadsheet') ||
+      mimetype.includes('presentation') ||
+      mimetype === 'text/plain' ||
+      mimetype.includes('zip') ||
+      mimetype.includes('rar') ||
+      originalNameLower.endsWith('.glb') ||
+      originalNameLower.endsWith('.pdf') ||
+      originalNameLower.endsWith('.doc') ||
+      originalNameLower.endsWith('.docx') ||
+      originalNameLower.endsWith('.xls') ||
+      originalNameLower.endsWith('.xlsx') ||
+      originalNameLower.endsWith('.ppt') ||
+      originalNameLower.endsWith('.pptx') ||
+      originalNameLower.endsWith('.txt') ||
+      originalNameLower.endsWith('.zip') ||
+      originalNameLower.endsWith('.rar')
     ) {
       resourceType = 'raw'
     }
 
-    // Удаляем из Cloudinary
-    if (media.cloudinaryPublicId) {
-      await cloudinary.uploader.destroy(media.cloudinaryPublicId, {
-        resource_type: resourceType
-      })
+    // Delete from Cloudinary
+    if (cloudinaryId) {
+      try {
+        await cloudinary.uploader.destroy(cloudinaryId, {
+          resource_type: resourceType
+        })
+      } catch (cloudinaryError) {
+        console.warn('Cloudinary delete failed:', cloudinaryError)
+      }
     }
 
     // Удаляем запись из БД
