@@ -228,13 +228,24 @@ export class TelegramFileService {
           caption,
         })
       } else {
-        const fileBuffer = await downloadFileBuffer(resolvedUrl, signedUrls)
-        result = await bot.telegram.sendDocument(user.telegramId, {
-          source: fileBuffer,
-          filename: resolvedFilename,
-        }, {
-          caption,
-        })
+        // Try sending document by URL first (Telegram will download it)
+        try {
+          console.log('[Telegram] Trying to send document by URL to user:', resolvedUrl)
+          result = await bot.telegram.sendDocument(user.telegramId, resolvedUrl, {
+            caption,
+          })
+          console.log('[Telegram] Document sent successfully by URL to user')
+        } catch (urlError: any) {
+          console.log('[Telegram] Sending by URL failed, trying buffer download:', urlError.message)
+          // Fallback to downloading and sending as buffer
+          const fileBuffer = await downloadFileBuffer(resolvedUrl, signedUrls)
+          result = await bot.telegram.sendDocument(user.telegramId, {
+            source: fileBuffer,
+            filename: resolvedFilename,
+          }, {
+            caption,
+          })
+        }
       }
 
       return {
@@ -420,13 +431,24 @@ export class TelegramFileService {
           caption,
         })
       } else {
-        const fileBuffer = await downloadFileBuffer(resolvedUrl, signedUrls)
-        result = await bot.telegram.sendDocument(chatId, {
-          source: fileBuffer,
-          filename: resolvedFilename,
-        }, {
-          caption,
-        })
+        // Try sending document by URL first (Telegram will download it)
+        try {
+          console.log('[Telegram] Trying to send document by URL:', resolvedUrl)
+          result = await bot.telegram.sendDocument(chatId, resolvedUrl, {
+            caption,
+          })
+          console.log('[Telegram] Document sent successfully by URL')
+        } catch (urlError: any) {
+          console.log('[Telegram] Sending by URL failed, trying buffer download:', urlError.message)
+          // Fallback to downloading and sending as buffer
+          const fileBuffer = await downloadFileBuffer(resolvedUrl, signedUrls)
+          result = await bot.telegram.sendDocument(chatId, {
+            source: fileBuffer,
+            filename: resolvedFilename,
+          }, {
+            caption,
+          })
+        }
       }
 
       groupFile.sentToTelegramGroup = true
