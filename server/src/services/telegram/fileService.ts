@@ -3,6 +3,7 @@ import User from '../../models/User'
 import Group from '../../models/Group'
 import GroupFile from '../../models/GroupFile'
 import Media from '../../models/Media'
+import cloudinary from '../../config/cloudinary'
 import { escapeMarkdown, resolveTelegramLang, t } from './i18n'
 
 const getUserLang = (user?: any) => resolveTelegramLang(user?.telegramLanguage)
@@ -66,13 +67,40 @@ const getFilenameFromUrl = (url: string, fallback = 'file') => {
   return fallback
 }
 
-const downloadFileBuffer = async (url: string) => {
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`Failed to download file: ${response.status} ${response.statusText}`)
+const getCloudinaryResourceType = (mimetype?: string) => {
+  if (mimetype?.startsWith('image/')) return 'image'
+  if (mimetype?.startsWith('video/')) return 'video'
+  return 'raw'
+}
+
+const getCloudinarySignedUrl = (publicId?: string, mimetype?: string) => {
+  if (!publicId) return null
+  return cloudinary.url(publicId, {
+    resource_type: getCloudinaryResourceType(mimetype),
+    type: 'upload',
+    secure: true,
+    sign_url: true,
+  })
+}
+
+const downloadFileBuffer = async (url: string, fallbackUrl?: string) => {
+  const tryFetch = async (target: string) => {
+    const response = await fetch(target)
+    if (!response.ok) {
+      throw new Error(`Failed to download file: ${response.status} ${response.statusText}`)
+    }
+    const arrayBuffer = await response.arrayBuffer()
+    return Buffer.from(arrayBuffer)
   }
-  const arrayBuffer = await response.arrayBuffer()
-  return Buffer.from(arrayBuffer)
+
+  try {
+    return await tryFetch(url)
+  } catch (error) {
+    if (fallbackUrl && fallbackUrl !== url) {
+      return await tryFetch(fallbackUrl)
+    }
+    throw error
+  }
 }
 
 const buildCaption = (
@@ -106,11 +134,13 @@ export class TelegramFileService {
     fileUrl: string,
     caption?: string,
     mimetype?: string,
-    filename?: string
+    filename?: string,
+    cloudinaryPublicId?: string
   ): Promise<{ success: boolean; error?: string; messageId?: number }> {
     try {
       const resolvedUrl = resolveMediaUrl(fileUrl)
       const resolvedFilename = filename || getFilenameFromUrl(resolvedUrl, 'document')
+      const signedUrl = getCloudinarySignedUrl(cloudinaryPublicId, mimetype) || undefined
       const user = await User.findById(userId)
 
       if (!user?.telegramId) {
@@ -130,7 +160,7 @@ export class TelegramFileService {
           caption,
         })
       } else {
-        const fileBuffer = await downloadFileBuffer(resolvedUrl)
+        const fileBuffer = await downloadFileBuffer(resolvedUrl, signedUrl)
         result = await bot.telegram.sendDocument(user.telegramId, {
           source: fileBuffer,
           filename: resolvedFilename,
@@ -197,7 +227,8 @@ export class TelegramFileService {
           media.url,
           caption,
           media.mimetype,
-          media.originalName
+          media.originalName,
+          media.cloudinaryPublicId
         )
 
         const deliveryRecord = {
@@ -260,7 +291,8 @@ export class TelegramFileService {
             media.url,
             caption,
             media.mimetype,
-            media.originalName
+            media.originalName,
+            media.cloudinaryPublicId
           )
 
           groupFile.deliveryStatus[i].delivered = result.success
@@ -302,6 +334,7 @@ export class TelegramFileService {
       const media = groupFile.media as any
       const resolvedUrl = resolveMediaUrl(media.url)
       const resolvedFilename = media.originalName || getFilenameFromUrl(resolvedUrl, 'document')
+      const signedUrl = getCloudinarySignedUrl(media.cloudinaryPublicId, media.mimetype) || undefined
       const caption = buildCaption('ru', groupFile.title, groupFile.description, media)
 
       let result
@@ -314,7 +347,7 @@ export class TelegramFileService {
           caption,
         })
       } else {
-        const fileBuffer = await downloadFileBuffer(resolvedUrl)
+        const fileBuffer = await downloadFileBuffer(resolvedUrl, signedUrl)
         result = await bot.telegram.sendDocument(chatId, {
           source: fileBuffer,
           filename: resolvedFilename,
