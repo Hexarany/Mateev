@@ -67,24 +67,72 @@ const getFilenameFromUrl = (url: string, fallback = 'file') => {
   return fallback
 }
 
+const getFileExtension = (value?: string) => {
+  if (!value) return null
+  const cleaned = value.split('?')[0].split('#')[0]
+  const lastDot = cleaned.lastIndexOf('.')
+  if (lastDot === -1 || lastDot === cleaned.length - 1) return null
+  return cleaned.slice(lastDot + 1)
+}
+
+const getCloudinaryPublicIdFromUrl = (url?: string) => {
+  if (!url) return null
+  try {
+    const parsed = new URL(url)
+    const parts = parsed.pathname.split('/').filter(Boolean)
+    if (parts.length < 4) return null
+    const resourceType = parts[1]
+    if (!['image', 'video', 'raw'].includes(resourceType)) return null
+    const typeIndex = 2
+    let start = typeIndex + 1
+    if (parts[start] && parts[start].startsWith('v') && /^\d+$/.test(parts[start].slice(1))) {
+      start += 1
+    }
+    const publicId = parts.slice(start).join('/')
+    return publicId || null
+  } catch {
+    return null
+  }
+}
+
 const getCloudinaryResourceType = (mimetype?: string) => {
   if (mimetype?.startsWith('image/')) return 'image'
   if (mimetype?.startsWith('video/')) return 'video'
   return 'raw'
 }
 
-const getCloudinarySignedUrls = (publicId?: string, mimetype?: string) => {
-  if (!publicId) return []
+const getCloudinarySignedUrls = (
+  publicId?: string,
+  sourceUrl?: string,
+  filename?: string,
+  mimetype?: string
+) => {
+  const resolvedPublicId = publicId || getCloudinaryPublicIdFromUrl(sourceUrl)
+  if (!resolvedPublicId) return []
   const resourceType = getCloudinaryResourceType(mimetype)
   const deliveryTypes = ['upload', 'authenticated', 'private'] as const
-  return deliveryTypes.map((type) =>
-    cloudinary.url(publicId, {
+  const urls = deliveryTypes.map((type) =>
+    cloudinary.url(resolvedPublicId, {
       resource_type: resourceType,
       type,
       secure: true,
       sign_url: true,
     })
   )
+  const extension =
+    getFileExtension(filename) || getFileExtension(resolvedPublicId) || getFileExtension(sourceUrl)
+  const utils: any = (cloudinary as any).utils
+  if (extension && typeof utils?.private_download_url === 'function') {
+    const baseId = resolvedPublicId.replace(new RegExp(`\\.${extension}$`), '')
+    urls.push(
+      utils.private_download_url(baseId, extension, {
+        resource_type: resourceType,
+        type: 'upload',
+        secure: true,
+      })
+    )
+  }
+  return urls.filter((candidate, index, array) => array.indexOf(candidate) === index)
 }
 
 const downloadFileBuffer = async (url: string, fallbackUrls: string[] = []) => {
@@ -150,7 +198,12 @@ export class TelegramFileService {
     try {
       const resolvedUrl = resolveMediaUrl(fileUrl)
       const resolvedFilename = filename || getFilenameFromUrl(resolvedUrl, 'document')
-      const signedUrls = getCloudinarySignedUrls(cloudinaryPublicId, mimetype)
+      const signedUrls = getCloudinarySignedUrls(
+        cloudinaryPublicId,
+        resolvedUrl,
+        resolvedFilename,
+        mimetype
+      )
       const user = await User.findById(userId)
 
       if (!user?.telegramId) {
@@ -344,7 +397,12 @@ export class TelegramFileService {
       const media = groupFile.media as any
       const resolvedUrl = resolveMediaUrl(media.url)
       const resolvedFilename = media.originalName || getFilenameFromUrl(resolvedUrl, 'document')
-      const signedUrls = getCloudinarySignedUrls(media.cloudinaryPublicId, media.mimetype)
+      const signedUrls = getCloudinarySignedUrls(
+        media.cloudinaryPublicId,
+        resolvedUrl,
+        resolvedFilename,
+        media.mimetype
+      )
       const caption = buildCaption('ru', groupFile.title, groupFile.description, media)
 
       let result
