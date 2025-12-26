@@ -12,7 +12,7 @@ const handleMulterError = (err: any, req: express.Request, res: express.Response
     if (err.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
         error: {
-          message: 'Размер файла превышает лимит 10 МБ. Пожалуйста, выберите файл меньшего размера.'
+          message: 'Размер файла превышает лимит 500 МБ. Пожалуйста, выберите файл меньшего размера.'
         }
       })
     }

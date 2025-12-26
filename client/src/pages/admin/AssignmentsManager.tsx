@@ -671,7 +671,7 @@ const AssignmentsManager = () => {
                   <input type="file" hidden onChange={handleFileUpload} />
                 </Button>
                 <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, display: 'block' }}>
-                  Максимальный размер файла: 10 МБ
+                  Максимальный размер файла: 500 МБ (Telegram: до 50 МБ)
                 </Typography>
                 {assignmentForm.attachments.length > 0 && (
                   <Box sx={{ mt: 1 }}>

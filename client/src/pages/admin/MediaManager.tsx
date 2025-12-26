@@ -67,11 +67,13 @@ const MediaManager = () => {
     const file = event.target.files?.[0]
     if (!file || !token) return
 
-    // Проверка размера файла (10 МБ лимит)
-    const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
+    // Проверка размера файла (500 МБ лимит, но предупреждение для файлов >50 МБ)
+    const MAX_FILE_SIZE = 500 * 1024 * 1024 // 500 MB
+    const TELEGRAM_LIMIT = 50 * 1024 * 1024 // 50 MB - лимит Telegram
+
     if (file.size > MAX_FILE_SIZE) {
       showSnackbar(
-        `Файл слишком большой! Размер: ${(file.size / (1024 * 1024)).toFixed(2)} МБ. Максимум: 10 МБ.`,
+        `Файл слишком большой! Размер: ${(file.size / (1024 * 1024)).toFixed(2)} МБ. Максимум: 500 МБ.`,
         'error'
       )
       // Сброс поля ввода файла
@@ -79,6 +81,14 @@ const MediaManager = () => {
         fileInputRef.current.value = ''
       }
       return
+    }
+
+    // Предупреждение для файлов больше лимита Telegram
+    if (file.size > TELEGRAM_LIMIT) {
+      showSnackbar(
+        `Внимание: файл ${(file.size / (1024 * 1024)).toFixed(2)} МБ превышает лимит Telegram (50 МБ). Файл будет доступен на сайте, но не сможет быть отправлен через бота.`,
+        'warning'
+      )
     }
 
     setIsUploading(true)
@@ -168,7 +178,7 @@ const MediaManager = () => {
           {isUploading ? 'Загрузка...' : 'Выбрать файл для загрузки'}
         </Button>
         <Typography variant="caption" sx={{ mt: 1 }}>
-            Макс. 10MB. Поддерживаются изображения, видео, 3D-модели (.glb), документы (PDF, Word, Excel, PowerPoint), архивы
+            Макс. 500MB для загрузки на сервер (Telegram: до 50MB). Поддерживаются изображения, видео, 3D-модели (.glb), документы (PDF, Word, Excel, PowerPoint), архивы
         </Typography>
       </Paper>
 
