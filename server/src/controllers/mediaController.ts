@@ -10,7 +10,7 @@ const storage = multer.memoryStorage()
 
 export const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB лимит (соответствует бесплатному плану Cloudinary)
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB лимит (максимум для Telegram Bot API)
   fileFilter: (req, file, cb) => {
     const allowedMimes = [
       'image/jpeg',
@@ -126,7 +126,7 @@ export const uploadMedia = async (req: Request, res: Response) => {
 
     // Проверяем, является ли ошибка ограничением размера файла
     if (error.message && error.message.includes('File size too large')) {
-      const maxSizeMB = 10
+      const maxSizeMB = 50
       return res.status(400).json({
         error: {
           message: `Размер файла превышает лимит ${maxSizeMB} МБ. Пожалуйста, выберите файл меньшего размера.`
