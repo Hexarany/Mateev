@@ -265,10 +265,12 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 border: '1px solid',
                 borderColor: 'divider',
                 borderRadius: 2,
-                overflow: 'hidden',
+                overflowX: 'auto',
+                overflowY: 'hidden',
+                WebkitOverflowScrolling: 'touch',
               }}
             >
-              <Table>{children}</Table>
+              <Table sx={{ minWidth: 600 }}>{children}</Table>
             </TableContainer>
           ),
 
