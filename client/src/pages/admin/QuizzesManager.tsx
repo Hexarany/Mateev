@@ -296,12 +296,29 @@ const QuizzesManager = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          maxWidth: '100%',
+          '& .MuiTable-root': {
+            minWidth: { xs: 500, sm: 600, md: 'auto' },
+          },
+          '& .MuiTableCell-root': {
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            padding: { xs: '6px 8px', sm: '12px 16px' },
+          },
+          '& .MuiTableCell-head': {
+            fontWeight: 600,
+            backgroundColor: 'action.hover',
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Название (RU)</TableCell>
-              <TableCell>Привязана к теме</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Привязана к теме</TableCell>
               <TableCell>Вопросов</TableCell>
               <TableCell>Действия</TableCell>
             </TableRow>
@@ -316,22 +333,32 @@ const QuizzesManager = () => {
                 const topicName = (quiz.topicId as any)?.name?.ru || topic?.name?.ru;
 
                 return (
-                    <TableRow key={quiz._id}>
-                      <TableCell>{quiz.title.ru}</TableCell>
-                      <TableCell>{topicName || '—'}</TableCell>
-                      <TableCell>{quiz.questions.length}</TableCell>
+                    <TableRow key={quiz._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        {quiz.title.ru}
+                      </TableCell>
+                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        {topicName || '—'}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        {quiz.questions.length}
+                      </TableCell>
                       <TableCell>
                         <IconButton
                           onClick={() => handleOpenDialog(quiz)}
                           color="primary"
+                          size="small"
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
                         >
-                          <EditIcon />
+                          <EditIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
                         <IconButton
                           onClick={() => handleDelete(quiz._id)}
                           color="error"
+                          size="small"
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
                       </TableCell>
                     </TableRow>

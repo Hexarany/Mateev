@@ -405,14 +405,31 @@ const AssignmentsManager = () => {
       {loading && <LinearProgress sx={{ mb: 2 }} />}
 
       {selectedGroup && (
-        <TableContainer component={Paper}>
-          <Table>
+        <TableContainer
+          component={Paper}
+          sx={{
+            overflowX: 'auto',
+            maxWidth: '100%',
+            '& .MuiTable-root': {
+              minWidth: { xs: 550, sm: 650, md: 'auto' },
+            },
+            '& .MuiTableCell-root': {
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              padding: { xs: '6px 8px', sm: '12px 16px' },
+            },
+            '& .MuiTableCell-head': {
+              fontWeight: 600,
+              backgroundColor: 'action.hover',
+            }
+          }}
+        >
+          <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Урок</TableCell>
                 <TableCell>Название</TableCell>
-                <TableCell>Дедлайн</TableCell>
-                <TableCell>Макс. балл</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Дедлайн</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Макс. балл</TableCell>
                 <TableCell>Сдано работ</TableCell>
                 <TableCell>Действия</TableCell>
               </TableRow>
@@ -430,46 +447,72 @@ const AssignmentsManager = () => {
                   const isOverdue = new Date() > new Date(assignment.deadline)
 
                   return (
-                    <TableRow key={assignment._id}>
-                      <TableCell>
+                    <TableRow key={assignment._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         {scheduleInfo ? `Урок ${scheduleInfo.lessonNumber}` : '-'}
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">{assignment.title[language]}</Typography>
-                        {isOverdue && <Chip label="Просрочено" size="small" color="error" sx={{ mt: 0.5 }} />}
+                        <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {assignment.title[language]}
+                        </Typography>
+                        {isOverdue && (
+                          <Chip
+                            label="Просрочено"
+                            size="small"
+                            color="error"
+                            sx={{
+                              mt: 0.5,
+                              fontSize: { xs: '0.6rem', sm: '0.7rem' },
+                              height: { xs: 18, sm: 20 }
+                            }}
+                          />
+                        )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         {new Date(assignment.deadline).toLocaleString('ru-RU')}
                       </TableCell>
-                      <TableCell>{assignment.maxScore}</TableCell>
+                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        {assignment.maxScore}
+                      </TableCell>
                       <TableCell>
                         <Chip
                           label={assignment.submissionsCount || 0}
                           color={assignment.submissionsCount > 0 ? 'primary' : 'default'}
                           size="small"
-                          sx={{ mr: 1 }}
+                          sx={{
+                            mr: { xs: 0.5, sm: 1 },
+                            fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                            height: { xs: 20, sm: 24 },
+                            '& .MuiChip-label': { px: { xs: 0.5, sm: 1 } }
+                          }}
                         />
                         <Button
                           size="small"
-                          startIcon={<VisibilityIcon />}
+                          startIcon={<VisibilityIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />}
                           onClick={() => handleViewSubmissions(assignment)}
+                          sx={{
+                            fontSize: { xs: '0.7rem', sm: '0.875rem' },
+                            px: { xs: 0.5, sm: 1 }
+                          }}
                         >
-                          Смотреть
+                          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Смотреть</Box>
                         </Button>
                       </TableCell>
                       <TableCell>
                         <IconButton
                           size="small"
                           onClick={() => openEditDialog(assignment)}
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
                         >
-                          <EditIcon />
+                          <EditIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
                         <IconButton
                           size="small"
                           color="error"
                           onClick={() => handleDeleteAssignment(assignment._id)}
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -716,13 +759,28 @@ const AssignmentsManager = () => {
         <DialogTitle>
           Сданные работы: {viewingSubmissions?.title[language]}
         </DialogTitle>
-        <DialogContent>
-          <TableContainer>
-            <Table>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <TableContainer
+            sx={{
+              overflowX: 'auto',
+              '& .MuiTable-root': {
+                minWidth: { xs: 500, sm: 600, md: 'auto' },
+              },
+              '& .MuiTableCell-root': {
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                padding: { xs: '6px 8px', sm: '12px 16px' },
+              },
+              '& .MuiTableCell-head': {
+                fontWeight: 600,
+                backgroundColor: 'action.hover',
+              }
+            }}
+          >
+            <Table size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Студент</TableCell>
-                  <TableCell>Дата сдачи</TableCell>
+                  <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Дата сдачи</TableCell>
                   <TableCell>Статус</TableCell>
                   <TableCell>Оценка</TableCell>
                   <TableCell>Действия</TableCell>
@@ -732,14 +790,18 @@ const AssignmentsManager = () => {
                 {submissions.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} align="center">
-                      <Typography color="textSecondary">Никто не сдал</Typography>
+                      <Typography color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        Никто не сдал
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 ) : (
                   submissions.map((submission) => (
-                    <TableRow key={submission._id}>
-                      <TableCell>{submission.student?.name || 'Студент'}</TableCell>
-                      <TableCell>
+                    <TableRow key={submission._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        {submission.student?.name || 'Студент'}
+                      </TableCell>
+                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         {new Date(submission.submittedAt).toLocaleString('ru-RU')}
                       </TableCell>
                       <TableCell>
@@ -747,9 +809,14 @@ const AssignmentsManager = () => {
                           label={getStatusLabel(submission.status)}
                           color={getStatusColor(submission.status)}
                           size="small"
+                          sx={{
+                            fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                            height: { xs: 20, sm: 24 },
+                            '& .MuiChip-label': { px: { xs: 0.5, sm: 1 } }
+                          }}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         {submission.grade !== undefined
                           ? `${submission.grade}/${viewingSubmissions?.maxScore}`
                           : '-'}
@@ -758,8 +825,12 @@ const AssignmentsManager = () => {
                         <Button
                           size="small"
                           variant="outlined"
-                          startIcon={<GradeIcon />}
+                          startIcon={<GradeIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />}
                           onClick={() => openGradeDialogHandler(submission)}
+                          sx={{
+                            fontSize: { xs: '0.7rem', sm: '0.875rem' },
+                            px: { xs: 0.5, sm: 1 }
+                          }}
                         >
                           {submission.grade !== undefined ? 'Изменить' : 'Оценить'}
                         </Button>

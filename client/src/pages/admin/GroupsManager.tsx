@@ -277,16 +277,33 @@ const GroupsManager = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 650 }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          maxWidth: '100%',
+          '& .MuiTable-root': {
+            minWidth: { xs: 600, sm: 700, md: 'auto' },
+          },
+          '& .MuiTableCell-root': {
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            padding: { xs: '6px 8px', sm: '12px 16px' },
+          },
+          '& .MuiTableCell-head': {
+            fontWeight: 600,
+            backgroundColor: 'action.hover',
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Название (RU)</TableCell>
-              <TableCell>Название (RO)</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Название (RO)</TableCell>
               <TableCell>Преподаватель</TableCell>
               <TableCell>Студентов</TableCell>
-              <TableCell>Дата начала</TableCell>
-              <TableCell>Дата окончания</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Дата начала</TableCell>
+              <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' } }}>Дата окончания</TableCell>
               <TableCell>Статус</TableCell>
               <TableCell align="right">Действия</TableCell>
             </TableRow>
@@ -300,18 +317,35 @@ const GroupsManager = () => {
               </TableRow>
             ) : (
               groups.map((group) => (
-                <TableRow key={group._id}>
-                  <TableCell>{group.name.ru}</TableCell>
-                  <TableCell>{group.name.ro}</TableCell>
-                  <TableCell>{getTeacherName(group.teacher)}</TableCell>
-                  <TableCell>{group.students.length}</TableCell>
-                  <TableCell>{formatDate(group.startDate)}</TableCell>
-                  <TableCell>{group.endDate ? formatDate(group.endDate) : '-'}</TableCell>
+                <TableRow key={group._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {group.name.ru}
+                  </TableCell>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {group.name.ro}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {getTeacherName(group.teacher)}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {group.students.length}
+                  </TableCell>
+                  <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {formatDate(group.startDate)}
+                  </TableCell>
+                  <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {group.endDate ? formatDate(group.endDate) : '-'}
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={group.isActive ? 'Активна' : 'Неактивна'}
                       color={group.isActive ? 'success' : 'default'}
                       size="small"
+                      sx={{
+                        fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                        height: { xs: 20, sm: 24 },
+                        '& .MuiChip-label': { px: { xs: 0.5, sm: 1 } }
+                      }}
                     />
                   </TableCell>
                   <TableCell align="right">
@@ -319,23 +353,26 @@ const GroupsManager = () => {
                       size="small"
                       onClick={() => handleOpenStudentsDialog(group)}
                       title="Управление студентами"
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
                     >
-                      <PeopleIcon />
+                      <PeopleIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => handleOpenDialog(group)}
                       title="Редактировать"
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
                     >
-                      <EditIcon />
+                      <EditIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
                     {isAdmin && (
                       <IconButton
                         size="small"
                         onClick={() => handleDelete(group._id, group.name.ru)}
                         title="Удалить"
+                        sx={{ p: { xs: 0.5, sm: 1 } }}
                       >
-                        <DeleteIcon color="error" />
+                        <DeleteIcon color="error" sx={{ fontSize: { xs: 18, sm: 20 } }} />
                       </IconButton>
                     )}
                   </TableCell>
