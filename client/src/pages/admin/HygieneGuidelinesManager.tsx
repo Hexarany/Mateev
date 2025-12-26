@@ -200,23 +200,36 @@ const HygieneGuidelinesManager = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>
           {editingGuideline ? 'Редактировать' : 'Новая рекомендация'}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, mt: { xs: 1, sm: 2 } }}>
             <TextField
               label="Название (RU)"
               value={formData.title.ru}
               onChange={(e) => setFormData({ ...formData, title: { ...formData.title, ru: e.target.value } })}
               fullWidth
+              size="small"
             />
             <TextField
               label="Название (RO)"
               value={formData.title.ro}
               onChange={(e) => setFormData({ ...formData, title: { ...formData.title, ro: e.target.value } })}
               fullWidth
+              size="small"
             />
             <TextField
               select
@@ -224,6 +237,7 @@ const HygieneGuidelinesManager = () => {
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
               fullWidth
+              size="small"
             >
               {categories.map((cat) => (
                 <MenuItem key={cat.value} value={cat.value}>
@@ -238,6 +252,7 @@ const HygieneGuidelinesManager = () => {
               multiline
               rows={10}
               fullWidth
+              size="small"
             />
             <TextField
               label="Контент (RO) - Markdown"
@@ -246,6 +261,7 @@ const HygieneGuidelinesManager = () => {
               multiline
               rows={10}
               fullWidth
+              size="small"
             />
             <TextField
               label="Порядок"
@@ -253,12 +269,13 @@ const HygieneGuidelinesManager = () => {
               value={formData.order}
               onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
               fullWidth
+              size="small"
             />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Отмена</Button>
-          <Button onClick={handleSave} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={handleCloseDialog} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSave} variant="contained" sx={{ minHeight: 40 }}>
             Сохранить
           </Button>
         </DialogActions>

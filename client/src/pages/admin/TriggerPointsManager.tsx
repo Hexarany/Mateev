@@ -266,13 +266,36 @@ const TriggerPointsManager = () => {
         </TableContainer>
       )}
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="lg" fullWidth>
-        <DialogTitle>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>
           {editingPoint ? 'Редактировать триггерную точку' : 'Новая триггерная точка'}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-            <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: { xs: 1, sm: 2 } }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_, v) => setActiveTab(v)}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                '& .MuiTab-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  minWidth: { xs: 80, sm: 120 },
+                  px: { xs: 1, sm: 2 },
+                }
+              }}
+            >
               <Tab label="Основное" />
               <Tab label="Локализация и симптомы" />
               <Tab label="Техника" />
@@ -281,7 +304,7 @@ const TriggerPointsManager = () => {
           </Box>
 
           <TabPanel value={activeTab} index={0}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Название точки (RU)"
                 value={formData.name.ru}
@@ -290,6 +313,7 @@ const TriggerPointsManager = () => {
                 }
                 fullWidth
                 required
+                size="small"
               />
               <TextField
                 label="Название точки (RO)"
@@ -299,6 +323,7 @@ const TriggerPointsManager = () => {
                 }
                 fullWidth
                 required
+                size="small"
               />
               <TextField
                 label="Название мышцы (на латыни)"
@@ -306,6 +331,7 @@ const TriggerPointsManager = () => {
                 onChange={(e) => setFormData({ ...formData, muscle: e.target.value })}
                 fullWidth
                 required
+                size="small"
                 helperText="Например: Trapezius, Levator Scapulae"
               />
               <TextField
@@ -316,6 +342,7 @@ const TriggerPointsManager = () => {
                   setFormData({ ...formData, category: e.target.value as any })
                 }
                 fullWidth
+                size="small"
               >
                 {categories.map((cat) => (
                   <MenuItem key={cat.value} value={cat.value}>
@@ -331,6 +358,7 @@ const TriggerPointsManager = () => {
                   setFormData({ ...formData, difficulty: e.target.value as any })
                 }
                 fullWidth
+                size="small"
               >
                 <MenuItem value="beginner">Начальный / Începător</MenuItem>
                 <MenuItem value="intermediate">Средний / Intermediar</MenuItem>
@@ -344,12 +372,13 @@ const TriggerPointsManager = () => {
                   setFormData({ ...formData, order: parseInt(e.target.value) })
                 }
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Локализация (RU)"
                 value={formData.location.ru}
@@ -359,6 +388,7 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={4}
                 fullWidth
+                size="small"
                 helperText="Опишите, где находится триггерная точка"
               />
               <TextField
@@ -370,6 +400,7 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={4}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Симптомы (RU)"
@@ -380,6 +411,7 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={4}
                 fullWidth
+                size="small"
                 helperText="Опишите симптомы, которые вызывает эта точка"
               />
               <TextField
@@ -391,6 +423,7 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={4}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Паттерн иррадиации боли (RU)"
@@ -401,6 +434,7 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={4}
                 fullWidth
+                size="small"
                 helperText="Куда отдает боль от этой точки"
               />
               <TextField
@@ -412,13 +446,14 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={4}
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={2}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Alert severity="info" sx={{ mb: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
+              <Alert severity="info" sx={{ mb: { xs: 1, sm: 2 } }}>
                 Поддерживается Markdown форматирование (списки, выделение и т.д.)
               </Alert>
               <TextField
@@ -430,6 +465,7 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
                 helperText="Подробное описание техники работы с точкой"
               />
               <TextField
@@ -441,12 +477,13 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={3}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Противопоказания (RU)"
                 value={formData.contraindications.ru}
@@ -456,6 +493,7 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={8}
                 fullWidth
+                size="small"
                 helperText="Опишите противопоказания (необязательно)"
               />
               <TextField
@@ -467,13 +505,14 @@ const TriggerPointsManager = () => {
                 multiline
                 rows={8}
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Отмена</Button>
-          <Button onClick={handleSave} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={handleCloseDialog} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSave} variant="contained" sx={{ minHeight: 40 }}>
             Сохранить
           </Button>
         </DialogActions>

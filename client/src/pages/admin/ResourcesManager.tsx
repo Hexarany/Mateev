@@ -338,16 +338,28 @@ const ResourcesManager = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>{editingResource ? 'Редактировать ресурс' : 'Добавить ресурс'}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>{editingResource ? 'Редактировать ресурс' : 'Добавить ресурс'}</DialogTitle>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, mt: { xs: 1, sm: 2 } }}>
             <TextField
               label="Название (RU)"
               value={formData.titleRu}
               onChange={(e) => setFormData({ ...formData, titleRu: e.target.value })}
               fullWidth
               required
+              size="small"
             />
             <TextField
               label="Название (RO)"
@@ -355,6 +367,7 @@ const ResourcesManager = () => {
               onChange={(e) => setFormData({ ...formData, titleRo: e.target.value })}
               fullWidth
               required
+              size="small"
             />
             <TextField
               label="Описание (RU)"
@@ -364,6 +377,7 @@ const ResourcesManager = () => {
               multiline
               rows={3}
               required
+              size="small"
             />
             <TextField
               label="Описание (RO)"
@@ -373,15 +387,17 @@ const ResourcesManager = () => {
               multiline
               rows={3}
               required
+              size="small"
             />
 
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 select
                 label="Тип"
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
                 sx={{ flex: 1 }}
+                size="small"
               >
                 <MenuItem value="pdf">PDF</MenuItem>
                 <MenuItem value="doc">Документ</MenuItem>
@@ -397,6 +413,7 @@ const ResourcesManager = () => {
                 value={formData.accessLevel}
                 onChange={(e) => setFormData({ ...formData, accessLevel: e.target.value as any })}
                 sx={{ flex: 1 }}
+                size="small"
               >
                 <MenuItem value="free">Бесплатно</MenuItem>
                 <MenuItem value="basic">Basic</MenuItem>
@@ -410,16 +427,18 @@ const ResourcesManager = () => {
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               fullWidth
               required
+              size="small"
               helperText="Например: Анатомия, Массаж, Физиология"
             />
 
             <Box>
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1.5, sm: 2 }, alignItems: 'flex-start' }}>
                 <TextField
                   label="URL файла (Cloudinary или прямая ссылка)"
                   value={formData.fileUrl}
                   onChange={(e) => setFormData({ ...formData, fileUrl: e.target.value })}
                   fullWidth
+                  size="small"
                   helperText="Для PDF/DOC/Книг - ссылка на файл"
                 />
                 <Button
@@ -427,7 +446,7 @@ const ResourcesManager = () => {
                   component="label"
                   startIcon={<UploadFileIcon />}
                   disabled={uploading}
-                  sx={{ minWidth: '150px', height: '56px' }}
+                  sx={{ minWidth: { xs: '100%', sm: '150px' }, height: { xs: 40, sm: '56px' } }}
                 >
                   {uploading ? 'Загрузка...' : 'Загрузить'}
                   <input type="file" hidden onChange={handleFileUpload} accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" />
@@ -448,6 +467,7 @@ const ResourcesManager = () => {
               value={formData.externalUrl}
               onChange={(e) => setFormData({ ...formData, externalUrl: e.target.value })}
               fullWidth
+              size="small"
               helperText="Для статей/видео - ссылка на внешний ресурс"
             />
 
@@ -456,15 +476,17 @@ const ResourcesManager = () => {
               value={formData.thumbnail}
               onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
               fullWidth
+              size="small"
               helperText="Ссылка на изображение превью"
             />
 
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Автор"
                 value={formData.author}
                 onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                 sx={{ flex: 2 }}
+                size="small"
               />
               <TextField
                 label="Год публикации"
@@ -472,6 +494,7 @@ const ResourcesManager = () => {
                 value={formData.publishedYear}
                 onChange={(e) => setFormData({ ...formData, publishedYear: parseInt(e.target.value) })}
                 sx={{ flex: 1 }}
+                size="small"
               />
             </Box>
 
@@ -480,6 +503,7 @@ const ResourcesManager = () => {
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
               fullWidth
+              size="small"
               helperText="Например: анатомия, обучение, практика"
             />
 
@@ -489,15 +513,16 @@ const ResourcesManager = () => {
               value={formData.isPublished ? 'published' : 'draft'}
               onChange={(e) => setFormData({ ...formData, isPublished: e.target.value === 'published' })}
               fullWidth
+              size="small"
             >
               <MenuItem value="published">Опубликован</MenuItem>
               <MenuItem value="draft">Черновик</MenuItem>
             </TextField>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Отмена</Button>
-          <Button onClick={handleSubmit} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={handleCloseDialog} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ minHeight: 40 }}>
             {editingResource ? 'Сохранить' : 'Создать'}
           </Button>
         </DialogActions>

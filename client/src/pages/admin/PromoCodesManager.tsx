@@ -403,20 +403,32 @@ const PromoCodesManager = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingCode ? 'Редактировать промокод' : 'Создать промокод'}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>{editingCode ? 'Редактировать промокод' : 'Создать промокод'}</DialogTitle>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, mt: { xs: 1, sm: 2 } }}>
             <TextField
               label="Код промокода"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
               fullWidth
               required
+              size="small"
               helperText="Будет автоматически переведен в верхний регистр"
             />
 
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel>Тип скидки</InputLabel>
               <Select
                 value={formData.discountType}
@@ -437,6 +449,7 @@ const PromoCodesManager = () => {
               onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
               fullWidth
               required
+              size="small"
               inputProps={{
                 min: 0,
                 max: formData.discountType === 'percentage' ? 100 : undefined,
@@ -450,6 +463,7 @@ const PromoCodesManager = () => {
               onChange={(e) => setFormData({ ...formData, maxUses: Number(e.target.value) })}
               fullWidth
               required
+              size="small"
               inputProps={{ min: 1 }}
             />
 
@@ -459,6 +473,7 @@ const PromoCodesManager = () => {
               value={formData.validFrom}
               onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
               fullWidth
+              size="small"
               InputLabelProps={{ shrink: true }}
             />
 
@@ -468,6 +483,7 @@ const PromoCodesManager = () => {
               value={formData.validUntil}
               onChange={(e) => setFormData({ ...formData, validUntil: e.target.value })}
               fullWidth
+              size="small"
               InputLabelProps={{ shrink: true }}
             />
 
@@ -478,6 +494,7 @@ const PromoCodesManager = () => {
               fullWidth
               multiline
               rows={2}
+              size="small"
             />
 
             <TextField
@@ -485,13 +502,14 @@ const PromoCodesManager = () => {
               value={formData.campaign}
               onChange={(e) => setFormData({ ...formData, campaign: e.target.value })}
               fullWidth
+              size="small"
               helperText="Название маркетинговой кампании"
             />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Отмена</Button>
-          <Button onClick={handleSubmit} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={handleCloseDialog} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ minHeight: 40 }}>
             {editingCode ? 'Сохранить' : 'Создать'}
           </Button>
         </DialogActions>

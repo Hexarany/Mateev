@@ -210,12 +210,23 @@ const CategoriesManager = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>
           {editingCategory ? 'Редактировать категорию' : 'Новая категория'}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, mt: { xs: 1, sm: 2 } }}>
             <TextField
               label="Название (RU)"
               value={formData.name.ru}
@@ -223,6 +234,7 @@ const CategoriesManager = () => {
                 setFormData({ ...formData, name: { ...formData.name, ru: e.target.value } })
               }
               fullWidth
+              size="small"
             />
             <TextField
               label="Название (RO)"
@@ -231,6 +243,7 @@ const CategoriesManager = () => {
                 setFormData({ ...formData, name: { ...formData.name, ro: e.target.value } })
               }
               fullWidth
+              size="small"
             />
             <TextField
               label="Описание (RU)"
@@ -244,6 +257,7 @@ const CategoriesManager = () => {
               multiline
               rows={3}
               fullWidth
+              size="small"
             />
             <TextField
               label="Описание (RO)"
@@ -257,12 +271,14 @@ const CategoriesManager = () => {
               multiline
               rows={3}
               fullWidth
+              size="small"
             />
             <TextField
               label="Иконка (название Material Icon)"
               value={formData.icon}
               onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
               fullWidth
+              size="small"
               helperText="Например: Science, Favorite, LocalHospital"
             />
             <TextField
@@ -271,6 +287,7 @@ const CategoriesManager = () => {
               value={formData.color}
               onChange={(e) => setFormData({ ...formData, color: e.target.value })}
               fullWidth
+              size="small"
             />
             <TextField
               label="Порядок"
@@ -280,12 +297,13 @@ const CategoriesManager = () => {
                 setFormData({ ...formData, order: parseInt(e.target.value) })
               }
               fullWidth
+              size="small"
             />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Отмена</Button>
-          <Button onClick={handleSave} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={handleCloseDialog} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSave} variant="contained" sx={{ minHeight: 40 }}>
             Сохранить
           </Button>
         </DialogActions>

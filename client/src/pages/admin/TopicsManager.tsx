@@ -265,13 +265,36 @@ const TopicsManager = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="lg" fullWidth>
-        <DialogTitle>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>
           {editingTopic ? 'Редактировать тему' : 'Новая тема'}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-            <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: { xs: 1, sm: 2 } }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_, v) => setActiveTab(v)}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                '& .MuiTab-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  minWidth: { xs: 60, sm: 90 },
+                  px: { xs: 1, sm: 2 },
+                }
+              }}
+            >
               <Tab label="Основное" />
               <Tab label="Контент RU" />
               <Tab label="Контент RO" />
@@ -281,7 +304,7 @@ const TopicsManager = () => {
           </Box>
 
           <TabPanel value={activeTab} index={0}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Название (RU)"
                 value={formData.name.ru}
@@ -289,6 +312,7 @@ const TopicsManager = () => {
                   setFormData({ ...formData, name: { ...formData.name, ru: e.target.value } })
                 }
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Название (RO)"
@@ -297,6 +321,7 @@ const TopicsManager = () => {
                   setFormData({ ...formData, name: { ...formData.name, ro: e.target.value } })
                 }
                 fullWidth
+                size="small"
               />
               <TextField
                 select
@@ -304,6 +329,7 @@ const TopicsManager = () => {
                 value={formData.categoryId}
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                 fullWidth
+                size="small"
               >
                 {categories.map((cat) => (
                   <MenuItem key={cat._id} value={cat._id}>
@@ -319,6 +345,7 @@ const TopicsManager = () => {
                   setFormData({ ...formData, difficulty: e.target.value as any })
                 }
                 fullWidth
+                size="small"
               >
                 <MenuItem value="beginner">Начальный</MenuItem>
                 <MenuItem value="intermediate">Средний</MenuItem>
@@ -332,6 +359,7 @@ const TopicsManager = () => {
                   setFormData({ ...formData, estimatedTime: parseInt(e.target.value) })
                 }
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Порядок"
@@ -341,12 +369,13 @@ const TopicsManager = () => {
                   setFormData({ ...formData, order: parseInt(e.target.value) })
                 }
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Описание (RU)"
                 value={formData.description.ru}
@@ -359,6 +388,7 @@ const TopicsManager = () => {
                 multiline
                 rows={3}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Контент (RU) - Markdown"
@@ -372,13 +402,14 @@ const TopicsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
                 helperText="Используйте Markdown для форматирования. Поддерживаются заголовки, списки, жирный текст и т.д."
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={2}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Описание (RO)"
                 value={formData.description.ro}
@@ -391,6 +422,7 @@ const TopicsManager = () => {
                 multiline
                 rows={3}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Контент (RO) - Markdown"
@@ -404,18 +436,20 @@ const TopicsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
                 helperText="Folosiți Markdown pentru formatare"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={3}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, sm: 3 } }}>
               <TextField
                 label="URL изображения"
                 value={formData.imageUrl}
                 onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                 fullWidth
+                size="small"
                 helperText="URL картинки для превью темы"
               />
               <TextField
@@ -423,12 +457,13 @@ const TopicsManager = () => {
                 value={formData.modelUrl}
                 onChange={(e) => setFormData({ ...formData, modelUrl: e.target.value })}
                 fullWidth
+                size="small"
                 helperText="URL файла .glb для 3D визуализации"
               />
 
               {editingTopic && editingTopic._id && (
                 <>
-                  <Box sx={{ borderTop: 2, borderColor: 'divider', pt: 3, mt: 2 }} />
+                  <Box sx={{ borderTop: 2, borderColor: 'divider', pt: { xs: 2, sm: 3 }, mt: { xs: 1, sm: 2 } }} />
                   <TopicImagesManager
                     topicId={editingTopic._id}
                     images={editingTopic.images || []}
@@ -438,7 +473,7 @@ const TopicsManager = () => {
               )}
 
               {!editingTopic && (
-                <Alert severity="info" sx={{ mt: 2 }}>
+                <Alert severity="info" sx={{ mt: { xs: 1, sm: 2 } }}>
                   Иллюстрации можно добавить после создания топика
                 </Alert>
               )}
@@ -446,15 +481,15 @@ const TopicsManager = () => {
           </TabPanel>
 
           <TabPanel value={activeTab} index={4}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Typography variant="h6" gutterBottom>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
+              <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                 YouTube видео для темы
               </Typography>
 
               {formData.youtubeVideos.map((video, index) => (
-                <Paper key={index} sx={{ p: 2, bgcolor: 'grey.50' }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
+                <Paper key={index} sx={{ p: { xs: 1.5, sm: 2 }, bgcolor: 'grey.50' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: { xs: 1, sm: 2 } }}>
+                    <Typography variant="subtitle1" fontWeight="bold" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                       Видео #{index + 1}
                     </Typography>
                     <IconButton
@@ -464,12 +499,13 @@ const TopicsManager = () => {
                         const newVideos = formData.youtubeVideos.filter((_, i) => i !== index)
                         setFormData({ ...formData, youtubeVideos: newVideos })
                       }}
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
                     >
-                      <DeleteIcon />
+                      <DeleteIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
                   </Box>
 
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
                     <TextField
                       label="URL видео YouTube"
                       value={video.url}
@@ -480,11 +516,12 @@ const TopicsManager = () => {
                       }}
                       fullWidth
                       required
+                      size="small"
                       placeholder="https://www.youtube.com/watch?v=..."
                       helperText="Вставьте полную ссылку на YouTube видео"
                     />
 
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1.5, sm: 2 } }}>
                       <TextField
                         label="Название (RU)"
                         value={video.title.ru}
@@ -495,6 +532,7 @@ const TopicsManager = () => {
                         }}
                         fullWidth
                         required
+                        size="small"
                       />
                       <TextField
                         label="Название (RO)"
@@ -506,10 +544,11 @@ const TopicsManager = () => {
                         }}
                         fullWidth
                         required
+                        size="small"
                       />
                     </Box>
 
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1.5, sm: 2 } }}>
                       <TextField
                         label="Описание (RU)"
                         value={video.description?.ru || ''}
@@ -524,6 +563,7 @@ const TopicsManager = () => {
                         fullWidth
                         multiline
                         rows={2}
+                        size="small"
                       />
                       <TextField
                         label="Описание (RO)"
@@ -539,10 +579,11 @@ const TopicsManager = () => {
                         fullWidth
                         multiline
                         rows={2}
+                        size="small"
                       />
                     </Box>
 
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1.5, sm: 2 } }}>
                       <TextField
                         label="Автор видео"
                         value={video.author || ''}
@@ -552,6 +593,7 @@ const TopicsManager = () => {
                           setFormData({ ...formData, youtubeVideos: newVideos })
                         }}
                         fullWidth
+                        size="small"
                         placeholder="Имя автора или канала"
                       />
                       <TextField
@@ -564,6 +606,7 @@ const TopicsManager = () => {
                           setFormData({ ...formData, youtubeVideos: newVideos })
                         }}
                         fullWidth
+                        size="small"
                         placeholder="Например: 15"
                       />
                     </Box>
@@ -589,7 +632,7 @@ const TopicsManager = () => {
                     ],
                   })
                 }}
-                sx={{ mt: 1 }}
+                sx={{ mt: { xs: 0.5, sm: 1 }, minHeight: 40 }}
               >
                 Добавить YouTube видео
               </Button>
@@ -602,9 +645,9 @@ const TopicsManager = () => {
             </Box>
           </TabPanel>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Отмена</Button>
-          <Button onClick={handleSave} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={handleCloseDialog} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSave} variant="contained" sx={{ minHeight: 40 }}>
             Сохранить
           </Button>
         </DialogActions>

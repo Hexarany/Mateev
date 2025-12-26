@@ -396,13 +396,36 @@ const MassageProtocolsManager = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="lg" fullWidth>
-        <DialogTitle>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>
           {editingProtocol ? 'Редактировать протокол' : 'Новый протокол'}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-            <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable">
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: { xs: 1, sm: 2 } }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_, v) => setActiveTab(v)}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                '& .MuiTab-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  minWidth: { xs: 70, sm: 100 },
+                  px: { xs: 1, sm: 2 },
+                }
+              }}
+            >
               <Tab label="Основное" />
               <Tab label="Описание" />
               <Tab label="Польза" />
@@ -413,7 +436,7 @@ const MassageProtocolsManager = () => {
           </Box>
 
           <TabPanel value={activeTab} index={0}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Название (RU)"
                 value={formData.name.ru}
@@ -421,6 +444,7 @@ const MassageProtocolsManager = () => {
                   setFormData({ ...formData, name: { ...formData.name, ru: e.target.value } })
                 }
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Название (RO)"
@@ -429,6 +453,7 @@ const MassageProtocolsManager = () => {
                   setFormData({ ...formData, name: { ...formData.name, ro: e.target.value } })
                 }
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Краткое описание (RU)"
@@ -439,6 +464,7 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={2}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Краткое описание (RO)"
@@ -449,12 +475,14 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={2}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Тип массажа"
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                 fullWidth
+                size="small"
                 helperText="Например: классический, баночный, антицеллюлитный"
               />
               <TextField
@@ -465,6 +493,7 @@ const MassageProtocolsManager = () => {
                   setFormData({ ...formData, duration: parseInt(e.target.value) })
                 }
                 fullWidth
+                size="small"
               />
               <TextField
                 select
@@ -474,6 +503,7 @@ const MassageProtocolsManager = () => {
                   setFormData({ ...formData, difficulty: e.target.value as any })
                 }
                 fullWidth
+                size="small"
               >
                 <MenuItem value="beginner">Начальный</MenuItem>
                 <MenuItem value="intermediate">Средний</MenuItem>
@@ -487,12 +517,13 @@ const MassageProtocolsManager = () => {
                   setFormData({ ...formData, order: parseInt(e.target.value) })
                 }
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Описание (RU) - Markdown"
                 value={formData.content.ru}
@@ -502,6 +533,7 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Описание (RO) - Markdown"
@@ -512,12 +544,13 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={2}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Польза (RU) - Markdown"
                 value={formData.benefits.ru}
@@ -527,6 +560,7 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={10}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Польза (RO) - Markdown"
@@ -537,12 +571,13 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={10}
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={3}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Противопоказания (RU) - Markdown"
                 value={formData.contraindications.ru}
@@ -552,6 +587,7 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={10}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Противопоказания (RO) - Markdown"
@@ -562,12 +598,13 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={10}
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={activeTab} index={4}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Техника выполнения (RU) - Markdown"
                 value={formData.technique.ru}
@@ -577,6 +614,7 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
               />
               <TextField
                 label="Техника выполнения (RO) - Markdown"
@@ -587,6 +625,7 @@ const MassageProtocolsManager = () => {
                 multiline
                 rows={15}
                 fullWidth
+                size="small"
               />
             </Box>
           </TabPanel>
@@ -762,19 +801,29 @@ const MassageProtocolsManager = () => {
             </TabPanel>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Отмена</Button>
-          <Button onClick={handleSave} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={handleCloseDialog} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSave} variant="contained" sx={{ minHeight: 40 }}>
             Сохранить
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Caption Edit Dialog */}
-      <Dialog open={!!editingCaption} onClose={() => setEditingCaption(null)} maxWidth="sm" fullWidth>
-        <DialogTitle>Редактировать подпись</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+      <Dialog
+        open={!!editingCaption}
+        onClose={() => setEditingCaption(null)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            m: { xs: 2, sm: 3 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>Редактировать подпись</DialogTitle>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, pt: { xs: 1, sm: 1 } }}>
             <TextField
               label="Подпись (RU)"
               value={editingCaption?.caption.ru || ''}
@@ -791,6 +840,7 @@ const MassageProtocolsManager = () => {
               multiline
               rows={3}
               fullWidth
+              size="small"
             />
             <TextField
               label="Подпись (RO)"
@@ -808,12 +858,13 @@ const MassageProtocolsManager = () => {
               multiline
               rows={3}
               fullWidth
+              size="small"
             />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditingCaption(null)}>Отмена</Button>
-          <Button onClick={handleUpdateCaption} variant="contained">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={() => setEditingCaption(null)} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleUpdateCaption} variant="contained" sx={{ minHeight: 40 }}>
             Сохранить
           </Button>
         </DialogActions>

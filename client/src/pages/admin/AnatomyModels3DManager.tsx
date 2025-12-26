@@ -201,26 +201,38 @@ const AnatomyModels3DManager = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editing ? 'Редактировать' : 'Новая модель'}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField label="Название (RU)" value={formData.name.ru} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, ru: e.target.value } })} fullWidth />
-            <TextField label="Название (RO)" value={formData.name.ro} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, ro: e.target.value } })} fullWidth />
-            <TextField label="Описание (RU)" value={formData.description.ru} onChange={(e) => setFormData({ ...formData, description: { ...formData.description, ru: e.target.value } })} multiline rows={3} fullWidth />
-            <TextField label="Описание (RO)" value={formData.description.ro} onChange={(e) => setFormData({ ...formData, description: { ...formData.description, ro: e.target.value } })} multiline rows={3} fullWidth />
-            <TextField select label="Категория" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value as any })} fullWidth>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: { xs: '100vh', sm: 'calc(100vh - 64px)' },
+            m: { xs: 0, sm: 2 },
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>{editing ? 'Редактировать' : 'Новая модель'}</DialogTitle>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 }, mt: { xs: 1, sm: 2 } }}>
+            <TextField label="Название (RU)" value={formData.name.ru} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, ru: e.target.value } })} fullWidth size="small" />
+            <TextField label="Название (RO)" value={formData.name.ro} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, ro: e.target.value } })} fullWidth size="small" />
+            <TextField label="Описание (RU)" value={formData.description.ru} onChange={(e) => setFormData({ ...formData, description: { ...formData.description, ru: e.target.value } })} multiline rows={3} fullWidth size="small" />
+            <TextField label="Описание (RO)" value={formData.description.ro} onChange={(e) => setFormData({ ...formData, description: { ...formData.description, ro: e.target.value } })} multiline rows={3} fullWidth size="small" />
+            <TextField select label="Категория" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value as any })} fullWidth size="small">
               {categories.map((cat) => (<MenuItem key={cat.value} value={cat.value}>{cat.label}</MenuItem>))}
             </TextField>
-            <TextField label="URL модели (.glb)" value={formData.modelUrl} onChange={(e) => setFormData({ ...formData, modelUrl: e.target.value })} fullWidth helperText="Cloudinary URL для .glb файла" />
-            <TextField label="URL превью" value={formData.previewImage} onChange={(e) => setFormData({ ...formData, previewImage: e.target.value })} fullWidth />
+            <TextField label="URL модели (.glb)" value={formData.modelUrl} onChange={(e) => setFormData({ ...formData, modelUrl: e.target.value })} fullWidth size="small" helperText="Cloudinary URL для .glb файла" />
+            <TextField label="URL превью" value={formData.previewImage} onChange={(e) => setFormData({ ...formData, previewImage: e.target.value })} fullWidth size="small" />
 
-            <Typography variant="subtitle2" sx={{ mt: 2, mb: 1, fontWeight: 600 }}>Авторство (для CC BY лицензий)</Typography>
+            <Typography variant="subtitle2" sx={{ mt: { xs: 1, sm: 2 }, mb: { xs: 0.5, sm: 1 }, fontWeight: 600, fontSize: { xs: '0.875rem', sm: '1rem' } }}>Авторство (для CC BY лицензий)</Typography>
             <TextField
               label="Автор"
               value={formData.attribution.author}
               onChange={(e) => setFormData({ ...formData, attribution: { ...formData.attribution, author: e.target.value } })}
               fullWidth
+              size="small"
               helperText="Имя создателя 3D модели"
             />
             <TextField
@@ -228,6 +240,7 @@ const AnatomyModels3DManager = () => {
               value={formData.attribution.source}
               onChange={(e) => setFormData({ ...formData, attribution: { ...formData.attribution, source: e.target.value } })}
               fullWidth
+              size="small"
               helperText="Название сайта или платформы"
             />
             <TextField
@@ -235,6 +248,7 @@ const AnatomyModels3DManager = () => {
               value={formData.attribution.sourceUrl}
               onChange={(e) => setFormData({ ...formData, attribution: { ...formData.attribution, sourceUrl: e.target.value } })}
               fullWidth
+              size="small"
               helperText="Ссылка на оригинальную модель"
             />
             <TextField
@@ -242,20 +256,21 @@ const AnatomyModels3DManager = () => {
               value={formData.attribution.license}
               onChange={(e) => setFormData({ ...formData, attribution: { ...formData.attribution, license: e.target.value } })}
               fullWidth
+              size="small"
               helperText="Например: CC BY 4.0"
             />
 
-            <TextField select label="Сложность" value={formData.difficulty} onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as any })} fullWidth>
+            <TextField select label="Сложность" value={formData.difficulty} onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as any })} fullWidth size="small">
               <MenuItem value="beginner">Начальный</MenuItem>
               <MenuItem value="intermediate">Средний</MenuItem>
               <MenuItem value="advanced">Продвинутый</MenuItem>
             </TextField>
-            <TextField label="Порядок" type="number" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })} fullWidth />
+            <TextField label="Порядок" type="number" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })} fullWidth size="small" />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Отмена</Button>
-          <Button onClick={handleSave} variant="contained">Сохранить</Button>
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, gap: 1 }}>
+          <Button onClick={() => setOpen(false)} sx={{ minHeight: 40 }}>Отмена</Button>
+          <Button onClick={handleSave} variant="contained" sx={{ minHeight: 40 }}>Сохранить</Button>
         </DialogActions>
       </Dialog>
 
