@@ -254,6 +254,10 @@ export class TelegramFileService {
         }
       }
 
+      if (!result || typeof result.message_id !== 'number') {
+        throw new Error('Telegram send did not return message id')
+      }
+
       return {
         success: true,
         messageId: result.message_id,
@@ -465,6 +469,10 @@ export class TelegramFileService {
         if (!sentSuccessfully) {
           throw new Error(`Failed to send document after trying ${allUrls.length} URLs. Last error: ${lastError?.message}`)
         }
+      }
+
+      if (!result || typeof result.message_id !== 'number') {
+        throw new Error('Telegram send did not return message id')
       }
 
       groupFile.sentToTelegramGroup = true
