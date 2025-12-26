@@ -11,7 +11,6 @@ import {
   CircularProgress,
   Card,
   CardContent,
-  CardMedia,
   Grid,
   Chip,
   ToggleButtonGroup,
@@ -26,6 +25,7 @@ import AdjustIcon from '@mui/icons-material/Adjust'
 import CleanHandsIcon from '@mui/icons-material/CleanHands'
 import ViewInArIcon from '@mui/icons-material/ViewInAr'
 import QuizIcon from '@mui/icons-material/Quiz'
+import OptimizedImage from '@/components/OptimizedImage'
 import { globalSearch, saveSearchQuery, type SearchResult } from '@/services/api'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'
@@ -170,12 +170,11 @@ const SearchPage = () => {
           }}
         >
           {result.thumbnail && (
-            <CardMedia
-              component="img"
-              height="140"
-              image={result.thumbnail.startsWith('http') ? result.thumbnail : `${API_BASE_URL}${result.thumbnail}`}
+            <OptimizedImage
+              src={result.thumbnail.startsWith('http') ? result.thumbnail : `${API_BASE_URL}${result.thumbnail}`}
               alt={result.title[lang]}
-              sx={{ objectFit: 'cover' }}
+              height={140}
+              objectFit="cover"
             />
           )}
           <CardContent sx={{ flexGrow: 1 }}>

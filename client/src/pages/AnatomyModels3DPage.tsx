@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Container, Typography, Grid, Card, CardMedia, CardContent, CardActions, Button, Box, Chip, CircularProgress } from '@mui/material'
+import { Container, Typography, Grid, Card, CardContent, CardActions, Button, Box, Chip, CircularProgress } from '@mui/material'
 import View3DIcon from '@mui/icons-material/ViewInAr'
 import { getAnatomyModels3D } from '@/services/api'
 import type { AnatomyModel3D } from '@/types'
+import OptimizedImage from '@/components/OptimizedImage'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'
 
@@ -68,12 +69,11 @@ const AnatomyModels3DPage = () => {
           <Grid item xs={12} sm={6} md={4} key={model._id}>
             <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               {model.previewImage && (
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={model.previewImage.startsWith('http') ? model.previewImage : `${API_BASE_URL}${model.previewImage}`}
+                <OptimizedImage
+                  src={model.previewImage.startsWith('http') ? model.previewImage : `${API_BASE_URL}${model.previewImage}`}
                   alt={model.name[lang]}
-                  sx={{ objectFit: 'cover' }}
+                  height={200}
+                  objectFit="cover"
                 />
               )}
               <CardContent sx={{ flexGrow: 1 }}>

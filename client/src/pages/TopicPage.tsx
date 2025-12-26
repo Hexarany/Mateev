@@ -12,7 +12,6 @@ import {
   Button,
   Grid,
   Card,
-  CardMedia,
   CardContent,
   CircularProgress,
   Paper,
@@ -33,6 +32,7 @@ import Model3DViewer from '@/components/Model3DViewer'
 import EnhancedMarkdown from '@/components/EnhancedMarkdown'
 import AccessGate from '@/components/AccessGate'
 import BookmarkButton from '@/components/BookmarkButton'
+import OptimizedImage from '@/components/OptimizedImage'
 import { getTopicById } from '@/services/api'
 import type { Topic } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
@@ -316,12 +316,11 @@ const TopicPage = () => {
                     }}
                     onClick={() => handleImageClick(index)}
                   >
-                    <CardMedia
-                      component="img"
-                      height="250"
-                      image={image.url.startsWith('http') ? image.url : `${API_BASE_URL}${image.url}`}
+                    <OptimizedImage
+                      src={image.url.startsWith('http') ? image.url : `${API_BASE_URL}${image.url}`}
                       alt={image.caption?.[lang] || topic.name[lang]}
-                      sx={{ objectFit: 'cover' }}
+                      height={250}
+                      objectFit="cover"
                     />
                     {image.caption && image.caption[lang] && (
                       <CardContent sx={{ flexGrow: 1 }}>

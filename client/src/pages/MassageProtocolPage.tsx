@@ -12,7 +12,6 @@ import {
   Button,
   Grid,
   Card,
-  CardMedia,
   CardContent,
   CircularProgress,
   Paper,
@@ -37,6 +36,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import EnhancedMarkdown from '@/components/EnhancedMarkdown'
 import AccessGate from '@/components/AccessGate'
+import OptimizedImage from '@/components/OptimizedImage'
 import { getMassageProtocolById } from '@/services/api'
 import type { MassageProtocol } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
@@ -326,12 +326,11 @@ const MassageProtocolPage = () => {
                     }}
                     onClick={() => handleImageClick(index)}
                   >
-                    <CardMedia
-                      component="img"
-                      height="250"
-                      image={image.url.startsWith('http') ? image.url : `${API_BASE_URL}${image.url}`}
+                    <OptimizedImage
+                      src={image.url.startsWith('http') ? image.url : `${API_BASE_URL}${image.url}`}
                       alt={image.caption?.[lang] || protocol.name[lang]}
-                      sx={{ objectFit: 'cover' }}
+                      height={250}
+                      objectFit="cover"
                     />
                     {image.caption && image.caption[lang] && (
                       <CardContent sx={{ flexGrow: 1 }}>

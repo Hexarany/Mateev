@@ -7,7 +7,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
   Box,
   Chip,
   CircularProgress,
@@ -21,6 +20,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import { getMassageProtocols } from '@/services/api'
 import type { MassageProtocol } from '@/types'
+import OptimizedImage from '@/components/OptimizedImage'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'
 
@@ -119,12 +119,11 @@ const MassageProtocolsPage = () => {
               }}
             >
               {protocol.images && protocol.images.length > 0 && (
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={protocol.images[0].url.startsWith('http') ? protocol.images[0].url : `${API_BASE_URL}${protocol.images[0].url}`}
+                <OptimizedImage
+                  src={protocol.images[0].url.startsWith('http') ? protocol.images[0].url : `${API_BASE_URL}${protocol.images[0].url}`}
                   alt={protocol.name[lang]}
-                  sx={{ objectFit: 'cover' }}
+                  height={200}
+                  objectFit="cover"
                 />
               )}
               <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

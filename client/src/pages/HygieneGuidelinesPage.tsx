@@ -10,7 +10,6 @@ import {
   CircularProgress,
   Grid,
   Card,
-  CardMedia,
   Paper,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -23,6 +22,7 @@ import CheckroomIcon from '@mui/icons-material/Checkroom'
 import InfoIcon from '@mui/icons-material/Info'
 import EnhancedMarkdown from '@/components/EnhancedMarkdown'
 import AccessGate from '@/components/AccessGate'
+import OptimizedImage from '@/components/OptimizedImage'
 import { getHygieneGuidelines } from '@/services/api'
 import type { HygieneGuideline } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
@@ -181,12 +181,11 @@ const HygieneGuidelinesPage = () => {
                         {guideline.images.map((image, index) => (
                           <Grid item xs={12} sm={6} md={4} key={image._id || index}>
                             <Card elevation={1}>
-                              <CardMedia
-                                component="img"
-                                height="200"
-                                image={image.url.startsWith('http') ? image.url : `${API_BASE_URL}${image.url}`}
+                              <OptimizedImage
+                                src={image.url.startsWith('http') ? image.url : `${API_BASE_URL}${image.url}`}
                                 alt={image.caption?.[lang] || guideline.title[lang]}
-                                sx={{ objectFit: 'cover' }}
+                                height={200}
+                                objectFit="cover"
                               />
                               {image.caption && image.caption[lang] && (
                                 <Box sx={{ p: 1 }}>

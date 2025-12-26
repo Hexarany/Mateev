@@ -88,8 +88,8 @@ const GradesPage = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+      <Box sx={{ mb: { xs: 2, sm: 3, md: 4 } }}>
         <Typography variant="h4" gutterBottom>
           {language === 'ru' ? 'Мои оценки' : 'Notele mele'}
         </Typography>
@@ -171,7 +171,16 @@ const GradesPage = () => {
 
       {/* Таблица оценок */}
       {gradedSubmissions.length > 0 ? (
-        <TableContainer component={Paper}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            overflowX: 'auto',
+            maxWidth: '100%',
+            '& .MuiTable-root': {
+              minWidth: { xs: 600, sm: 750, md: 'auto' },
+            }
+          }}
+        >
           <Table>
             <TableHead>
               <TableRow>
@@ -184,13 +193,13 @@ const GradesPage = () => {
                 <TableCell align="center">
                   <strong>{language === 'ru' ? 'Оценка' : 'Nota'}</strong>
                 </TableCell>
-                <TableCell align="center">
+                <TableCell align="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                   <strong>{language === 'ru' ? 'Процент' : 'Procent'}</strong>
                 </TableCell>
                 <TableCell>
                   <strong>{language === 'ru' ? 'Дата сдачи' : 'Data predării'}</strong>
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                   <strong>{language === 'ru' ? 'Комментарий' : 'Comentariu'}</strong>
                 </TableCell>
               </TableRow>
@@ -222,7 +231,7 @@ const GradesPage = () => {
                         size="small"
                       />
                     </TableCell>
-                    <TableCell align="center">
+                    <TableCell align="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                       <Typography
                         variant="body2"
                         sx={{
@@ -238,7 +247,7 @@ const GradesPage = () => {
                         {formatDate(submission.submittedAt)}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                       <Typography variant="body2" sx={{ maxWidth: 300 }}>
                         {submission.feedback || '-'}
                       </Typography>
