@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import {
-  getMySubmissions,
-  submitAssignment,
-  updateSubmission,
-  uploadHomeworkFile,
-} from '@/services/api'
+  useMyAssignments,
+  useSubmitAssignment,
+  useUpdateSubmission,
+  useUploadHomeworkFile,
+} from '@/hooks/useAssignments'
 import {
   Box,
   Container,
@@ -23,7 +23,6 @@ import {
   TextField,
   Alert,
   Snackbar,
-  LinearProgress,
   Paper,
   Divider,
   IconButton,
@@ -31,24 +30,25 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Skeleton,
 } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import WarningIcon from '@mui/icons-material/Warning'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 
 const AssignmentsPage = () => {
-  const { token } = useAuth()
   const { i18n } = useTranslation()
   const language = i18n.language as 'ru' | 'ro'
-  const [submissions, setSubmissions] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [uploadingFile, setUploadingFile] = useState(false)
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
 
+  const { data: submissions = [], isLoading, error } = useMyAssignments()
+  const submitMutation = useSubmitAssignment()
+  const updateMutation = useUpdateSubmission()
+  const uploadMutation = useUploadHomeworkFile()
+
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
   const [openSubmitDialog, setOpenSubmitDialog] = useState(false)
   const [currentAssignment, setCurrentAssignment] = useState<any>(null)
   const [submissionForm, setSubmissionForm] = useState({
@@ -57,27 +57,9 @@ const AssignmentsPage = () => {
     comment: '',
   })
 
-  useEffect(() => {
-    loadMySubmissions()
-  }, [])
-
-  const loadMySubmissions = async () => {
-    try {
-      if (!token) return
-      setLoading(true)
-      const data = await getMySubmissions(token)
-      setSubmissions(data)
-    } catch (error: any) {
-      showSnackbar(error.response?.data?.message || 'Ошибка загрузки', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleSubmit = async () => {
     try {
-      if (!token || !currentAssignment) return
-      setLoading(true)
+      if (!currentAssignment) return
 
       const data = {
         textAnswer: submissionForm.textAnswer || undefined,
@@ -86,24 +68,26 @@ const AssignmentsPage = () => {
 
       // Если уже сдавал - пересдача
       if (currentAssignment.mySubmission) {
-        await updateSubmission(
-          currentAssignment.mySubmission._id,
-          { ...data, comment: submissionForm.comment },
-          token
-        )
-        showSnackbar('Работа пересдана', 'success')
+        await updateMutation.mutateAsync({
+          submissionId: currentAssignment.mySubmission._id,
+          data: { ...data, comment: submissionForm.comment },
+        })
+        showSnackbar(language === 'ru' ? 'Работа пересдана' : 'Lucrare retransmisă', 'success')
       } else {
-        await submitAssignment(currentAssignment._id, data, token)
-        showSnackbar('Работа сдана', 'success')
+        await submitMutation.mutateAsync({
+          assignmentId: currentAssignment._id,
+          data,
+        })
+        showSnackbar(language === 'ru' ? 'Работа сдана' : 'Lucrare trimisă', 'success')
       }
 
       setOpenSubmitDialog(false)
       resetForm()
-      loadMySubmissions()
     } catch (error: any) {
-      showSnackbar(error.response?.data?.message || 'Ошибка сдачи', 'error')
-    } finally {
-      setLoading(false)
+      showSnackbar(
+        error.response?.data?.message || (language === 'ru' ? 'Ошибка сдачи' : 'Eroare la trimitere'),
+        'error'
+      )
     }
   }
 
@@ -112,10 +96,7 @@ const AssignmentsPage = () => {
     if (!file) return
 
     try {
-      if (!token) return
-      setUploadingFile(true)
-
-      const response = await uploadHomeworkFile(file, token)
+      const response = await uploadMutation.mutateAsync(file)
       const fileUrl = response.url || response.fileUrl
 
       setSubmissionForm(prev => ({
@@ -123,11 +104,12 @@ const AssignmentsPage = () => {
         files: [...prev.files, fileUrl]
       }))
 
-      showSnackbar('Файл загружен', 'success')
+      showSnackbar(language === 'ru' ? 'Файл загружен' : 'Fișier încărcat', 'success')
     } catch (error: any) {
-      showSnackbar(error.response?.data?.error?.message || error.response?.data?.message || 'Ошибка загрузки файла', 'error')
-    } finally {
-      setUploadingFile(false)
+      showSnackbar(
+        error.response?.data?.error?.message || error.response?.data?.message || (language === 'ru' ? 'Ошибка загрузки файла' : 'Eroare la încărcarea fișierului'),
+        'error'
+      )
     }
   }
 
@@ -214,10 +196,39 @@ const AssignmentsPage = () => {
   )
   const completedAssignments = submissions.filter(s => s.status === 'graded')
 
+  if (isLoading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ mb: { xs: 3, md: 4 } }}>
+          <Skeleton variant="text" width="60%" height={48} sx={{ mb: 1 }} />
+          <Skeleton variant="text" width="80%" height={24} />
+        </Box>
+        <Grid container spacing={2}>
+          {[1, 2, 3].map((n) => (
+            <Grid item xs={12} key={n}>
+              <Card>
+                <CardContent>
+                  <Skeleton variant="text" width="40%" height={32} sx={{ mb: 1 }} />
+                  <Skeleton variant="text" width="100%" />
+                  <Skeleton variant="text" width="100%" />
+                  <Skeleton variant="text" width="70%" sx={{ mb: 2 }} />
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Skeleton variant="rounded" width={120} height={32} />
+                    <Skeleton variant="rounded" width={100} height={32} />
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    )
+  }
+
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+      <Box sx={{ mb: { xs: 3, md: 4 } }}>
+        <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2rem', md: '2.125rem' } }}>
           {language === 'ru' ? 'Мои домашние задания' : 'Temele mele de casă'}
         </Typography>
         <Typography variant="body1" color="textSecondary">
@@ -227,7 +238,11 @@ const AssignmentsPage = () => {
         </Typography>
       </Box>
 
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error instanceof Error ? error.message : 'Ошибка загрузки заданий'}
+        </Alert>
+      )}
 
       {/* Активные задания */}
       {activeAssignments.length > 0 && (
@@ -387,13 +402,24 @@ const AssignmentsPage = () => {
       )}
 
       {/* Диалог сдачи работы */}
-      <Dialog open={openSubmitDialog} onClose={() => setOpenSubmitDialog(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
+      <Dialog
+        open={openSubmitDialog}
+        onClose={() => setOpenSubmitDialog(false)}
+        maxWidth="md"
+        fullWidth
+        sx={{
+          '& .MuiDialog-paper': {
+            m: { xs: 2, sm: 4 },
+            maxHeight: { xs: 'calc(100% - 32px)', sm: 'calc(100% - 64px)' },
+          }
+        }}
+      >
+        <DialogTitle sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
           {currentAssignment?.mySubmission
             ? (language === 'ru' ? 'Пересдать работу' : 'Retrimite lucrarea')
             : (language === 'ru' ? 'Сдать работу' : 'Trimite lucrarea')}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
           {currentAssignment && (
             <Box sx={{ pt: 2 }}>
               <Typography variant="h6" gutterBottom>
@@ -420,7 +446,12 @@ const AssignmentsPage = () => {
                 label={language === 'ru' ? 'Текстовый ответ' : 'Răspuns text'}
                 value={submissionForm.textAnswer}
                 onChange={(e) => setSubmissionForm({ ...submissionForm, textAnswer: e.target.value })}
-                sx={{ mb: 2 }}
+                sx={{
+                  mb: 2,
+                  '& .MuiInputBase-input': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                  }
+                }}
                 helperText={
                   !currentAssignment.requiresFile
                     ? (language === 'ru' ? 'Можно ответить текстом без файла' : 'Puteți răspunde cu text fără fișier')
@@ -432,11 +463,11 @@ const AssignmentsPage = () => {
                 variant="outlined"
                 component="label"
                 startIcon={<CloudUploadIcon />}
-                disabled={uploadingFile}
+                disabled={uploadMutation.isPending}
                 fullWidth
                 sx={{ mb: 1 }}
               >
-                {uploadingFile
+                {uploadMutation.isPending
                   ? (language === 'ru' ? 'Загрузка...' : 'Se încarcă...')
                   : (language === 'ru' ? 'Прикрепить файл' : 'Atașează fișier')}
                 <input type="file" hidden onChange={handleFileUpload} />
@@ -485,7 +516,12 @@ const AssignmentsPage = () => {
                   label={language === 'ru' ? 'Комментарий к пересдаче' : 'Comentariu la retransmitere'}
                   value={submissionForm.comment}
                   onChange={(e) => setSubmissionForm({ ...submissionForm, comment: e.target.value })}
-                  sx={{ mt: 2 }}
+                  sx={{
+                    mt: 2,
+                    '& .MuiInputBase-input': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                    }
+                  }}
                   placeholder={
                     language === 'ru'
                       ? 'Что вы исправили или изменили?'
@@ -504,11 +540,14 @@ const AssignmentsPage = () => {
             variant="contained"
             onClick={handleSubmit}
             disabled={
-              loading ||
+              submitMutation.isPending ||
+              updateMutation.isPending ||
               (currentAssignment?.requiresFile && submissionForm.files.length === 0 && !submissionForm.textAnswer)
             }
           >
-            {currentAssignment?.mySubmission
+            {submitMutation.isPending || updateMutation.isPending
+              ? (language === 'ru' ? 'Отправка...' : 'Se trimite...')
+              : currentAssignment?.mySubmission
               ? (language === 'ru' ? 'Пересдать' : 'Retrimite')
               : (language === 'ru' ? 'Сдать' : 'Trimite')}
           </Button>

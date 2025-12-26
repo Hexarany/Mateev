@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { getMyGroups } from '@/services/api'
+import { useMyGroups } from '@/hooks/useGroups'
 import {
   Box,
   Container,
@@ -16,10 +14,10 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  LinearProgress,
   Alert,
   Paper,
   Divider,
+  Skeleton,
 } from '@mui/material'
 import GroupIcon from '@mui/icons-material/Group'
 import PersonIcon from '@mui/icons-material/Person'
@@ -27,31 +25,10 @@ import SchoolIcon from '@mui/icons-material/School'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 
 const MyGroupsPage = () => {
-  const { token } = useAuth()
   const { i18n } = useTranslation()
   const navigate = useNavigate()
   const language = i18n.language as 'ru' | 'ro'
-  const [groups, setGroups] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    loadMyGroups()
-  }, [])
-
-  const loadMyGroups = async () => {
-    try {
-      if (!token) return
-      setLoading(true)
-      const data = await getMyGroups(token)
-      setGroups(data)
-    } catch (error: any) {
-      console.error('Error loading groups:', error)
-      setError(error.response?.data?.error?.message || 'Ошибка загрузки')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data: groups = [], isLoading, error } = useMyGroups()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -62,9 +39,24 @@ const MyGroupsPage = () => {
     })
   }
 
+  if (isLoading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+        <Skeleton variant="text" width="40%" height={40} sx={{ mb: 2 }} />
+        <Grid container spacing={3}>
+          {[1, 2].map((n) => (
+            <Grid item xs={12} key={n}>
+              <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2 }} />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    )
+  }
+
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+      <Box sx={{ mb: { xs: 2, sm: 3, md: 4 } }}>
         <Typography variant="h4" gutterBottom>
           {language === 'ru' ? 'Мои группы' : 'Grupele mele'}
         </Typography>
@@ -75,15 +67,13 @@ const MyGroupsPage = () => {
         </Typography>
       </Box>
 
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
-
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {error instanceof Error ? error.message : 'Ошибка загрузки'}
         </Alert>
       )}
 
-      {groups.length === 0 && !loading && (
+      {groups.length === 0 && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <GroupIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="textSecondary">

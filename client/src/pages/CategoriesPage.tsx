@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 import {
@@ -10,36 +9,21 @@ import {
   CardActions,
   Button,
   Box,
-  CircularProgress,
+  Skeleton,
+  Alert,
   alpha,
   useTheme,
 } from '@mui/material'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { getCategories } from '@/services/api'
+import { useCategories } from '@/hooks/useCategories'
 import type { Category } from '@/types'
 
 const CategoriesPage = () => {
   const { t, i18n } = useTranslation()
   const theme = useTheme()
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: categories = [], isLoading, error } = useCategories()
 
   const lang = i18n.language as 'ru' | 'ro'
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories()
-        setCategories(data)
-      } catch (error) {
-        console.error('Failed to fetch categories:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCategories()
-  }, [])
 
   const getCategoryColor = (index: number) => {
     const colors = theme.palette.mode === 'dark'
@@ -87,10 +71,26 @@ const CategoriesPage = () => {
         </Typography>
       </Box>
 
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-          <CircularProgress size={60} />
-        </Box>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error instanceof Error ? error.message : 'Ошибка при загрузке категорий'}
+        </Alert>
+      )}
+
+      {isLoading ? (
+        <Grid container spacing={3}>
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <Grid item xs={12} sm={6} md={4} key={n}>
+              <Card sx={{ p: 3, borderRadius: 3 }}>
+                <Skeleton variant="text" width="60%" height={32} sx={{ mb: 1 }} />
+                <Skeleton variant="text" width="100%" />
+                <Skeleton variant="text" width="100%" />
+                <Skeleton variant="text" width="80%" sx={{ mb: 2 }} />
+                <Skeleton variant="rectangular" height={36} width="40%" />
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       ) : categories.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="h6" color="text.secondary">

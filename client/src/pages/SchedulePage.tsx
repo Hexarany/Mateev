@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import api from '../services/api'
+import { useMySchedule } from '../hooks/useSchedule'
 import {
   Container,
   Typography,
@@ -13,6 +12,7 @@ import {
   Box,
   Chip,
   Divider,
+  Skeleton,
 } from '@mui/material'
 import {
   CalendarMonth as CalendarIcon,
@@ -42,28 +42,9 @@ interface ScheduleEntry {
 
 export default function SchedulePage() {
   const { user } = useAuth()
-  const [schedule, setSchedule] = useState<ScheduleEntry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { data: schedule = [], isLoading, error } = useMySchedule()
 
   const lang = user?.language || 'ru'
-
-  useEffect(() => {
-    fetchSchedule()
-  }, [])
-
-  const fetchSchedule = async () => {
-    try {
-      setLoading(true)
-      const response = await api.get('/schedule/my')
-      setSchedule(response.data)
-    } catch (err: any) {
-      console.error('Error fetching schedule:', err)
-      setError(err.response?.data?.error?.message || 'Ошибка при загрузке расписания')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -89,17 +70,22 @@ export default function SchedulePage() {
     return text[lang] || text.ru || ''
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <Container maxWidth="md" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
+      <Container maxWidth="md" sx={{ mt: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+        <Paper sx={{ p: { xs: 2, sm: 3 } }}>
+          <Skeleton variant="text" width="60%" height={40} sx={{ mb: 2 }} />
+          <Skeleton variant="rectangular" height={100} sx={{ mb: 2 }} />
+          <Skeleton variant="rectangular" height={100} sx={{ mb: 2 }} />
+          <Skeleton variant="rectangular" height={100} />
+        </Paper>
       </Container>
     )
   }
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Paper sx={{ p: 3 }}>
+    <Container maxWidth="md" sx={{ mt: { xs: 2, sm: 3, md: 4 }, mb: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+      <Paper sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2, boxShadow: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
           <CalendarIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
           <Typography variant="h4">
@@ -109,7 +95,7 @@ export default function SchedulePage() {
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
+            {error instanceof Error ? error.message : 'Ошибка при загрузке расписания'}
           </Alert>
         )}
 

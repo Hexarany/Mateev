@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams, Link as RouterLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -12,7 +12,8 @@ import {
   Button,
   Breadcrumbs,
   Link,
-  CircularProgress,
+  Skeleton,
+  Alert,
   TextField,
   InputAdornment,
   Chip,
@@ -30,7 +31,8 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import { getCategoryById, getTopicsByCategory } from '@/services/api'
+import { useCategoryById } from '@/hooks/useCategories'
+import { useTopicsByCategory } from '@/hooks/useTopics'
 import type { Category, Topic } from '@/types'
 import { useFavorites } from '@/contexts/FavoritesContext'
 
@@ -39,33 +41,13 @@ const CategoryPage = () => {
   const { t, i18n } = useTranslation()
   const lang = i18n.language as 'ru' | 'ro'
   const { isFavorite, toggleFavorite } = useFavorites()
-
-  const [category, setCategory] = useState<Category | null>(null)
-  const [topics, setTopics] = useState<Topic[]>([])
-  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!categoryId) return
+  const { data: category, isLoading: categoryLoading, error: categoryError } = useCategoryById(categoryId)
+  const { data: topics = [], isLoading: topicsLoading, error: topicsError } = useTopicsByCategory(categoryId)
 
-      try {
-        setLoading(true)
-        const [categoryData, topicsData] = await Promise.all([
-          getCategoryById(categoryId),
-          getTopicsByCategory(categoryId),
-        ])
-        setCategory(categoryData)
-        setTopics(topicsData)
-      } catch (error) {
-        console.error('Failed to fetch data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [categoryId])
+  const isLoading = categoryLoading || topicsLoading
+  const error = categoryError || topicsError
 
   // Filter topics based on search query
   const filteredTopics = useMemo(() => {
@@ -99,18 +81,29 @@ const CategoryPage = () => {
     return { grouped, noRegion }
   }, [filteredTopics, lang])
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 8, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
+      <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4, md: 6 }, px: { xs: 2, sm: 3 } }}>
+        <Skeleton variant="text" width="40%" height={40} sx={{ mb: 2 }} />
+        <Skeleton variant="text" width="60%" height={60} sx={{ mb: 1 }} />
+        <Skeleton variant="text" width="80%" height={30} sx={{ mb: 4 }} />
+        <Grid container spacing={3}>
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <Grid item xs={12} sm={6} md={4} key={n}>
+              <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2 }} />
+            </Grid>
+          ))}
+        </Grid>
       </Container>
     )
   }
 
-  if (!category) {
+  if (error || !category) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography variant="h4">Категория не найдена, в ближайшее время это будет исправлено / Categoria nu a fost găsită</Typography>
+      <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4, md: 6 }, px: { xs: 2, sm: 3 } }}>
+        <Alert severity="error">
+          {error instanceof Error ? error.message : 'Категория не найдена / Categoria nu a fost găsită'}
+        </Alert>
       </Container>
     )
   }
