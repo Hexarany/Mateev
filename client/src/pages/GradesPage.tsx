@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
-import { getMySubmissions } from '@/services/api'
+import { useMyAssignments } from '@/hooks/useAssignments'
 import {
   Box,
   Container,
@@ -16,9 +14,9 @@ import {
   TableRow,
   Paper,
   Chip,
-  LinearProgress,
   Alert,
   Grid,
+  Skeleton,
 } from '@mui/material'
 import GradeIcon from '@mui/icons-material/Grade'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
@@ -26,31 +24,9 @@ import AssignmentIcon from '@mui/icons-material/Assignment'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 const GradesPage = () => {
-  const { token } = useAuth()
   const { i18n } = useTranslation()
   const language = i18n.language as 'ru' | 'ro'
-  const [submissions, setSubmissions] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    loadMySubmissions()
-  }, [])
-
-  const loadMySubmissions = async () => {
-    try {
-      if (!token) return
-      setLoading(true)
-      const data = await getMySubmissions(token)
-      setSubmissions(data)
-      setError(null)
-    } catch (error: any) {
-      console.error('Error loading submissions:', error)
-      setError(error.response?.data?.error?.message || error.response?.data?.message || 'Ошибка загрузки')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data: submissions = [], isLoading, error } = useMyAssignments()
 
   // Фильтруем только проверенные работы
   const gradedSubmissions = submissions.filter(s => s.grade !== undefined && s.grade !== null)
@@ -87,10 +63,35 @@ const GradesPage = () => {
     })
   }
 
+  if (isLoading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ mb: { xs: 2, sm: 3, md: 4 } }}>
+          <Skeleton variant="text" width="40%" height={48} sx={{ mb: 1 }} />
+          <Skeleton variant="text" width="60%" height={24} />
+        </Box>
+        <Grid container spacing={2} sx={{ mb: 4 }}>
+          {[1, 2, 3, 4].map((n) => (
+            <Grid item xs={12} sm={6} md={3} key={n}>
+              <Card>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <Skeleton variant="circular" width={40} height={40} sx={{ mx: 'auto', mb: 1 }} />
+                  <Skeleton variant="text" width="60%" height={48} sx={{ mx: 'auto' }} />
+                  <Skeleton variant="text" width="80%" height={24} sx={{ mx: 'auto' }} />
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+      </Container>
+    )
+  }
+
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
       <Box sx={{ mb: { xs: 2, sm: 3, md: 4 } }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2rem', md: '2.125rem' } }}>
           {language === 'ru' ? 'Мои оценки' : 'Notele mele'}
         </Typography>
         <Typography variant="body1" color="textSecondary">
@@ -100,11 +101,9 @@ const GradesPage = () => {
         </Typography>
       </Box>
 
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
-
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {error instanceof Error ? error.message : 'Ошибка загрузки оценок'}
         </Alert>
       )}
 
@@ -176,31 +175,41 @@ const GradesPage = () => {
           sx={{
             overflowX: 'auto',
             maxWidth: '100%',
+            borderRadius: 2,
+            boxShadow: 2,
             '& .MuiTable-root': {
-              minWidth: { xs: 600, sm: 750, md: 'auto' },
+              minWidth: { xs: 650, sm: 750, md: 'auto' },
+            },
+            '& .MuiTableCell-root': {
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              padding: { xs: '8px 6px', sm: '12px 16px' },
+            },
+            '& .MuiTableCell-head': {
+              fontWeight: 600,
+              backgroundColor: 'action.hover',
             }
           }}
         >
-          <Table>
+          <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>{language === 'ru' ? 'Задание' : 'Sarcină'}</strong>
+                  {language === 'ru' ? 'Задание' : 'Sarcină'}
                 </TableCell>
-                <TableCell>
-                  <strong>{language === 'ru' ? 'Группа' : 'Grup'}</strong>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                  {language === 'ru' ? 'Группа' : 'Grup'}
                 </TableCell>
                 <TableCell align="center">
-                  <strong>{language === 'ru' ? 'Оценка' : 'Nota'}</strong>
+                  {language === 'ru' ? 'Оценка' : 'Nota'}
                 </TableCell>
-                <TableCell align="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                  <strong>{language === 'ru' ? 'Процент' : 'Procent'}</strong>
+                <TableCell align="center" sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                  {language === 'ru' ? 'Процент' : 'Procent'}
                 </TableCell>
                 <TableCell>
-                  <strong>{language === 'ru' ? 'Дата сдачи' : 'Data predării'}</strong>
+                  {language === 'ru' ? 'Дата' : 'Data'}
                 </TableCell>
-                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
-                  <strong>{language === 'ru' ? 'Комментарий' : 'Comentariu'}</strong>
+                <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' } }}>
+                  {language === 'ru' ? 'Комментарий' : 'Comentariu'}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -213,42 +222,50 @@ const GradesPage = () => {
                 const gradeColor = getGradeColor(percentage)
 
                 return (
-                  <TableRow key={submission._id} hover>
+                  <TableRow key={submission._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
                     <TableCell>
-                      <Typography variant="body2">
+                      <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         {assignment.title[language]}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="textSecondary">
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                      <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         {assignment.group?.name?.[language] || '-'}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Chip
-                        label={`${submission.grade} / ${assignment.maxScore}`}
+                        label={`${submission.grade}/${assignment.maxScore}`}
                         color={gradeColor}
                         size="small"
+                        sx={{
+                          fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                          height: { xs: 20, sm: 24 },
+                          '& .MuiChip-label': {
+                            px: { xs: 0.5, sm: 1 },
+                          }
+                        }}
                       />
                     </TableCell>
-                    <TableCell align="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                    <TableCell align="center" sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                       <Typography
                         variant="body2"
                         sx={{
                           fontWeight: 'bold',
                           color: `${gradeColor}.main`,
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
                         }}
                       >
                         {percentage.toFixed(0)}%
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" color="textSecondary">
+                      <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
                         {formatDate(submission.submittedAt)}
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
-                      <Typography variant="body2" sx={{ maxWidth: 300 }}>
+                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' } }}>
+                      <Typography variant="body2" sx={{ maxWidth: 300, fontSize: '0.875rem' }}>
                         {submission.feedback || '-'}
                       </Typography>
                     </TableCell>

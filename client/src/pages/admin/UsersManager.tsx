@@ -507,8 +507,25 @@ const UsersManager = () => {
       )}
 
       {/* Таблица пользователей */}
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          maxWidth: '100%',
+          '& .MuiTable-root': {
+            minWidth: { xs: 700, sm: 800, md: 'auto' },
+          },
+          '& .MuiTableCell-root': {
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            padding: { xs: '6px 8px', sm: '12px 16px' },
+          },
+          '& .MuiTableCell-head': {
+            fontWeight: 600,
+            backgroundColor: 'action.hover',
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
@@ -516,15 +533,16 @@ const UsersManager = () => {
                   indeterminate={selectedUserIds.length > 0 && selectedUserIds.length < users.length}
                   checked={users.length > 0 && selectedUserIds.length === users.length}
                   onChange={handleSelectAll}
+                  size="small"
                 />
               </TableCell>
               <TableCell>Имя</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Email</TableCell>
               <TableCell>Роль</TableCell>
-              <TableCell>Уровень доступа</TableCell>
-              <TableCell>Подписка</TableCell>
-              <TableCell>Оплачено</TableCell>
-              <TableCell>Дата регистрации</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Уровень доступа</TableCell>
+              <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' } }}>Подписка</TableCell>
+              <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' } }}>Оплачено</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Дата регистрации</TableCell>
               <TableCell align="right">Действия</TableCell>
             </TableRow>
           </TableHead>
@@ -543,57 +561,81 @@ const UsersManager = () => {
               </TableRow>
             ) : (
               users.map((user) => (
-                <TableRow key={user._id} hover>
+                <TableRow key={user._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={selectedUserIds.includes(user._id)}
                       onChange={() => handleSelectUser(user._id)}
+                      size="small"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                     {user.firstName} {user.lastName}
                   </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <Chip label={user.role} color={getRoleColor(user.role)} size="small" />
+                  <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {user.email}
                   </TableCell>
                   <TableCell>
+                    <Chip
+                      label={user.role}
+                      color={getRoleColor(user.role)}
+                      size="small"
+                      sx={{
+                        fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                        height: { xs: 20, sm: 24 },
+                        '& .MuiChip-label': { px: { xs: 0.5, sm: 1 } }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                     <Chip
                       label={user.accessLevel}
                       color={getAccessLevelColor(user.accessLevel)}
                       size="small"
+                      sx={{
+                        fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                        height: { xs: 20, sm: 24 },
+                        '& .MuiChip-label': { px: { xs: 0.5, sm: 1 } }
+                      }}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' } }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                       <Chip
                         label={getSubscriptionLabel(user.subscriptionStatus)}
                         color={getSubscriptionColor(user.subscriptionStatus)}
                         size="small"
+                        sx={{ fontSize: '0.75rem', height: 24 }}
                       />
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
                         {user.subscriptionEndDate ? `до ${formatDateDisplay(user.subscriptionEndDate)}` : '—'}
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell>${user.paymentAmount || 0}</TableCell>
-                  <TableCell>{new Date(user.createdAt).toLocaleDateString('ru-RU')}</TableCell>
+                  <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    ${user.paymentAmount || 0}
+                  </TableCell>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {new Date(user.createdAt).toLocaleDateString('ru-RU')}
+                  </TableCell>
                   <TableCell align="right">
                     <IconButton
                       size="small"
                       color="primary"
                       onClick={() => handleSendEmailToUser(user)}
                       title="Отправить Email"
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
                     >
-                      <EmailIcon fontSize="small" />
+                      <EmailIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
                     <IconButton
                       size="small"
                       color="secondary"
                       onClick={() => handleSendPasswordReset(user)}
                       title="Ссылка для смены пароля"
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
                     >
-                      <LockResetIcon fontSize="small" />
+                      <LockResetIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
                     <IconButton
                       size="small"
@@ -601,18 +643,24 @@ const UsersManager = () => {
                       onClick={() => handleCancelSubscription(user)}
                       disabled={user.accessLevel === 'free' || user.role !== 'student'}
                       title="Отключить подписку"
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
                     >
-                      <BlockIcon fontSize="small" />
+                      <BlockIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
-                    <IconButton size="small" onClick={() => handleEditClick(user)}>
-                      <EditIcon fontSize="small" />
+                    <IconButton
+                      size="small"
+                      onClick={() => handleEditClick(user)}
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
+                    >
+                      <EditIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
                     <IconButton
                       size="small"
                       color="error"
                       onClick={() => handleDeleteClick(user)}
+                      sx={{ p: { xs: 0.5, sm: 1 } }}
                     >
-                      <DeleteIcon fontSize="small" />
+                      <DeleteIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                     </IconButton>
                   </TableCell>
                 </TableRow>
