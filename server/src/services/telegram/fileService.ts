@@ -195,8 +195,7 @@ export class TelegramFileService {
           media.url,
           caption,
           media.mimetype,
-          media.originalName,
-          media.cloudinaryPublicId
+          media.originalName
         )
 
         const deliveryRecord = {
