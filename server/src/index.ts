@@ -133,12 +133,33 @@ app.get('/api/health', (req, res) => {
 // Static files (uploads) - using absolute path with CORS
 const uploadsPath = path.join(__dirname, '..', 'uploads')
 console.log('📁 Uploads directory:', uploadsPath)
-// Применяем CORS для статических файлов
-app.use('/uploads', cors({
-  origin: '*',
-  methods: ['GET'],
-  credentials: false
-}), express.static(uploadsPath))
+
+// Middleware для правильных headers для Telegram
+app.use('/uploads', (req, res, next) => {
+  // Разрешаем доступ откуда угодно
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', '*')
+
+  // Убираем строгие security headers которые могут мешать Telegram
+  res.removeHeader('Cross-Origin-Opener-Policy')
+  res.removeHeader('Cross-Origin-Resource-Policy')
+  res.removeHeader('X-Frame-Options')
+  res.removeHeader('X-Content-Type-Options')
+
+  // Добавляем Content-Disposition для корректной загрузки
+  const filename = req.path.split('/').pop()
+  if (filename) {
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`)
+  }
+
+  next()
+}, express.static(uploadsPath, {
+  setHeaders: (res, filePath) => {
+    // Устанавливаем правильный Content-Type
+    res.setHeader('Cache-Control', 'public, max-age=31536000')
+  }
+}))
 
 // Routes
 app.use('/api/auth', authRoutes)
