@@ -140,47 +140,68 @@ const CategoriesManager = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          maxWidth: '100%',
+          '& .MuiTable-root': {
+            minWidth: { xs: 500, sm: 600, md: 'auto' },
+          },
+          '& .MuiTableCell-root': {
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            padding: { xs: '6px 8px', sm: '12px 16px' },
+          },
+          '& .MuiTableCell-head': {
+            fontWeight: 600,
+            backgroundColor: 'action.hover',
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Порядок</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Порядок</TableCell>
               <TableCell>Название (RU)</TableCell>
-              <TableCell>Название (RO)</TableCell>
-              <TableCell>Иконка</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Название (RO)</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Иконка</TableCell>
               <TableCell>Цвет</TableCell>
-              <TableCell>Действия</TableCell>
+              <TableCell align="right">Действия</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {categories.map((category) => (
-              <TableRow key={category._id}>
-                <TableCell>{category.order}</TableCell>
+              <TableRow key={category._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{category.order}</TableCell>
                 <TableCell>{category.name.ru}</TableCell>
-                <TableCell>{category.name.ro}</TableCell>
-                <TableCell>{category.icon}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>{category.name.ro}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>{category.icon}</TableCell>
                 <TableCell>
                   <Box
                     sx={{
-                      width: 40,
-                      height: 40,
+                      width: { xs: 30, sm: 40 },
+                      height: { xs: 30, sm: 40 },
                       bgcolor: category.color,
                       borderRadius: 1,
                     }}
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <IconButton
                     onClick={() => handleOpenDialog(category)}
                     color="primary"
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
-                    <EditIcon />
+                    <EditIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                   </IconButton>
                   <IconButton
                     onClick={() => handleDelete(category._id)}
                     color="error"
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                   </IconButton>
                 </TableCell>
               </TableRow>

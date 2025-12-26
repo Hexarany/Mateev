@@ -204,38 +204,59 @@ const TopicsManager = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          maxWidth: '100%',
+          '& .MuiTable-root': {
+            minWidth: { xs: 500, sm: 600, md: 'auto' },
+          },
+          '& .MuiTableCell-root': {
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            padding: { xs: '6px 8px', sm: '12px 16px' },
+          },
+          '& .MuiTableCell-head': {
+            fontWeight: 600,
+            backgroundColor: 'action.hover',
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Порядок</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Порядок</TableCell>
               <TableCell>Название (RU)</TableCell>
-              <TableCell>Категория</TableCell>
-              <TableCell>Сложность</TableCell>
-              <TableCell>Время (мин)</TableCell>
-              <TableCell>Действия</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Категория</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Сложность</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Время (мин)</TableCell>
+              <TableCell align="right">Действия</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {topics.map((topic) => (
-              <TableRow key={topic._id}>
-                <TableCell>{topic.order}</TableCell>
+              <TableRow key={topic._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{topic.order}</TableCell>
                 <TableCell>{topic.name.ru}</TableCell>
-                <TableCell>{getCategoryName(topic.categoryId)}</TableCell>
-                <TableCell>{topic.difficulty}</TableCell>
-                <TableCell>{topic.estimatedTime}</TableCell>
-                <TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>{getCategoryName(topic.categoryId)}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{topic.difficulty}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>{topic.estimatedTime}</TableCell>
+                <TableCell align="right">
                   <IconButton
                     onClick={() => handleOpenDialog(topic)}
                     color="primary"
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
-                    <EditIcon />
+                    <EditIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                   </IconButton>
                   <IconButton
                     onClick={() => handleDelete(topic._id)}
                     color="error"
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                   </IconButton>
                 </TableCell>
               </TableRow>

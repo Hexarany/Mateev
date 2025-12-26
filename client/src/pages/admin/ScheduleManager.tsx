@@ -374,62 +374,86 @@ const ScheduleManager = () => {
           )}
 
           {schedule.length > 0 && (
-            <TableContainer component={Paper}>
-              <Table>
+            <TableContainer
+              component={Paper}
+              sx={{
+                overflowX: 'auto',
+                maxWidth: '100%',
+                '& .MuiTable-root': {
+                  minWidth: { xs: 500, sm: 700, md: 'auto' },
+                },
+                '& .MuiTableCell-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  padding: { xs: '6px 8px', sm: '12px 16px' },
+                },
+                '& .MuiTableCell-head': {
+                  fontWeight: 600,
+                  backgroundColor: 'action.hover',
+                }
+              }}
+            >
+              <Table size="small">
                 <TableHead>
                   <TableRow>
                     <TableCell>#</TableCell>
-                    <TableCell>Дата и время</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Дата и время</TableCell>
                     <TableCell>Название</TableCell>
-                    <TableCell>Тема</TableCell>
-                    <TableCell>Статус</TableCell>
-                    <TableCell>Действия</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Тема</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Статус</TableCell>
+                    <TableCell align="right">Действия</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {schedule.map((lesson) => (
-                    <TableRow key={lesson._id}>
+                    <TableRow key={lesson._id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
                       <TableCell>{lesson.lessonNumber}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                         {new Date(lesson.date).toLocaleString('ru-RU', {
                           dateStyle: 'short',
                           timeStyle: 'short',
                         })}
                         <br />
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                           {lesson.duration} мин
                         </Typography>
                       </TableCell>
                       <TableCell>
                         {lesson.title.ru}
                         <br />
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                           {lesson.location}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                         {lesson.topic?.name?.ru || '-'}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                         <Chip
                           label={getStatusLabel(lesson.status)}
                           color={getStatusColor(lesson.status)}
                           size="small"
+                          sx={{
+                            fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                            height: { xs: 20, sm: 24 },
+                            '& .MuiChip-label': { px: { xs: 0.5, sm: 1 } }
+                          }}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="right">
                         <IconButton
                           onClick={() => handleOpenDialog(lesson)}
                           size="small"
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
                         >
-                          <EditIcon />
+                          <EditIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
                         <IconButton
                           onClick={() => handleDeleteLesson(lesson._id)}
                           size="small"
                           color="error"
+                          sx={{ p: { xs: 0.5, sm: 1 } }}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
                       </TableCell>
                     </TableRow>
