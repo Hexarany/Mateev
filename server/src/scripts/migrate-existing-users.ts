@@ -28,7 +28,28 @@ async function migrateExistingUsers() {
     await mongoose.connect(process.env.MONGODB_URI || '')
     console.log('✅ Connected to database\n')
 
-    // Find all users with basic or premium BUT no subscriptionEndsAt
+    // STEP 1: Migrate from old subscriptionEndDate to new subscriptionEndsAt
+    const usersWithOldField = await User.find({
+      subscriptionEndDate: { $exists: true, $ne: null },
+      $or: [
+        { subscriptionEndsAt: { $exists: false } },
+        { subscriptionEndsAt: null }
+      ]
+    })
+
+    console.log(`📊 Step 1: Migrating from old field (subscriptionEndDate)`)
+    console.log(`   Found ${usersWithOldField.length} users with old field\n`)
+
+    for (const user of usersWithOldField) {
+      user.subscriptionEndsAt = user.subscriptionEndDate
+      await user.save()
+      console.log(`   ✓ ${user.email} (${user.accessLevel}) → copied subscriptionEndDate to subscriptionEndsAt`)
+      console.log(`     Expires: ${user.subscriptionEndsAt?.toISOString().split('T')[0]}`)
+    }
+
+    console.log(`\n✅ Step 1 complete: Migrated ${usersWithOldField.length} users\n`)
+
+    // STEP 2: Find users with basic or premium BUT no subscriptionEndsAt
     const existingPaidUsers = await User.find({
       accessLevel: { $in: ['basic', 'premium'] },
       $or: [
@@ -37,10 +58,11 @@ async function migrateExistingUsers() {
       ]
     })
 
-    console.log(`📊 Found ${existingPaidUsers.length} existing paid users:\n`)
+    console.log(`📊 Step 2: Grandfathering users without expiration date`)
+    console.log(`   Found ${existingPaidUsers.length} users to grandfather:\n`)
 
     if (existingPaidUsers.length === 0) {
-      console.log('✅ No users to migrate. All done!')
+      console.log('✅ No users to grandfather. All done!')
       await mongoose.disconnect()
       return
     }
@@ -78,10 +100,12 @@ async function migrateExistingUsers() {
       console.log(`   ✓ ${user.email} (${user.accessLevel}) → grandfathered until 2099`)
     }
 
-    console.log(`\n✅ Migration complete! Updated ${updated} users.`)
-    console.log(`\n📋 Summary:`)
-    console.log(`   - All existing paid users now have subscriptionEndsAt = 2099-12-31`)
-    console.log(`   - They will keep their access "forever" (honoring original promise)`)
+    console.log(`\n✅ Step 2 complete! Grandfathered ${updated} users.`)
+    console.log(`\n📋 Final Summary:`)
+    console.log(`   Step 1: Migrated ${usersWithOldField.length} users from old field`)
+    console.log(`   Step 2: Grandfathered ${updated} users without expiration`)
+    console.log(`\n   - Users with existing dates keep their dates`)
+    console.log(`   - Users without dates get grandfathered status (2099-12-31)`)
     console.log(`   - New users from now on will have time-limited subscriptions\n`)
 
     await mongoose.disconnect()
