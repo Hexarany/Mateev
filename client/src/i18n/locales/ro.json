@@ -239,6 +239,14 @@
     "save": "Salvați",
     "cancel": "Anulați"
   },
+  "pricing": {
+    "trial": {
+      "title": "Încercați Basic gratuit!",
+      "subtitle": "Acces gratuit 3 zile • Fără card",
+      "description": "Obțineți acces complet la protocoalele de masaj, secțiunile de anatomie și suport Telegram timp de 3 zile complet gratuit!",
+      "button": "Activați 3 zile gratuit"
+    }
+  },
   "footer": {
     "copyright": "© 2024 MateevMassage. Toate drepturile rezervate.",
     "description": "Platformă educațională pentru studiul anatomiei umane",

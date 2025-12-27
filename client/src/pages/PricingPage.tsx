@@ -28,6 +28,7 @@ import { Check as CheckIcon, Star as StarIcon, LocalOffer as OfferIcon, CreditCa
 import { useAuth } from '@/contexts/AuthContext'
 import { useMainButton } from '@/contexts/MainButtonContext'
 import { useTelegram } from '@/contexts/TelegramContext'
+import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
@@ -56,6 +57,7 @@ const PricingPage = () => {
   const { user, isAuthenticated, token, updateUser } = useAuth()
   const { setMainButton, hideMainButton } = useMainButton()
   const { isInTelegram } = useTelegram()
+  const { t } = useTranslation()
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [promoCode, setPromoCode] = useState('')
@@ -503,16 +505,15 @@ const PricingPage = () => {
               <StarIcon sx={{ fontSize: 40 }} />
               <Box>
                 <Typography variant="h5" fontWeight={700}>
-                  Попробуйте Basic бесплатно!
+                  {t('pricing.trial.title')}
                 </Typography>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  Бесплатный доступ на 3 дня • Без привязки карты
+                  {t('pricing.trial.subtitle')}
                 </Typography>
               </Box>
             </Box>
             <Typography variant="body2" sx={{ mb: 2, opacity: 0.95 }}>
-              Получите полный доступ к протоколам массажа, анатомическим разделам и
-              сопровождению в Telegram на 3 дня совершенно бесплатно!
+              {t('pricing.trial.description')}
             </Typography>
             <Button
               variant="contained"
@@ -529,7 +530,7 @@ const PricingPage = () => {
                 },
               }}
             >
-              {activatingTrial ? <CircularProgress size={24} /> : 'Активировать 3 дня бесплатно'}
+              {activatingTrial ? <CircularProgress size={24} /> : t('pricing.trial.button')}
             </Button>
           </Paper>
         </Box>
