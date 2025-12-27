@@ -55,6 +55,7 @@ const PricingPage = lazy(() => import('./pages/PricingPage'))
 const PaymentCallbackPage = lazy(() => import('./pages/PaymentCallbackPage'))
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
+const AboutInstructorPage = lazy(() => import('./pages/AboutInstructorPage'))
 
 function App() {
   const { isInTelegram } = useTelegram()
@@ -84,6 +85,7 @@ function App() {
               <Route path="/subscription" element={<SubscriptionPage />} />
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/payment-callback" element={<PaymentCallbackPage />} />
+              <Route path="/about-instructor" element={<AboutInstructorPage />} />
               <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/category/:categoryId" element={<CategoryPage />} />
               <Route path="/topic/:topicId" element={<TopicPage />} />

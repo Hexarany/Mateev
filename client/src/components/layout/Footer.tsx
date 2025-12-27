@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Box, Container, Typography, Link } from '@mui/material'
+import { Link as RouterLink } from 'react-router-dom'
 import SchoolIcon from '@mui/icons-material/School'
 
 const Footer = () => {
@@ -22,8 +23,7 @@ const Footer = () => {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
+            flexDirection: 'column',
             alignItems: 'center',
             gap: 2,
           }}
@@ -37,6 +37,25 @@ const Footer = () => {
 
           <Typography variant="body2" color="text.secondary" align="center">
             {t('footer.description')}
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary" align="center">
+            {t('footer.createdBy')}{' '}
+            <Link
+              component={RouterLink}
+              to="/about-instructor"
+              sx={{
+                color: 'primary.main',
+                textDecoration: 'none',
+                fontWeight: 600,
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              {t('footer.instructorName')}
+            </Link>
+            , {t('footer.instructorTitle')}
           </Typography>
 
           <Typography variant="body2" color="text.secondary">

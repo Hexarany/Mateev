@@ -241,7 +241,10 @@
   },
   "footer": {
     "copyright": "© 2024 MateevMassage. Toate drepturile rezervate.",
-    "description": "Platformă educațională pentru studiul anatomiei umane"
+    "description": "Platformă educațională pentru studiul anatomiei umane",
+    "createdBy": "Platforma creată de",
+    "instructorName": "Denis Matievici",
+    "instructorTitle": "maseur certificat cu peste 10 ani de experiență"
   },
   "contentLock": {
     "title": "Acces complet pentru utilizatorii înregistrați",
