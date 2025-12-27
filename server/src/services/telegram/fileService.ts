@@ -155,6 +155,13 @@ export class TelegramFileService {
 
       console.log('[Telegram] Sending file to user')
 
+      if (!bot) {
+        return {
+          success: false,
+          error: 'Telegram bot not initialized',
+        }
+      }
+
       let result
       if (mimetype?.startsWith('image/')) {
         result = await bot.telegram.sendPhoto(user.telegramId, source, {
@@ -337,6 +344,13 @@ export class TelegramFileService {
       const caption = buildCaption('ru', groupFile.title, groupFile.description, media)
 
       console.log('[Telegram] Sending file to group')
+
+      if (!bot) {
+        return {
+          success: false,
+          error: 'Telegram bot not initialized',
+        }
+      }
 
       let result
       if (media.mimetype?.startsWith('image/')) {

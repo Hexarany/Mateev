@@ -7,10 +7,14 @@ import {
   createGroupChat
 } from '../controllers/telegramController'
 import { authenticateToken, authorizeRole } from '../middleware/auth'
+import { telegramWebhookCallback } from '../services/telegram'
 
 const router = express.Router()
 
-// All routes require authentication
+// Webhook endpoint (public, called by Telegram servers)
+router.post('/webhook', telegramWebhookCallback)
+
+// All other routes require authentication
 router.use(authenticateToken)
 
 // Linking/unlinking

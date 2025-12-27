@@ -38,6 +38,11 @@ export class GroupChatManager {
     const telegramChat = await TelegramGroupChat.findOne({ groupId, isActive: true })
     if (!telegramChat || telegramChat.chatId === 'pending') return false
 
+    if (!bot) {
+      console.warn('Telegram bot not initialized, cannot send group message')
+      return false
+    }
+
     try {
       await bot.telegram.sendMessage(telegramChat.chatId, message, {
         parse_mode: 'Markdown'

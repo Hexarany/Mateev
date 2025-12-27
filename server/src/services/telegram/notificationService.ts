@@ -43,6 +43,11 @@ export class TelegramNotificationService {
       return false
     }
 
+    if (!bot) {
+      console.warn('Telegram bot not initialized, skipping notification')
+      return false
+    }
+
     try {
       await bot.telegram.sendMessage(user.telegramId, message, {
         parse_mode: 'Markdown',
@@ -283,6 +288,11 @@ export class TelegramNotificationService {
       })
 
       if (!telegramGroupChat) {
+        return false
+      }
+
+      if (!bot) {
+        console.warn('Telegram bot not initialized, skipping group notification')
         return false
       }
 
