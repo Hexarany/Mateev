@@ -106,7 +106,7 @@ function App() {
             </Routes>
           </Suspense>
         </Box>
-        {!isInTelegram && <Footer />}
+        <Footer />
       </Box>
     </MainButtonProvider>
   )
