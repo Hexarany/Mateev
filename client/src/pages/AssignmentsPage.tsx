@@ -387,7 +387,7 @@ const AssignmentsPage = () => {
         </Box>
       )}
 
-      {submissions.length === 0 && !loading && (
+      {submissions.length === 0 && !isLoading && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <AssignmentIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="textSecondary">
