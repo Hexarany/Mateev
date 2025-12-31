@@ -11,14 +11,17 @@ import { MainButtonProvider } from './contexts/MainButtonContext'
 // import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 // import InstallPWA from './components/InstallPWA'
 
-// Critical pages - loaded immediately
+// Critical pages - loaded immediately (only absolute essentials)
 import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Lazy-loaded pages - loaded on demand
-// Priority 1: Heavy/admin pages
+// Priority 1: Auth pages (not needed on first load)
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
+
+// Priority 2: Heavy/admin pages
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const AnatomyModels3DPage = lazy(() => import('./pages/AnatomyModels3DPage'))
 const AnatomyModel3DViewerPage = lazy(() => import('./pages/AnatomyModel3DViewerPage'))
@@ -53,7 +56,6 @@ const TriggerPointDetailPage = lazy(() => import('./pages/TriggerPointDetailPage
 const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
 const PaymentCallbackPage = lazy(() => import('./pages/PaymentCallbackPage'))
-const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
 const AboutInstructorPage = lazy(() => import('./pages/AboutInstructorPage'))
 

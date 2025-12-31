@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState, useEffect } from 'react'
+import { Suspense, useRef, useState, useEffect, memo } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, useGLTF, Environment, Html, useProgress, Center } from '@react-three/drei'
 import { Box, CircularProgress, IconButton, Paper, Typography, LinearProgress } from '@mui/material'
@@ -322,4 +322,10 @@ const Model3DViewer = ({ modelUrl, caption, autoRotate = true }: Model3DViewerPr
   )
 }
 
-export default Model3DViewer
+// Memoize to prevent unnecessary re-renders when modelUrl doesn't change
+export default memo(Model3DViewer, (prevProps, nextProps) => {
+  // Only re-render if modelUrl changes
+  return prevProps.modelUrl === nextProps.modelUrl &&
+         prevProps.autoRotate === nextProps.autoRotate &&
+         prevProps.caption === nextProps.caption
+})
