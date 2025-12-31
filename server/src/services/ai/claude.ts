@@ -65,7 +65,7 @@ export async function sendChatMessage(
     ]
 
     const response = await client.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-3-5-sonnet-20240620',
       max_tokens: 2048,
       system: SYSTEM_PROMPT,
       messages,
@@ -131,7 +131,7 @@ export async function generateQuizQuestions(
 Верни только JSON массив, без дополнительного текста.`
 
     const response = await client.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-3-5-sonnet-20240620',
       max_tokens: 4096,
       messages: [{ role: 'user', content: prompt }],
     })
@@ -181,7 +181,7 @@ ${quizScores.map(q => `- ${q.topic}: ${q.score}%`).join('\n')}
 Ответ должен быть мотивирующим и конструктивным.`
 
     const response = await client.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-3-5-sonnet-20240620',
       max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }],
     })

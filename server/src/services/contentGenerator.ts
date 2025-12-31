@@ -75,7 +75,7 @@ Make sure the content is:
 Return ONLY valid JSON, no additional text.`
 
   const response = await getAnthropicClient().messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-3-5-sonnet-20240620',
     max_tokens: 4000,
     messages: [{ role: 'user', content: prompt }],
   })
@@ -155,7 +155,7 @@ Requirements:
 Return ONLY valid JSON, no additional text.`
 
   const response = await getAnthropicClient().messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-3-5-sonnet-20240620',
     max_tokens: 6000,
     messages: [{ role: 'user', content: prompt }],
   })
@@ -249,7 +249,7 @@ Requirements:
 Return ONLY valid JSON, no additional text.`
 
   const response = await getAnthropicClient().messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-3-5-sonnet-20240620',
     max_tokens: 5000,
     messages: [{ role: 'user', content: prompt }],
   })
@@ -345,7 +345,7 @@ Make it progressive (beginner → advanced).
 Return ONLY valid JSON.`
 
   const response = await getAnthropicClient().messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-3-5-sonnet-20240620',
     max_tokens: 8000,
     messages: [{ role: 'user', content: prompt }],
   })
