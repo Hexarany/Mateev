@@ -2,7 +2,7 @@ node_modules
 npm-debug.log
 .git
 .gitignore
-.env
+# .env - commented out to allow server/.env to be copied
 .env.local
 *.md
 .vscode
