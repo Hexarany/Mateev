@@ -24,6 +24,8 @@ export default defineConfig({
           'mui-vendor': ['@mui/material', '@mui/icons-material'],
           'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
           'markdown-vendor': ['react-markdown', 'rehype-raw', 'remark-gfm'],
+          'query-vendor': ['@tanstack/react-query', '@tanstack/react-query-devtools'],
+          'chart-vendor': ['recharts', 'date-fns'],
         },
       },
     },
