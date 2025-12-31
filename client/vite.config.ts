@@ -8,8 +8,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   plugins: [
     react(),
-    // Bundle analyzer - only for analysis, can be removed after
-    visualizer({
+    // Bundle analyzer - only in development
+    process.env.NODE_ENV !== 'production' && visualizer({
       filename: './dist/stats.html',
       open: false,
       gzipSize: true,
@@ -42,6 +42,10 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Increase file size limit for large assets
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
+        // Exclude certain files from precaching
+        globIgnores: ['**/stats.html', '**/node_modules/**'],
         // Cache strategies
         runtimeCaching: [
           {
