@@ -247,6 +247,34 @@
       "button": "Activați 3 zile gratuit"
     }
   },
+  "ai": {
+    "title": "Asistent AI",
+    "askAI": "Întreabă AI",
+    "chatTitle": "Chat cu asistentul AI",
+    "placeholder": "Pune o întrebare despre anatomie sau masaj...",
+    "send": "Trimite",
+    "thinking": "AI se gândește...",
+    "error": "Eroare la accesarea AI",
+    "limitReached": "Ați atins limita zilnică de cereri",
+    "upgradePrompt": "Îmbunătățiți planul pentru mai multe cereri",
+    "remainingRequests": "Cereri rămase astăzi",
+    "exampleQuestions": {
+      "title": "Exemple de întrebări:",
+      "q1": "Ce mușchi sunt responsabili pentru extensia coloanei vertebrale?",
+      "q2": "Cum se masează corect mușchiul trapez?",
+      "q3": "Ce sunt punctele trigger și cum să lucrezi cu ele?",
+      "q4": "Explică funcțiile mușchiului sternocleidomastoidian"
+    },
+    "contextHelp": "Pune o întrebare despre tema «{topicName}»",
+    "quizHelp": "Explică de ce acesta este răspunsul corect/greșit",
+    "generateQuiz": "Generează quiz cu AI",
+    "generating": "Generez întrebări...",
+    "generatedSuccess": "Quiz generat cu succes!",
+    "usageStats": "Statistici utilizare AI",
+    "used": "Folosit",
+    "limit": "Limită",
+    "remaining": "Rămas"
+  },
   "footer": {
     "copyright": "© 2024 MateevMassage. Toate drepturile rezervate.",
     "description": "Platformă educațională pentru studiul anatomiei umane",

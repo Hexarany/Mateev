@@ -30,8 +30,10 @@ import AddIcon from '@mui/icons-material/Add'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import CloseIcon from '@mui/icons-material/Close'
+import SmartToyIcon from '@mui/icons-material/SmartToy'
 import type { Quiz, Topic, QuizQuestion } from '@/types'
 import { createQuiz, updateQuiz, deleteQuiz, getTopics } from '@/services/api'
+import api from '@/services/api'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
 
@@ -84,6 +86,7 @@ const QuizzesManager = () => {
     categoryId: '',
   })
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
+  const [generatingWithAI, setGeneratingWithAI] = useState(false)
 
   const loadQuizzes = useCallback(async () => {
     try {
@@ -282,6 +285,49 @@ const QuizzesManager = () => {
     }));
   };
 
+  const handleGenerateWithAI = async () => {
+    if (!formData.topicId) {
+      showSnackbar('Сначала выберите тему', 'error');
+      return;
+    }
+
+    const selectedTopic = topics.find(t => t._id === formData.topicId);
+    if (!selectedTopic) {
+      showSnackbar('Тема не найдена', 'error');
+      return;
+    }
+
+    setGeneratingWithAI(true);
+    try {
+      const response = await api.post('/ai/generate-quiz', {
+        topicName: selectedTopic.name.ru,
+        topicDescription: selectedTopic.description.ru,
+        questionCount: 5,
+      });
+
+      const generatedQuestions = response.data.questions.map((q: any) => ({
+        _id: '',
+        question: { ru: q.question, ro: q.question }, // TODO: перевести на румынский
+        options: q.options.map((opt: string) => ({ ru: opt, ro: opt })),
+        correctAnswer: q.correctAnswer,
+        explanation: { ru: q.explanation, ro: q.explanation },
+      }));
+
+      setFormData(prev => ({
+        ...prev,
+        questions: [...prev.questions, ...generatedQuestions],
+      }));
+
+      showSnackbar('Квиз успешно сгенерирован! Проверьте вопросы и добавьте румынские переводы', 'success');
+      setActiveTab(1); // Переключаем на вкладку вопросов
+    } catch (error: any) {
+      console.error('AI generation error:', error);
+      showSnackbar(error.response?.data?.error || 'Ошибка генерации квиза', 'error');
+    } finally {
+      setGeneratingWithAI(false);
+    }
+  };
+
 
   return (
     <Box>
@@ -380,8 +426,22 @@ const QuizzesManager = () => {
           }
         }}
       >
-        <DialogTitle sx={{ pb: { xs: 1, sm: 2 } }}>
-          {editingQuiz ? 'Редактировать викторину' : 'Новая викторина'}
+        <DialogTitle sx={{ pb: { xs: 1, sm: 2 }, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6">
+            {editingQuiz ? 'Редактировать викторину' : 'Новая викторина'}
+          </Typography>
+          {formData.topicId && (
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<SmartToyIcon />}
+              onClick={handleGenerateWithAI}
+              disabled={generatingWithAI}
+              sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+            >
+              {generatingWithAI ? 'Генерация...' : 'AI Генерация'}
+            </Button>
+          )}
         </DialogTitle>
         <DialogContent dividers sx={{ px: { xs: 2, sm: 3 } }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: { xs: 1, sm: 2 } }}>

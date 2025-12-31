@@ -28,7 +28,9 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import CloseIcon from '@mui/icons-material/Close'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import SmartToyIcon from '@mui/icons-material/SmartToy'
 import Model3DViewer from '@/components/Model3DViewer'
+import AIChatDialog from '@/components/AIChatDialog'
 import EnhancedMarkdown from '@/components/EnhancedMarkdown'
 import AccessGate from '@/components/AccessGate'
 import BookmarkButton from '@/components/BookmarkButton'
@@ -73,6 +75,7 @@ const TopicPage = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [completing, setCompleting] = useState(false)
+  const [aiChatOpen, setAiChatOpen] = useState(false)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -230,23 +233,36 @@ const TopicPage = () => {
                 </Box>
               </Box>
               {isAuthenticated && (
-                <Button
-                  variant={isCompleted ? "outlined" : "contained"}
-                  color={isCompleted ? "success" : "primary"}
-                  startIcon={<CheckCircleIcon />}
-                  onClick={handleCompleteClick}
-                  disabled={completing || isCompleted}
-                  sx={{
-                    minWidth: { xs: '100%', sm: '180px' },
-                    width: { xs: '100%', sm: 'auto' },
-                    alignSelf: { xs: 'stretch', sm: 'center' }
-                  }}
-                >
-                  {isCompleted
-                    ? (lang === 'ru' ? '\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e' : 'Finalizat')
-                    : (lang === 'ru' ? '\u0417\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u044c \u0442\u0435\u043c\u0443' : 'Finalizeaz\u0103 tema')
-                  }
-                </Button>
+                <Box sx={{ display: 'flex', gap: 1, minWidth: { xs: '100%', sm: 'auto' }, flexDirection: { xs: 'column', sm: 'row' } }}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<SmartToyIcon />}
+                    onClick={() => setAiChatOpen(true)}
+                    sx={{
+                      minWidth: { xs: '100%', sm: '150px' },
+                      width: { xs: '100%', sm: 'auto' },
+                    }}
+                  >
+                    {t('ai.askAI')}
+                  </Button>
+                  <Button
+                    variant={isCompleted ? "outlined" : "contained"}
+                    color={isCompleted ? "success" : "primary"}
+                    startIcon={<CheckCircleIcon />}
+                    onClick={handleCompleteClick}
+                    disabled={completing || isCompleted}
+                    sx={{
+                      minWidth: { xs: '100%', sm: '180px' },
+                      width: { xs: '100%', sm: 'auto' },
+                    }}
+                  >
+                    {isCompleted
+                      ? (lang === 'ru' ? '\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e' : 'Finalizat')
+                      : (lang === 'ru' ? '\u0417\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u044c \u0442\u0435\u043c\u0443' : 'Finalizeaz\u0103 tema')
+                    }
+                  </Button>
+                </Box>
               )}
             </Box>
             <Typography variant="body1" color="text.secondary" paragraph sx={{ mt: 1 }}>
@@ -495,6 +511,16 @@ const TopicPage = () => {
           )}
         </Box>
       </Dialog>
+
+      {/* AI Chat Dialog */}
+      {topic && (
+        <AIChatDialog
+          open={aiChatOpen}
+          onClose={() => setAiChatOpen(false)}
+          topicName={topic.name[lang]}
+          contextMessage={`Контекст: Тема "${topic.name[lang]}" - ${topic.description[lang]}`}
+        />
+      )}
     </Container>
   )
 }
