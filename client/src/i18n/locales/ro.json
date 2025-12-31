@@ -265,7 +265,7 @@
       "q3": "Ce sunt punctele trigger și cum să lucrezi cu ele?",
       "q4": "Explică funcțiile mușchiului sternocleidomastoidian"
     },
-    "contextHelp": "Pune o întrebare despre tema «{topicName}»",
+    "contextHelp": "Pune o întrebare despre tema «{{topicName}}»",
     "quizHelp": "Explică de ce acesta este răspunsul corect/greșit",
     "generateQuiz": "Generează quiz cu AI",
     "generating": "Generez întrebări...",
