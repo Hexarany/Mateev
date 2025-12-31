@@ -43,6 +43,7 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import PeopleIcon from '@mui/icons-material/People'
 import PersonIcon from '@mui/icons-material/Person'
 import HistoryIcon from '@mui/icons-material/History'
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CategoriesManager from './CategoriesManager'
@@ -63,6 +64,7 @@ import ScheduleManager from './ScheduleManager'
 import AssignmentsManager from './AssignmentsManager'
 import InstructorProfileManager from './InstructorProfileManager'
 import AuditLogsPage from './AuditLogsPage'
+import BulkOperationsPage from './BulkOperationsPage'
 
 type AdminGroupKey = 'content' | 'workflow' | 'operations' | 'access'
 
@@ -296,6 +298,16 @@ const ADMIN_SECTIONS: AdminSection[] = [
     description: 'История действий пользователей и системы.',
     icon: HistoryIcon,
     component: AuditLogsPage,
+    group: 'operations',
+    adminOnly: true,
+  },
+  {
+    key: 'bulk-operations',
+    label: 'Массовые операции / Operatii in masa',
+    shortLabel: 'Bulk',
+    description: 'Импорт/экспорт CSV, массовые действия.',
+    icon: DynamicFeedIcon,
+    component: BulkOperationsPage,
     group: 'operations',
     adminOnly: true,
   },

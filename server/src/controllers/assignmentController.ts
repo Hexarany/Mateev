@@ -8,6 +8,7 @@ import User from '../models/User'
 import mongoose from 'mongoose'
 import { TelegramNotificationService } from '../services/telegram/notificationService'
 import emailService from '../services/emailService'
+import { sendNotificationToUser } from './pushNotificationController'
 
 // ============================================
 // ASSIGNMENTS (Домашние задания)
@@ -74,15 +75,16 @@ export const createAssignment = async (req: CustomRequest, res: Response) => {
     TelegramNotificationService.notifyNewAssignment(assignment._id.toString())
       .catch(err => console.error('Failed to send Telegram assignment notification:', err))
 
-    // Send Email notification to all students in the group (non-blocking)
+    // Send Email and Push notifications to all students in the group (non-blocking)
     groupExists.populate('students').then(async (populatedGroup) => {
       const students = populatedGroup.students as any[]
       for (const student of students) {
+        const assignmentTitle = assignment.title?.ru || assignment.title?.ro || 'Новое задание'
+        const description = assignment.description?.ru || assignment.description?.ro || ''
+
+        // Email notification
         if (student.emailNotifications?.enabled && student.emailNotifications?.homework) {
           const studentName = `${student.firstName} ${student.lastName || ''}`.trim()
-          const assignmentTitle = assignment.title?.ru || assignment.title?.ro || 'Новое задание'
-          const description = assignment.description?.ru || assignment.description?.ro || ''
-
           emailService.sendNewAssignmentEmail(
             student.email,
             studentName,
@@ -92,8 +94,20 @@ export const createAssignment = async (req: CustomRequest, res: Response) => {
             'ru' // TODO: use student's language preference
           ).catch(err => console.error(`Failed to send email to ${student.email}:`, err))
         }
+
+        // Push notification
+        sendNotificationToUser(student._id.toString(), {
+          title: 'Новое задание',
+          body: `${assignmentTitle} - Срок: ${new Date(assignment.deadline).toLocaleDateString('ru-RU')}`,
+          icon: '/pwa-192x192.png',
+          url: '/assignments',
+          data: {
+            type: 'new_assignment',
+            assignmentId: assignment._id.toString(),
+          },
+        }).catch(err => console.error(`Failed to send push notification to ${student._id}:`, err))
       }
-    }).catch(err => console.error('Failed to send email notifications:', err))
+    }).catch(err => console.error('Failed to send notifications:', err))
 
     res.status(201).json({
       message: 'Assignment created successfully',
@@ -559,12 +573,15 @@ export const gradeSubmission = async (req: CustomRequest, res: Response) => {
     TelegramNotificationService.notifySubmissionGraded(submission._id.toString())
       .catch(err => console.error('Failed to send Telegram grade notification:', err))
 
-    // Send Email notification to student (non-blocking)
+    // Send Email and Push notifications to student (non-blocking)
     User.findById(submission.student).then(async (student) => {
-      if (student && student.emailNotifications?.enabled && student.emailNotifications?.grades) {
-        const studentName = `${student.firstName} ${student.lastName || ''}`.trim()
-        const assignmentTitle = assignment.title?.ru || assignment.title?.ro || 'Задание'
+      if (!student) return
 
+      const studentName = `${student.firstName} ${student.lastName || ''}`.trim()
+      const assignmentTitle = assignment.title?.ru || assignment.title?.ro || 'Задание'
+
+      // Email notification
+      if (student.emailNotifications?.enabled && student.emailNotifications?.grades) {
         emailService.sendGradeEmail(
           student.email,
           studentName,
@@ -575,7 +592,20 @@ export const gradeSubmission = async (req: CustomRequest, res: Response) => {
           'ru' // TODO: use student's language preference
         ).catch(err => console.error(`Failed to send grade email to ${student.email}:`, err))
       }
-    }).catch(err => console.error('Failed to send grade email notification:', err))
+
+      // Push notification
+      sendNotificationToUser(student._id.toString(), {
+        title: 'Оценка выставлена',
+        body: `${assignmentTitle}: ${grade}/${assignment.maxScore}`,
+        icon: '/pwa-192x192.png',
+        url: '/grades',
+        data: {
+          type: 'grade_posted',
+          submissionId: submission._id.toString(),
+          grade,
+        },
+      }).catch(err => console.error(`Failed to send push notification to ${student._id}:`, err))
+    }).catch(err => console.error('Failed to send notifications:', err))
 
     res.json({
       message: 'Submission graded successfully',

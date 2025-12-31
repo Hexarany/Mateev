@@ -7,9 +7,7 @@ import LoadingSpinner from './components/LoadingSpinner'
 import { useTelegram } from './contexts/TelegramContext'
 import { useTelegramBackButton } from './hooks/useTelegramBackButton'
 import { MainButtonProvider } from './contexts/MainButtonContext'
-// Temporarily disabled PWA components
-// import PWAUpdatePrompt from './components/PWAUpdatePrompt'
-// import InstallPWA from './components/InstallPWA'
+import PWAInstallPrompt from './components/PWAInstallPrompt'
 
 // Critical pages - loaded immediately (only absolute essentials)
 import HomePage from './pages/HomePage'
@@ -39,6 +37,7 @@ const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage'))
 const CertificatesPage = lazy(() => import('./pages/CertificatesPage'))
 const CertificateVerifyPage = lazy(() => import('./pages/CertificateVerifyPage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
+const NotificationSettingsPage = lazy(() => import('./pages/NotificationSettingsPage'))
 const AssignmentsPage = lazy(() => import('./pages/AssignmentsPage'))
 const MyGroupsPage = lazy(() => import('./pages/MyGroupsPage'))
 const GradesPage = lazy(() => import('./pages/GradesPage'))
@@ -68,8 +67,7 @@ function App() {
   return (
     <MainButtonProvider>
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        {/* <PWAUpdatePrompt /> */}
-        {/* <InstallPWA /> */}
+        <PWAInstallPrompt />
         <Navbar />
         <Box component="main" sx={{ flexGrow: 1 }}>
           <Suspense fallback={<LoadingSpinner />}>
@@ -84,6 +82,7 @@ function App() {
               <Route path="/certificates" element={<CertificatesPage />} />
               <Route path="/verify-certificate/:certificateNumber" element={<CertificateVerifyPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/notification-settings" element={<NotificationSettingsPage />} />
               <Route path="/assignments" element={<AssignmentsPage />} />
               <Route path="/my-groups" element={<MyGroupsPage />} />
               <Route path="/grades" element={<GradesPage />} />

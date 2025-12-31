@@ -44,6 +44,8 @@ import assignmentRoutes from './routes/assignmentRoutes'
 import telegramRoutes from './routes/telegramRoutes'
 import aiRoutes from './routes/aiRoutes'
 import auditLogRoutes from './routes/auditLogs'
+import pushNotificationRoutes from './routes/pushNotifications'
+import bulkOperationsRoutes from './routes/bulkOperations'
 import { initTelegramBot, telegramWebhookCallback, telegramWebhookPath } from './services/telegram'
 
 // Load environment variables
@@ -198,6 +200,8 @@ app.use('/api/assignments', assignmentRoutes)
 app.use('/api/telegram', telegramRoutes)
 app.use('/api/ai', aiRoutes)
 app.use('/api/audit-logs', auditLogRoutes)
+app.use('/api/push-notifications', pushNotificationRoutes)
+app.use('/api/bulk', bulkOperationsRoutes)
 
 // Serve static files from React app whenever the bundle exists
 const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist');
