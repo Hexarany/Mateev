@@ -35,6 +35,7 @@ const ResourcesLibraryPage = lazy(() => import('./pages/ResourcesLibraryPage'))
 // Priority 3: User pages
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage'))
 const CertificatesPage = lazy(() => import('./pages/CertificatesPage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const AssignmentsPage = lazy(() => import('./pages/AssignmentsPage'))
@@ -78,6 +79,7 @@ function App() {
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/my-progress" element={<StudentDashboardPage />} />
               <Route path="/certificates" element={<CertificatesPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/assignments" element={<AssignmentsPage />} />

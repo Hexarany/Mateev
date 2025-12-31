@@ -577,11 +577,11 @@ const Navbar = () => {
                   <MenuItem
                     onClick={() => {
                       handleCloseUserMenu()
-                      navigate('/dashboard')
+                      navigate('/my-progress')
                     }}
                   >
                     <Typography textAlign="center">
-                      {i18n.language === 'ru' ? 'Мой прогресс' : 'Progresul meu'}
+                      {i18n.language === 'ru' ? '📊 Мой прогресс' : '📊 Progresul meu'}
                     </Typography>
                   </MenuItem>
                   <MenuItem
