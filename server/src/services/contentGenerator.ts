@@ -104,7 +104,7 @@ Return ONLY valid JSON, no additional text.`
 export async function generateQuizQuestions(params: GenerateQuizParams) {
   const { topicId, questionCount = 10, difficulty = 'medium' } = params
 
-  const topic = await Topic.findById(topicId).populate('category')
+  const topic = await Topic.findById(topicId).populate('categoryId')
   if (!topic) {
     throw new Error('Topic not found')
   }
