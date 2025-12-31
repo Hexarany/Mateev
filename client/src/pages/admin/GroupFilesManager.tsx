@@ -483,7 +483,7 @@ const GroupFilesManager = () => {
             <Grid item xs={12} md={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h6" color="success.main">
+                  <Typography variant="h6" color="success">
                     {stats.successfulDeliveries}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -495,7 +495,7 @@ const GroupFilesManager = () => {
             <Grid item xs={12} md={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h6" color="error.main">
+                  <Typography variant="h6" color="error">
                     {stats.failedDeliveries}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">

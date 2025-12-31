@@ -259,7 +259,7 @@ const PromoCodesManager = () => {
               <Typography variant="h6" gutterBottom>
                 Активных
               </Typography>
-              <Typography variant="h3" color="success.main">
+              <Typography variant="h3" color="success">
                 {promoCodes.filter((p) => p.isActive && !isExpired(p.validUntil)).length}
               </Typography>
             </CardContent>

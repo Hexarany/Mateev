@@ -314,7 +314,7 @@ export default function SchedulePage() {
         {/* Header with controls */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <CalendarIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
+            <CalendarIcon sx={{ fontSize: 32, mr: 2, color: (theme) => theme.palette.primary.main }} />
             <Typography variant="h4">
               {lang === 'ru' ? 'Моё расписание' : 'Orarul meu'}
             </Typography>
