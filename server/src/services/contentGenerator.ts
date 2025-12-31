@@ -189,6 +189,13 @@ Return ONLY valid JSON, no additional text.`
 
   const generatedQuestions = parseClaudeJSON(content.text)
 
+  // Generate slug from topic name
+  const slug = topic.name.ru
+    .toLowerCase()
+    .replace(/[^a-zа-я0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    + '-' + Date.now()
+
   return {
     title: {
       ru: `Тест: ${topic.name.ru}`,
@@ -198,28 +205,23 @@ Return ONLY valid JSON, no additional text.`
       ru: `Проверочный тест по теме "${topic.name.ru}"`,
       ro: `Test de verificare pentru tema "${topic.name.ro}"`,
     },
-    topic: topicId,
+    slug,
+    topicId,
     questions: generatedQuestions.questions.map((q: any) => ({
       question: {
         ru: q.question_ru,
         ro: q.question_ro,
       },
       options: q.options_ru.map((opt: string, idx: number) => ({
-        text: {
-          ru: opt,
-          ro: q.options_ro[idx],
-        },
+        ru: opt,
+        ro: q.options_ro[idx],
       })),
       correctAnswer: q.correctAnswer,
       explanation: {
         ru: q.explanation_ru,
         ro: q.explanation_ro,
       },
-      points: q.points || 10,
-      timeLimit: 60,
     })),
-    timeLimit: questionCount * 60,
-    passingScore: 70,
     difficulty,
   }
 }
