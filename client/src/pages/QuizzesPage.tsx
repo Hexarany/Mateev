@@ -97,7 +97,7 @@ const QuizzesPage = () => {
 
       {/* Header */}
       <Box sx={{ mb: 4, textAlign: 'center' }}>
-        <QuizIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
+        <QuizIcon sx={{ fontSize: 60, color: (theme) => theme.palette.primary.main, mb: 2 }} />
         <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
           {lang === 'ru' ? 'Тесты по анатомии' : 'Teste de anatomie'}
         </Typography>
@@ -130,7 +130,7 @@ const QuizzesPage = () => {
               >
                 <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <QuizIcon sx={{ color: 'primary.main', mr: 1, fontSize: 28 }} />
+                    <QuizIcon sx={{ color: (theme) => theme.palette.primary.main, mr: 1, fontSize: 28 }} />
                     <Typography variant="h6" component="h2" sx={{ fontWeight: 600, flexGrow: 1 }}>
                       {quiz.title[lang]}
                     </Typography>

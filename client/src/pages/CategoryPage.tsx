@@ -243,7 +243,7 @@ const CategoryPage = () => {
                       size="small"
                     >
                       {favorited ? (
-                        <FavoriteIcon sx={{ color: 'error.main' }} />
+                        <FavoriteIcon sx={{ color: (theme) => theme.palette.error.main }} />
                       ) : (
                         <FavoriteBorderIcon />
                       )}
@@ -255,7 +255,7 @@ const CategoryPage = () => {
                       <FitnessCenterIcon
                         sx={{
                           mr: 1,
-                          color: 'primary.main',
+                          color: (theme) => theme.palette.primary.main,
                           fontSize: 28,
                         }}
                       />
@@ -391,7 +391,7 @@ const CategoryPage = () => {
                           size="small"
                         >
                           {favorited ? (
-                            <FavoriteIcon sx={{ color: 'error.main' }} />
+                            <FavoriteIcon sx={{ color: (theme) => theme.palette.error.main }} />
                           ) : (
                             <FavoriteBorderIcon />
                           )}
@@ -403,7 +403,7 @@ const CategoryPage = () => {
                           <FitnessCenterIcon
                             sx={{
                               mr: 1,
-                              color: 'primary.main',
+                              color: (theme) => theme.palette.primary.main,
                               fontSize: 28,
                             }}
                           />

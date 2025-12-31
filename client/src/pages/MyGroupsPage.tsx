@@ -127,13 +127,13 @@ const MyGroupsPage = () => {
                     {/* Преподаватель */}
                     <Grid item xs={12} md={6}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <SchoolIcon sx={{ mr: 1, color: 'primary.main' }} />
+                        <SchoolIcon sx={{ mr: 1, color: (theme) => theme.palette.primary.main }} />
                         <Typography variant="h6">
                           {language === 'ru' ? 'Преподаватель' : 'Profesor'}
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>
+                        <Avatar sx={{ bgcolor: (theme) => theme.palette.primary.main }}>
                           <PersonIcon />
                         </Avatar>
                         <Box>
@@ -150,7 +150,7 @@ const MyGroupsPage = () => {
                     {/* Даты */}
                     <Grid item xs={12} md={6}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <CalendarTodayIcon sx={{ mr: 1, color: 'primary.main' }} />
+                        <CalendarTodayIcon sx={{ mr: 1, color: (theme) => theme.palette.primary.main }} />
                         <Typography variant="h6">
                           {language === 'ru' ? 'Период обучения' : 'Perioada de studiu'}
                         </Typography>
@@ -168,7 +168,7 @@ const MyGroupsPage = () => {
                     {/* Студенты */}
                     <Grid item xs={12}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <GroupIcon sx={{ mr: 1, color: 'primary.main' }} />
+                        <GroupIcon sx={{ mr: 1, color: (theme) => theme.palette.primary.main }} />
                         <Typography variant="h6">
                           {language === 'ru' ? 'Студенты' : 'Studenți'} ({students.length})
                         </Typography>
@@ -178,7 +178,7 @@ const MyGroupsPage = () => {
                           {students.map((student, index) => (
                             <ListItem key={student._id || index}>
                               <ListItemAvatar>
-                                <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+                                <Avatar sx={{ width: 32, height: 32, bgcolor: (theme) => theme.palette.secondary.main }}>
                                   {student.firstName?.[0]}
                                 </Avatar>
                               </ListItemAvatar>

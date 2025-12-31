@@ -45,7 +45,7 @@ const Footer = () => {
               component={RouterLink}
               to="/about-instructor"
               sx={{
-                color: 'primary.main',
+                color: (theme) => theme.palette.primary.main,
                 textDecoration: 'none',
                 fontWeight: 600,
                 '&:hover': {

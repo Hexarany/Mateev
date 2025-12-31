@@ -89,7 +89,7 @@ const DashboardPage = () => {
 
   const stats = [
     {
-      icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: 'error.main' }} />,
+      icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: (theme) => theme.palette.error.main }} />,
       title: lang === 'ru' ? 'Серия дней' : 'Serie de zile',
       value: progress.stats.streak,
       subtitle: lang === 'ru'
@@ -98,14 +98,14 @@ const DashboardPage = () => {
       color: 'error.light',
     },
     {
-      icon: <SchoolIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
+      icon: <SchoolIcon sx={{ fontSize: 40, color: (theme) => theme.palette.primary.main }} />,
       title: lang === 'ru' ? 'Изучено тем' : 'Teme studiate',
       value: progress.stats.totalTopicsCompleted,
       subtitle: lang === 'ru' ? 'Завершено' : 'Finalizate',
       color: 'primary.light',
     },
     {
-      icon: <QuizIcon sx={{ fontSize: 40, color: 'success.main' }} />,
+      icon: <QuizIcon sx={{ fontSize: 40, color: (theme) => theme.palette.success.main }} />,
       title: lang === 'ru' ? 'Тесты пройдены' : 'Teste trecute',
       value: progress.stats.totalQuizzesPassed,
       subtitle: lang === 'ru'
@@ -114,7 +114,7 @@ const DashboardPage = () => {
       color: 'success.light',
     },
     {
-      icon: <AccessTimeIcon sx={{ fontSize: 40, color: 'info.main' }} />,
+      icon: <AccessTimeIcon sx={{ fontSize: 40, color: (theme) => theme.palette.info.main }} />,
       title: lang === 'ru' ? 'Время обучения' : 'Timp de studiu',
       value: formatTime(progress.stats.totalStudyTime),
       subtitle: lang === 'ru' ? 'Всего' : 'Total',
@@ -261,7 +261,7 @@ const DashboardPage = () => {
       {/* Achievements */}
       <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
-          <EmojiEventsIcon sx={{ verticalAlign: 'middle', mr: 1, color: 'warning.main' }} />
+          <EmojiEventsIcon sx={{ verticalAlign: 'middle', mr: 1, color: (theme) => theme.palette.warning.main }} />
           {lang === 'ru' ? 'Достижения' : 'Realizări'}
           <Chip
             label={`${progress.achievements.length}/9`}
@@ -323,7 +323,7 @@ const DashboardPage = () => {
       <Paper elevation={0} sx={{ p: 3, mt: 4, border: '1px solid', borderColor: 'divider' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
-            <WorkspacePremiumIcon sx={{ verticalAlign: 'middle', mr: 1, color: 'primary.main' }} />
+            <WorkspacePremiumIcon sx={{ verticalAlign: 'middle', mr: 1, color: (theme) => theme.palette.primary.main }} />
             {lang === 'ru' ? 'Сертификаты' : 'Certificate'}
             {certificates.length > 0 && (
               <Chip
@@ -383,7 +383,7 @@ const DashboardPage = () => {
                       >
                         <CardContent>
                           <Box sx={{ textAlign: 'center' }}>
-                            <WorkspacePremiumIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
+                            <WorkspacePremiumIcon sx={{ fontSize: 40, color: (theme) => theme.palette.success.main, mb: 1 }} />
                             <Typography variant="body2" fontWeight="bold" gutterBottom>
                               {cert.title[lang]}
                             </Typography>
@@ -407,7 +407,7 @@ const DashboardPage = () => {
             {/* Available Certificates Preview */}
             {availableCerts.some(cert => cert.eligible) && (
               <Box>
-                <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, color: 'success.main' }}>
+                <Typography variant="subtitle2" gutterBottom sx={{ mb: 2, color: (theme) => theme.palette.success.main }}>
                   {lang === 'ru' ? 'Доступны для получения' : 'Disponibile pentru obținere'}
                 </Typography>
                 <Grid container spacing={2}>
@@ -432,7 +432,7 @@ const DashboardPage = () => {
                         >
                           <CardContent>
                             <Box sx={{ textAlign: 'center' }}>
-                              <WorkspacePremiumIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                              <WorkspacePremiumIcon sx={{ fontSize: 40, color: (theme) => theme.palette.primary.main, mb: 1 }} />
                               <Typography variant="body2" fontWeight="bold" gutterBottom>
                                 {cert.title[lang]}
                               </Typography>

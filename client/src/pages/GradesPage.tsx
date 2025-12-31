@@ -113,7 +113,7 @@ const GradesPage = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
-                <AssignmentIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                <AssignmentIcon sx={{ fontSize: 40, color: (theme) => theme.palette.primary.main, mb: 1 }} />
                 <Typography variant="h4" color="primary">
                   {stats.total}
                 </Typography>
@@ -127,7 +127,7 @@ const GradesPage = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
-                <GradeIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
+                <GradeIcon sx={{ fontSize: 40, color: (theme) => theme.palette.success.main, mb: 1 }} />
                 <Typography variant="h4" color="success.main">
                   {stats.averageGrade.toFixed(1)}
                 </Typography>
@@ -141,7 +141,7 @@ const GradesPage = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
-                <TrendingUpIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
+                <TrendingUpIcon sx={{ fontSize: 40, color: (theme) => theme.palette.info.main, mb: 1 }} />
                 <Typography variant="h4" color="info.main">
                   {stats.averagePercentage.toFixed(0)}%
                 </Typography>
@@ -155,7 +155,7 @@ const GradesPage = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
-                <CheckCircleIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
+                <CheckCircleIcon sx={{ fontSize: 40, color: (theme) => theme.palette.warning.main, mb: 1 }} />
                 <Typography variant="h4" color="warning.main">
                   {stats.totalEarnedPoints} / {stats.totalPossiblePoints}
                 </Typography>

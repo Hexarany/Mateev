@@ -140,15 +140,15 @@ const NotificationsPage = () => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'achievement_unlocked':
-        return <CheckCircleIcon sx={{ fontSize: 40, color: 'success.main' }} />
+        return <CheckCircleIcon sx={{ fontSize: 40, color: (theme) => theme.palette.success.main }} />
       case 'certificate_ready':
-        return <WorkspacePremiumIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+        return <WorkspacePremiumIcon sx={{ fontSize: 40, color: (theme) => theme.palette.primary.main }} />
       case 'new_content':
-        return <SchoolIcon sx={{ fontSize: 40, color: 'info.main' }} />
+        return <SchoolIcon sx={{ fontSize: 40, color: (theme) => theme.palette.info.main }} />
       case 'quiz_reminder':
-        return <QuizIcon sx={{ fontSize: 40, color: 'warning.main' }} />
+        return <QuizIcon sx={{ fontSize: 40, color: (theme) => theme.palette.warning.main }} />
       case 'system_announcement':
-        return <AnnouncementIcon sx={{ fontSize: 40, color: 'error.main' }} />
+        return <AnnouncementIcon sx={{ fontSize: 40, color: (theme) => theme.palette.error.main }} />
       default:
         return <NotificationsIcon sx={{ fontSize: 40 }} />
     }

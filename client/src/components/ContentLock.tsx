@@ -88,7 +88,7 @@ const ContentLock = ({ previewText }: ContentLockProps) => {
               size="large"
               sx={{
                 backgroundColor: 'white',
-                color: 'primary.main',
+                color: (theme) => theme.palette.primary.main,
                 '&:hover': {
                   backgroundColor: 'grey.100',
                 },

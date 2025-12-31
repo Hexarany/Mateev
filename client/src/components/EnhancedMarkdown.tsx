@@ -152,7 +152,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 mt: 4,
                 mb: 3,
                 fontWeight: 700,
-                color: 'primary.main',
+                color: (theme) => theme.palette.primary.main,
                 borderBottom: '4px solid',
                 borderColor: 'primary.main',
                 pb: 1.5,
@@ -277,7 +277,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
           thead: ({ children }) => (
             <TableHead
               sx={{
-                bgcolor: 'primary.main',
+                bgcolor: (theme) => theme.palette.primary.main,
                 '& th': {
                   color: 'white',
                   fontWeight: 700,
@@ -341,7 +341,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 pl: 4,
                 my: 2,
                 '& li::marker': {
-                  color: 'primary.main',
+                  color: (theme) => theme.palette.primary.main,
                   fontSize: '1.2em',
                 },
               }}
@@ -357,7 +357,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 pl: 4,
                 my: 2,
                 '& li::marker': {
-                  color: 'primary.main',
+                  color: (theme) => theme.palette.primary.main,
                   fontWeight: 600,
                 },
               }}

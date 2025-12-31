@@ -236,7 +236,7 @@ const EnhancedQuizPage = () => {
                 onClick={() => handleModeSelect('practice')}
               >
                 <CardContent sx={{ textAlign: 'center', py: 4 }}>
-                  <SchoolIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
+                  <SchoolIcon sx={{ fontSize: 64, color: (theme) => theme.palette.primary.main, mb: 2 }} />
                   <Typography variant="h6" gutterBottom>
                     {lang === 'ru' ? 'Практика' : 'Practică'}
                   </Typography>
@@ -263,7 +263,7 @@ const EnhancedQuizPage = () => {
                 onClick={() => handleModeSelect('exam')}
               >
                 <CardContent sx={{ textAlign: 'center', py: 4 }}>
-                  <EmojiEventsIcon sx={{ fontSize: 64, color: 'warning.main', mb: 2 }} />
+                  <EmojiEventsIcon sx={{ fontSize: 64, color: (theme) => theme.palette.warning.main, mb: 2 }} />
                   <Typography variant="h6" gutterBottom>
                     {lang === 'ru' ? 'Экзамен' : 'Examen'}
                   </Typography>

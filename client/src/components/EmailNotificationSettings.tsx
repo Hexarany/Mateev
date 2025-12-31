@@ -104,7 +104,7 @@ const EmailNotificationSettings = () => {
       <Card>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <EmailIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
+            <EmailIcon sx={{ fontSize: 40, color: (theme) => theme.palette.primary.main, mr: 2 }} />
             <Typography variant="h5" fontWeight={600}>
               {lang === 'ru' ? 'Email уведомления' : 'Notificări email'}
             </Typography>

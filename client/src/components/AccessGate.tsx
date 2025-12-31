@@ -171,7 +171,7 @@ const AccessGate = ({ requiredTier, children, preview, contentType = 'конте
                 onClick={() => navigate('/login')}
                 sx={{
                   bgcolor: 'white',
-                  color: 'primary.main',
+                  color: (theme) => theme.palette.primary.main,
                   '&:hover': { bgcolor: 'grey.100' },
                 }}
               >
@@ -198,7 +198,7 @@ const AccessGate = ({ requiredTier, children, preview, contentType = 'конте
               onClick={() => navigate('/pricing')}
               sx={{
                 bgcolor: 'white',
-                color: 'primary.main',
+                color: (theme) => theme.palette.primary.main,
                 px: 4,
                 py: 1.5,
                 fontSize: '1.1rem',

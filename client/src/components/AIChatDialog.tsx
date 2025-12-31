@@ -264,7 +264,7 @@ export default function AIChatDialog({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  bgcolor: 'secondary.main',
+                  bgcolor: (theme) => theme.palette.secondary.main,
                   color: 'white',
                 }}
               >

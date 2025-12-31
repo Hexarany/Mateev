@@ -523,7 +523,7 @@ const PricingPage = () => {
               disabled={activatingTrial}
               sx={{
                 bgcolor: 'white',
-                color: 'primary.main',
+                color: (theme) => theme.palette.primary.main,
                 fontWeight: 700,
                 '&:hover': {
                   bgcolor: 'rgba(255,255,255,0.9)',
@@ -684,7 +684,7 @@ const PricingPage = () => {
                 {isBestValue && (
                   <Box
                     sx={{
-                      bgcolor: 'primary.main',
+                      bgcolor: (theme) => theme.palette.primary.main,
                       color: 'white',
                       py: 1,
                       textAlign: 'center',

@@ -208,7 +208,7 @@ const MassageProtocolPage = () => {
       {/* Protocol Header */}
       <Paper elevation={0} sx={{ mb: 4, p: 3, bgcolor: 'grey.50', border: '1px solid', borderColor: 'divider' }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-          <SpaIcon sx={{ fontSize: 48, color: 'primary.main', mr: 2 }} />
+          <SpaIcon sx={{ fontSize: 48, color: (theme) => theme.palette.primary.main, mr: 2 }} />
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
               {protocol.name[lang]}

@@ -88,7 +88,7 @@ const MassageProtocolsPage = () => {
 
       {/* Header */}
       <Box sx={{ mb: 4, textAlign: 'center' }}>
-        <SpaIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
+        <SpaIcon sx={{ fontSize: 60, color: (theme) => theme.palette.primary.main, mb: 2 }} />
         <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
           {lang === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj'}
         </Typography>

@@ -148,7 +148,7 @@ const AboutInstructorPage = () => {
               mx: 'auto',
               mb: 3,
               fontSize: '4rem',
-              bgcolor: 'primary.main',
+              bgcolor: (theme) => theme.palette.primary.main,
             }}
           >
             {profile.name[isRu ? 'ru' : 'ro']

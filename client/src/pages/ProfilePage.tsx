@@ -131,7 +131,7 @@ const ProfilePage = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <PersonIcon sx={{ mr: 1, color: 'primary.main' }} />
+                <PersonIcon sx={{ mr: 1, color: (theme) => theme.palette.primary.main }} />
                 <Typography variant="h5" fontWeight={600}>
                   {lang === 'ru' ? 'Личная информация' : 'Informații personale'}
                 </Typography>
@@ -170,7 +170,7 @@ const ProfilePage = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <WorkspacePremiumIcon sx={{ mr: 1, color: 'primary.main' }} />
+                <WorkspacePremiumIcon sx={{ mr: 1, color: (theme) => theme.palette.primary.main }} />
                 <Typography variant="h5" fontWeight={600}>
                   {lang === 'ru' ? 'Уровень доступа' : 'Nivel de acces'}
                 </Typography>
@@ -286,7 +286,7 @@ const ProfilePage = () => {
             <Card>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <PaymentIcon sx={{ mr: 1, color: 'primary.main' }} />
+                  <PaymentIcon sx={{ mr: 1, color: (theme) => theme.palette.primary.main }} />
                   <Typography variant="h5" fontWeight={600}>
                     {lang === 'ru' ? 'История платежей' : 'Istoric plăți'}
                   </Typography>

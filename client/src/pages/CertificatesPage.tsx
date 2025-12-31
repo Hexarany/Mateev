@@ -166,13 +166,13 @@ const CertificatesPage = () => {
   const getCertificateIcon = (type: string) => {
     switch (type) {
       case 'course_completion':
-        return <SchoolIcon sx={{ fontSize: 48, color: 'primary.main' }} />
+        return <SchoolIcon sx={{ fontSize: 48, color: (theme) => theme.palette.primary.main }} />
       case 'topic_mastery':
-        return <VerifiedIcon sx={{ fontSize: 48, color: 'success.main' }} />
+        return <VerifiedIcon sx={{ fontSize: 48, color: (theme) => theme.palette.success.main }} />
       case 'exam_excellence':
-        return <EmojiEventsIcon sx={{ fontSize: 48, color: 'warning.main' }} />
+        return <EmojiEventsIcon sx={{ fontSize: 48, color: (theme) => theme.palette.warning.main }} />
       case 'full_course':
-        return <WorkspacePremiumIcon sx={{ fontSize: 48, color: 'error.main' }} />
+        return <WorkspacePremiumIcon sx={{ fontSize: 48, color: (theme) => theme.palette.error.main }} />
       default:
         return <WorkspacePremiumIcon sx={{ fontSize: 48 }} />
     }
@@ -245,7 +245,7 @@ const CertificatesPage = () => {
                             ml: -1,
                             mt: -1,
                             fontSize: 24,
-                            color: 'success.main',
+                            color: (theme) => theme.palette.success.main,
                             bgcolor: 'white',
                             borderRadius: '50%',
                           }}

@@ -758,7 +758,7 @@ const HomePage = () => {
                     color="primary"
                     sx={{ fontWeight: 600, fontSize: '1rem', px: 1 }}
                   />
-                  <Box sx={{ color: 'primary.main' }}>
+                  <Box sx={{ color: (theme) => theme.palette.primary.main }}>
                     {stepIcons[index]}
                   </Box>
                 </Box>

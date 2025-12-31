@@ -91,7 +91,7 @@ export default function CertificateVerifyPage() {
             borderColor: 'error.main',
           }}
         >
-          <ErrorIcon sx={{ fontSize: 80, color: 'error.main', mb: 2 }} />
+          <ErrorIcon sx={{ fontSize: 80, color: (theme) => theme.palette.error.main, mb: 2 }} />
           <Typography variant="h4" gutterBottom fontWeight={600} color="error.main">
             Invalid Certificate
           </Typography>
@@ -168,7 +168,7 @@ export default function CertificateVerifyPage() {
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           {/* Certificate Icon and Type */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-            <CertificateIcon sx={{ fontSize: 48, color: 'primary.main', mr: 2 }} />
+            <CertificateIcon sx={{ fontSize: 48, color: (theme) => theme.palette.primary.main, mr: 2 }} />
             <Box>
               <Typography variant="h5" fontWeight={700}>
                 {certificate.title.ru}
