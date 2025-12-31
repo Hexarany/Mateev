@@ -31,12 +31,12 @@ export const exportUsersToCSV = async (req: CustomRequest, res: Response) => {
     }
 
     const users = await User.find(query).select(
-      'email firstName lastName role createdAt lastActive subscriptionTier subscriptionStatus'
+      'email firstName lastName role createdAt accessLevel subscriptionStatus'
     )
 
     // Build CSV
     const csvRows = [
-      ['Email', 'First Name', 'Last Name', 'Role', 'Created At', 'Last Active', 'Subscription Tier', 'Subscription Status']
+      ['Email', 'First Name', 'Last Name', 'Role', 'Created At', 'Access Level', 'Subscription Status']
     ]
 
     users.forEach(user => {
@@ -46,8 +46,7 @@ export const exportUsersToCSV = async (req: CustomRequest, res: Response) => {
         user.lastName || '',
         user.role,
         user.createdAt?.toISOString() || '',
-        user.lastActive?.toISOString() || '',
-        user.subscriptionTier || '',
+        user.accessLevel || 'free',
         user.subscriptionStatus || '',
       ])
     })

@@ -45,6 +45,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import HistoryIcon from '@mui/icons-material/History'
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CategoriesManager from './CategoriesManager'
@@ -67,6 +68,7 @@ import InstructorProfileManager from './InstructorProfileManager'
 import AuditLogsPage from './AuditLogsPage'
 import BulkOperationsPage from './BulkOperationsPage'
 import ContentGeneratorPage from './ContentGeneratorPage'
+import ExternalImportPage from './ExternalImportPage'
 
 type AdminGroupKey = 'content' | 'workflow' | 'operations' | 'access'
 
@@ -320,6 +322,17 @@ const ADMIN_SECTIONS: AdminSection[] = [
     description: 'Автогенерация тем, тестов, протоколов.',
     icon: AutoAwesomeIcon,
     component: ContentGeneratorPage,
+    group: 'operations',
+    adminOnly: true,
+    quickAccess: true,
+  },
+  {
+    key: 'external-import',
+    label: 'Внешний импорт / Import extern',
+    shortLabel: 'Import',
+    description: 'Wikipedia, Wikimedia, PubMed, переводы.',
+    icon: CloudDownloadIcon,
+    component: ExternalImportPage,
     group: 'operations',
     adminOnly: true,
     quickAccess: true,

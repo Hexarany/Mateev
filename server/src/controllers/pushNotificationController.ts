@@ -1,5 +1,7 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
+import { CustomRequest } from '../middleware/auth'
 import webpush from 'web-push'
+import mongoose from 'mongoose'
 import PushSubscription from '../models/PushSubscription'
 import User from '../models/User'
 
@@ -22,7 +24,7 @@ if (vapidKeys.publicKey && vapidKeys.privateKey) {
 /**
  * Get VAPID public key for client-side subscription
  */
-export const getVapidPublicKey = async (req: Request, res: Response) => {
+export const getVapidPublicKey = async (req: CustomRequest, res: Response) => {
   try {
     if (!vapidKeys.publicKey) {
       return res.status(500).json({
@@ -40,7 +42,7 @@ export const getVapidPublicKey = async (req: Request, res: Response) => {
 /**
  * Subscribe to push notifications
  */
-export const subscribe = async (req: Request, res: Response) => {
+export const subscribe = async (req: CustomRequest, res: Response) => {
   try {
     const { endpoint, keys } = req.body
 
@@ -53,7 +55,7 @@ export const subscribe = async (req: Request, res: Response) => {
 
     if (subscription) {
       // Update existing subscription
-      subscription.userId = req.user!._id
+      subscription.userId = new mongoose.Types.ObjectId(req.userId!)
       subscription.keys = keys
       subscription.userAgent = req.get('User-Agent')
       subscription.lastUsed = new Date()
@@ -61,7 +63,7 @@ export const subscribe = async (req: Request, res: Response) => {
     } else {
       // Create new subscription
       subscription = await PushSubscription.create({
-        userId: req.user!._id,
+        userId: new mongoose.Types.ObjectId(req.userId!),
         endpoint,
         keys,
         userAgent: req.get('User-Agent'),
@@ -81,7 +83,7 @@ export const subscribe = async (req: Request, res: Response) => {
 /**
  * Unsubscribe from push notifications
  */
-export const unsubscribe = async (req: Request, res: Response) => {
+export const unsubscribe = async (req: CustomRequest, res: Response) => {
   try {
     const { endpoint } = req.body
 
@@ -90,7 +92,7 @@ export const unsubscribe = async (req: Request, res: Response) => {
     }
 
     await PushSubscription.findOneAndDelete({
-      userId: req.user!._id,
+      userId: new mongoose.Types.ObjectId(req.userId!),
       endpoint,
     })
 
@@ -104,9 +106,9 @@ export const unsubscribe = async (req: Request, res: Response) => {
 /**
  * Get all subscriptions for current user
  */
-export const getMySubscriptions = async (req: Request, res: Response) => {
+export const getMySubscriptions = async (req: CustomRequest, res: Response) => {
   try {
-    const subscriptions = await PushSubscription.find({ userId: req.user!._id })
+    const subscriptions = await PushSubscription.find({ userId: new mongoose.Types.ObjectId(req.userId!) })
     res.json(subscriptions)
   } catch (error: any) {
     console.error('Error getting subscriptions:', error)
@@ -118,7 +120,7 @@ export const getMySubscriptions = async (req: Request, res: Response) => {
  * Send push notification to specific users
  * (Admin only)
  */
-export const sendNotification = async (req: Request, res: Response) => {
+export const sendNotification = async (req: CustomRequest, res: Response) => {
   try {
     const { userIds, title, body, data, icon, badge, url } = req.body
 
