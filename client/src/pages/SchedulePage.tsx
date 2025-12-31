@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useMySchedule } from '../hooks/useSchedule'
 import {
@@ -16,6 +16,19 @@ import {
   Skeleton,
   ToggleButtonGroup,
   ToggleButton,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Switch,
+  FormControlLabel,
+  IconButton,
 } from '@mui/material'
 import {
   CalendarMonth as CalendarIcon,
@@ -25,11 +38,16 @@ import {
   Topic as TopicIcon,
   ViewList as ListIcon,
   CalendarViewMonth as CalendarViewIcon,
+  Download as DownloadIcon,
+  Notifications as NotificationsIcon,
+  NoteAdd as NoteAddIcon,
+  Edit as EditIcon,
 } from '@mui/icons-material'
 import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { ru, ro } from 'date-fns/locale'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+import { exportToICalendar } from '../utils/icalendar'
 
 interface ScheduleEntry {
   _id: string
@@ -62,8 +80,107 @@ export default function SchedulePage() {
   const { user } = useAuth()
   const { data: schedule = [], isLoading, error } = useMySchedule()
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
+  const [selectedGroup, setSelectedGroup] = useState<string>('all')
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
+  const [notificationMinutes, setNotificationMinutes] = useState(30)
+  const [notificationsDialogOpen, setNotificationsDialogOpen] = useState(false)
+  const [lessonNotes, setLessonNotes] = useState<Record<string, string>>({})
+  const [noteDialogOpen, setNoteDialogOpen] = useState(false)
+  const [selectedLesson, setSelectedLesson] = useState<ScheduleEntry | null>(null)
+  const [currentNote, setCurrentNote] = useState('')
 
   const lang = user?.language || 'ru'
+
+  // Load saved preferences
+  useEffect(() => {
+    const savedNotificationsEnabled = localStorage.getItem('notificationsEnabled') === 'true'
+    const savedNotificationMinutes = parseInt(localStorage.getItem('notificationMinutes') || '30')
+    const savedNotes = localStorage.getItem('lessonNotes')
+
+    setNotificationsEnabled(savedNotificationsEnabled)
+    setNotificationMinutes(savedNotificationMinutes)
+    if (savedNotes) {
+      setLessonNotes(JSON.parse(savedNotes))
+    }
+
+    // Request notification permission if enabled
+    if (savedNotificationsEnabled && 'Notification' in window) {
+      Notification.requestPermission()
+    }
+  }, [])
+
+  // Check for upcoming lessons and send notifications
+  useEffect(() => {
+    if (!notificationsEnabled || !('Notification' in window) || Notification.permission !== 'granted') {
+      return
+    }
+
+    const checkInterval = setInterval(() => {
+      const now = new Date()
+      const upcomingLessons = schedule.filter(lesson => {
+        const lessonTime = new Date(lesson.date)
+        const timeDiff = lessonTime.getTime() - now.getTime()
+        const minutesDiff = timeDiff / 1000 / 60
+        return minutesDiff > 0 && minutesDiff <= notificationMinutes
+      })
+
+      upcomingLessons.forEach(lesson => {
+        const notificationKey = `notified-${lesson._id}`
+        if (!localStorage.getItem(notificationKey)) {
+          new Notification(lang === 'ru' ? 'Напоминание о занятии' : 'Memento despre lecție', {
+            body: `${getLocalizedText(lesson.title)} - ${getLocalizedText(lesson.group.name)}`,
+            icon: '/anatomy-icon.svg',
+            tag: lesson._id,
+          })
+          localStorage.setItem(notificationKey, 'true')
+        }
+      })
+    }, 60000) // Check every minute
+
+    return () => clearInterval(checkInterval)
+  }, [notificationsEnabled, notificationMinutes, schedule, lang])
+
+  // Save notifications settings
+  const handleNotificationsToggle = (enabled: boolean) => {
+    setNotificationsEnabled(enabled)
+    localStorage.setItem('notificationsEnabled', String(enabled))
+
+    if (enabled && 'Notification' in window) {
+      Notification.requestPermission().then(permission => {
+        if (permission !== 'granted') {
+          setNotificationsEnabled(false)
+          localStorage.setItem('notificationsEnabled', 'false')
+          alert(lang === 'ru' ? 'Разрешите уведомления в настройках браузера' : 'Permiteți notificările în setările browserului')
+        }
+      })
+    }
+  }
+
+  const handleNotificationMinutesChange = (minutes: number) => {
+    setNotificationMinutes(minutes)
+    localStorage.setItem('notificationMinutes', String(minutes))
+  }
+
+  // Handle notes
+  const handleOpenNoteDialog = (lesson: ScheduleEntry) => {
+    setSelectedLesson(lesson)
+    setCurrentNote(lessonNotes[lesson._id] || '')
+    setNoteDialogOpen(true)
+  }
+
+  const handleSaveNote = () => {
+    if (!selectedLesson) return
+
+    const updatedNotes = {
+      ...lessonNotes,
+      [selectedLesson._id]: currentNote,
+    }
+    setLessonNotes(updatedNotes)
+    localStorage.setItem('lessonNotes', JSON.stringify(updatedNotes))
+    setNoteDialogOpen(false)
+    setSelectedLesson(null)
+    setCurrentNote('')
+  }
 
   const localizer = dateFnsLocalizer({
     format,
@@ -97,8 +214,46 @@ export default function SchedulePage() {
     return text[lang] || text.ru || ''
   }
 
-  // Convert schedule to calendar events
-  const calendarEvents: CalendarEvent[] = schedule.map((lesson) => {
+  // Filter schedule by selected group
+  const filteredSchedule = selectedGroup === 'all'
+    ? schedule
+    : schedule.filter(lesson => lesson.group._id === selectedGroup)
+
+  // Get unique groups for filter
+  const uniqueGroups = Array.from(
+    new Map(schedule.map(lesson => [lesson.group._id, lesson.group])).values()
+  )
+
+  // Export to iCalendar
+  const handleExportICalendar = () => {
+    const events = filteredSchedule.map(lesson => {
+      const startDate = new Date(lesson.date)
+      const durationMinutes = parseInt(lesson.duration) || 90
+      const endDate = new Date(startDate.getTime() + durationMinutes * 60000)
+
+      return {
+        title: `${lang === 'ru' ? 'Занятие' : 'Lecția'} ${lesson.lessonNumber}: ${getLocalizedText(lesson.title)}`,
+        description: `${lang === 'ru' ? 'Группа' : 'Grup'}: ${getLocalizedText(lesson.group.name)}${
+          lesson.topic ? `\n${lang === 'ru' ? 'Тема' : 'Temă'}: ${getLocalizedText(lesson.topic.name)}` : ''
+        }${
+          lessonNotes[lesson._id] ? `\n${lang === 'ru' ? 'Заметки' : 'Notițe'}: ${lessonNotes[lesson._id]}` : ''
+        }`,
+        location: lesson.location || '',
+        start: startDate,
+        end: endDate,
+        uid: lesson._id,
+      }
+    })
+
+    exportToICalendar(
+      events,
+      `schedule-${new Date().toISOString().split('T')[0]}.ics`,
+      lang === 'ru' ? 'Расписание занятий' : 'Orarul lecțiilor'
+    )
+  }
+
+  // Convert filtered schedule to calendar events
+  const calendarEvents: CalendarEvent[] = filteredSchedule.map((lesson) => {
     const startDate = new Date(lesson.date)
     const durationMinutes = parseInt(lesson.duration) || 90
     const endDate = new Date(startDate.getTime() + durationMinutes * 60000)
@@ -156,13 +311,58 @@ export default function SchedulePage() {
   return (
     <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 3, md: 4 }, mb: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
       <Paper sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2, boxShadow: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+        {/* Header with controls */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <CalendarIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
             <Typography variant="h4">
               {lang === 'ru' ? 'Моё расписание' : 'Orarul meu'}
             </Typography>
           </Box>
+
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <Button
+              size="small"
+              startIcon={<DownloadIcon />}
+              onClick={handleExportICalendar}
+              disabled={filteredSchedule.length === 0}
+              variant="outlined"
+            >
+              <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                {lang === 'ru' ? 'Экспорт' : 'Export'}
+              </Box>
+            </Button>
+            <Button
+              size="small"
+              startIcon={<NotificationsIcon />}
+              onClick={() => setNotificationsDialogOpen(true)}
+              variant="outlined"
+              color={notificationsEnabled ? 'success' : 'default'}
+            >
+              <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                {lang === 'ru' ? 'Напоминания' : 'Memento-uri'}
+              </Box>
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Filters and view toggle */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel>{lang === 'ru' ? 'Группа' : 'Grup'}</InputLabel>
+            <Select
+              value={selectedGroup}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+              label={lang === 'ru' ? 'Группа' : 'Grup'}
+            >
+              <MenuItem value="all">{lang === 'ru' ? 'Все группы' : 'Toate grupurile'}</MenuItem>
+              {uniqueGroups.map(group => (
+                <MenuItem key={group._id} value={group._id}>
+                  {getLocalizedText(group.name)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <ToggleButtonGroup
             value={viewMode}
@@ -197,11 +397,11 @@ export default function SchedulePage() {
           </Alert>
         )}
 
-        {schedule.length === 0 ? (
+        {filteredSchedule.length === 0 ? (
           <Alert severity="info">
-            {lang === 'ru'
-              ? 'У вас пока нет запланированных занятий'
-              : 'Nu aveți lecții programate încă'}
+            {selectedGroup !== 'all'
+              ? (lang === 'ru' ? 'Нет занятий для выбранной группы' : 'Nu există lecții pentru grupul selectat')
+              : (lang === 'ru' ? 'У вас пока нет запланированных занятий' : 'Nu aveți lecții programate încă')}
           </Alert>
         ) : (
           <>
@@ -209,12 +409,12 @@ export default function SchedulePage() {
               <>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                   {lang === 'ru'
-                    ? 'Показаны последние 3 прошедших занятия и все предстоящие'
-                    : 'Se afișează ultimele 3 lecții trecute și toate lecțiile viitoare'}
+                    ? `Показано занятий: ${filteredSchedule.length}`
+                    : `Afișate lecții: ${filteredSchedule.length}`}
                 </Typography>
 
                 <List>
-                  {schedule.map((lesson, index) => {
+                  {filteredSchedule.map((lesson, index) => {
                     const { dateStr, timeStr } = formatDate(lesson.date)
                     const isPast = new Date(lesson.date) < new Date()
 
@@ -340,6 +540,90 @@ export default function SchedulePage() {
             )}
           </>
         )}
+
+        {/* Notifications Settings Dialog */}
+        <Dialog open={notificationsDialogOpen} onClose={() => setNotificationsDialogOpen(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            {lang === 'ru' ? 'Настройки напоминаний' : 'Setări memento-uri'}
+          </DialogTitle>
+          <DialogContent>
+            <Box sx={{ py: 2 }}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={notificationsEnabled}
+                    onChange={(e) => handleNotificationsToggle(e.target.checked)}
+                  />
+                }
+                label={lang === 'ru' ? 'Включить уведомления' : 'Activează notificările'}
+              />
+
+              {notificationsEnabled && (
+                <FormControl fullWidth sx={{ mt: 3 }}>
+                  <InputLabel>{lang === 'ru' ? 'Напоминать за' : 'Amintește cu'}</InputLabel>
+                  <Select
+                    value={notificationMinutes}
+                    onChange={(e) => handleNotificationMinutesChange(Number(e.target.value))}
+                    label={lang === 'ru' ? 'Напоминать за' : 'Amintește cu'}
+                  >
+                    <MenuItem value={5}>5 {lang === 'ru' ? 'минут' : 'minute'}</MenuItem>
+                    <MenuItem value={15}>15 {lang === 'ru' ? 'минут' : 'minute'}</MenuItem>
+                    <MenuItem value={30}>30 {lang === 'ru' ? 'минут' : 'minute'}</MenuItem>
+                    <MenuItem value={60}>1 {lang === 'ru' ? 'час' : 'oră'}</MenuItem>
+                    <MenuItem value={120}>2 {lang === 'ru' ? 'часа' : 'ore'}</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+
+              {notificationsEnabled && 'Notification' in window && Notification.permission !== 'granted' && (
+                <Alert severity="warning" sx={{ mt: 2 }}>
+                  {lang === 'ru'
+                    ? 'Разрешите уведомления в настройках браузера'
+                    : 'Permiteți notificările în setările browserului'}
+                </Alert>
+              )}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setNotificationsDialogOpen(false)}>
+              {lang === 'ru' ? 'Закрыть' : 'Închide'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Notes Dialog */}
+        <Dialog open={noteDialogOpen} onClose={() => setNoteDialogOpen(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            {lang === 'ru' ? 'Заметка к занятию' : 'Notiță pentru lecție'}
+          </DialogTitle>
+          <DialogContent>
+            {selectedLesson && (
+              <Box sx={{ pt: 2 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  {getLocalizedText(selectedLesson.title)}
+                </Typography>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={6}
+                  value={currentNote}
+                  onChange={(e) => setCurrentNote(e.target.value)}
+                  placeholder={lang === 'ru' ? 'Введите заметку...' : 'Introduceți notița...'}
+                  variant="outlined"
+                  sx={{ mt: 2 }}
+                />
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setNoteDialogOpen(false)}>
+              {lang === 'ru' ? 'Отмена' : 'Anulare'}
+            </Button>
+            <Button onClick={handleSaveNote} variant="contained">
+              {lang === 'ru' ? 'Сохранить' : 'Salvează'}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </Container>
   )
