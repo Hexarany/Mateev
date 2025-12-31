@@ -4,9 +4,19 @@ import Topic from '../models/Topic'
 import Quiz from '../models/Quiz'
 import MassageProtocol from '../models/MassageProtocol'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+// Lazy initialization to ensure env vars are loaded
+let anthropicClient: Anthropic | null = null
+function getAnthropicClient() {
+  if (!anthropicClient) {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY is not configured')
+    }
+    anthropicClient = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    })
+  }
+  return anthropicClient
+}
 
 interface GenerateTopicParams {
   categoryId: string
@@ -64,7 +74,7 @@ Make sure the content is:
 
 Return ONLY valid JSON, no additional text.`
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropicClient().messages.create({
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 4000,
     messages: [{ role: 'user', content: prompt }],
@@ -144,7 +154,7 @@ Requirements:
 
 Return ONLY valid JSON, no additional text.`
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropicClient().messages.create({
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 6000,
     messages: [{ role: 'user', content: prompt }],
@@ -238,7 +248,7 @@ Requirements:
 
 Return ONLY valid JSON, no additional text.`
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropicClient().messages.create({
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 5000,
     messages: [{ role: 'user', content: prompt }],
@@ -334,7 +344,7 @@ Return JSON:
 Make it progressive (beginner → advanced).
 Return ONLY valid JSON.`
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropicClient().messages.create({
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 8000,
     messages: [{ role: 'user', content: prompt }],

@@ -1,9 +1,19 @@
 import axios from 'axios'
 import Anthropic from '@anthropic-ai/sdk'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+// Lazy initialization to ensure env vars are loaded
+let anthropicClient: Anthropic | null = null
+function getAnthropicClient() {
+  if (!anthropicClient) {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY is not configured')
+    }
+    anthropicClient = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    })
+  }
+  return anthropicClient
+}
 
 /**
  * Wikimedia Commons - Free medical images
@@ -228,7 +238,7 @@ ${content}
 
 Return ONLY the translated text, no additional commentary.`
 
-    const response = await anthropic.messages.create({
+    const response = await getAnthropicClient().messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 4000,
       messages: [{ role: 'user', content: prompt }],
@@ -297,7 +307,7 @@ Return JSON with this structure:
 
 Return ONLY valid JSON.`
 
-    const response = await anthropic.messages.create({
+    const response = await getAnthropicClient().messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 6000,
       messages: [{ role: 'user', content: prompt }],
