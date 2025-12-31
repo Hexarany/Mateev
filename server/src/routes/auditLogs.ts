@@ -1,12 +1,12 @@
 import express from 'express'
 import { getLogs, getStats, getFilters } from '../controllers/auditLogController'
-import { protect, admin } from '../middleware/auth'
+import { authenticateToken, authorizeRole } from '../middleware/auth'
 
 const router = express.Router()
 
 // Все роуты требуют аутентификации и прав админа
-router.use(protect)
-router.use(admin)
+router.use(authenticateToken)
+router.use(authorizeRole('admin'))
 
 // GET /api/audit-logs - получить логи с фильтрацией
 router.get('/', getLogs)
