@@ -276,7 +276,7 @@ const GradesPage = () => {
           </Table>
         </TableContainer>
       ) : (
-        !loading && (
+        !isLoading && (
           <Paper sx={{ p: 4, textAlign: 'center' }}>
             <GradeIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
             <Typography variant="h6" color="textSecondary">
