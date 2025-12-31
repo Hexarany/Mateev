@@ -44,6 +44,7 @@ import PeopleIcon from '@mui/icons-material/People'
 import PersonIcon from '@mui/icons-material/Person'
 import HistoryIcon from '@mui/icons-material/History'
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CategoriesManager from './CategoriesManager'
@@ -65,6 +66,7 @@ import AssignmentsManager from './AssignmentsManager'
 import InstructorProfileManager from './InstructorProfileManager'
 import AuditLogsPage from './AuditLogsPage'
 import BulkOperationsPage from './BulkOperationsPage'
+import ContentGeneratorPage from './ContentGeneratorPage'
 
 type AdminGroupKey = 'content' | 'workflow' | 'operations' | 'access'
 
@@ -310,6 +312,17 @@ const ADMIN_SECTIONS: AdminSection[] = [
     component: BulkOperationsPage,
     group: 'operations',
     adminOnly: true,
+  },
+  {
+    key: 'content-generator',
+    label: 'AI Генератор / Generator AI',
+    shortLabel: 'AI',
+    description: 'Автогенерация тем, тестов, протоколов.',
+    icon: AutoAwesomeIcon,
+    component: ContentGeneratorPage,
+    group: 'operations',
+    adminOnly: true,
+    quickAccess: true,
   },
 ]
 
