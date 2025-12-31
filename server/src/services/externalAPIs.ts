@@ -239,7 +239,7 @@ ${content}
 Return ONLY the translated text, no additional commentary.`
 
     const response = await getAnthropicClient().messages.create({
-      model: 'claude-sonnet-4-5-20251101',
+      model: 'claude-sonnet-4-5-20250929',
       max_tokens: 4000,
       messages: [{ role: 'user', content: prompt }],
     })
@@ -308,7 +308,7 @@ Return JSON with this structure:
 Return ONLY valid JSON.`
 
     const response = await getAnthropicClient().messages.create({
-      model: 'claude-sonnet-4-5-20251101',
+      model: 'claude-sonnet-4-5-20250929',
       max_tokens: 6000,
       messages: [{ role: 'user', content: prompt }],
     })
