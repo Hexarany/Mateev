@@ -42,6 +42,7 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import PeopleIcon from '@mui/icons-material/People'
 import PersonIcon from '@mui/icons-material/Person'
+import HistoryIcon from '@mui/icons-material/History'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CategoriesManager from './CategoriesManager'
@@ -61,6 +62,7 @@ import GroupFilesManager from './GroupFilesManager'
 import ScheduleManager from './ScheduleManager'
 import AssignmentsManager from './AssignmentsManager'
 import InstructorProfileManager from './InstructorProfileManager'
+import AuditLogsPage from './AuditLogsPage'
 
 type AdminGroupKey = 'content' | 'workflow' | 'operations' | 'access'
 
@@ -286,6 +288,16 @@ const ADMIN_SECTIONS: AdminSection[] = [
     component: InstructorProfileManager,
     group: 'operations',
     adminOnly: false,
+  },
+  {
+    key: 'audit-logs',
+    label: 'Журнал действий / Jurnalul de actiuni',
+    shortLabel: 'Логи',
+    description: 'История действий пользователей и системы.',
+    icon: HistoryIcon,
+    component: AuditLogsPage,
+    group: 'operations',
+    adminOnly: true,
   },
 ]
 
