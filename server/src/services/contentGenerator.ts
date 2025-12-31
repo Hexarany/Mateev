@@ -18,6 +18,28 @@ function getAnthropicClient() {
   return anthropicClient
 }
 
+/**
+ * Helper function to extract JSON from Claude's response
+ * Removes markdown code blocks if present
+ */
+function parseClaudeJSON(text: string): any {
+  // Remove markdown code blocks if present
+  let cleanedText = text.trim()
+
+  // Remove ```json and ``` markers
+  if (cleanedText.startsWith('```json')) {
+    cleanedText = cleanedText.replace(/^```json\s*/, '')
+  } else if (cleanedText.startsWith('```')) {
+    cleanedText = cleanedText.replace(/^```\s*/, '')
+  }
+
+  if (cleanedText.endsWith('```')) {
+    cleanedText = cleanedText.replace(/\s*```$/, '')
+  }
+
+  return JSON.parse(cleanedText.trim())
+}
+
 interface GenerateTopicParams {
   categoryId: string
   topicTitle: { ru: string; ro: string }
@@ -85,7 +107,7 @@ Return ONLY valid JSON, no additional text.`
     throw new Error('Unexpected response type from Claude')
   }
 
-  const generatedContent = JSON.parse(content.text)
+  const generatedContent = parseClaudeJSON(content.text)
 
   return {
     name: topicTitle,
@@ -165,7 +187,7 @@ Return ONLY valid JSON, no additional text.`
     throw new Error('Unexpected response type from Claude')
   }
 
-  const generatedQuestions = JSON.parse(content.text)
+  const generatedQuestions = parseClaudeJSON(content.text)
 
   return {
     title: {
@@ -259,7 +281,7 @@ Return ONLY valid JSON, no additional text.`
     throw new Error('Unexpected response type from Claude')
   }
 
-  const generatedProtocol = JSON.parse(content.text)
+  const generatedProtocol = parseClaudeJSON(content.text)
 
   return {
     title: protocolTitle,
@@ -355,5 +377,5 @@ Return ONLY valid JSON.`
     throw new Error('Unexpected response type from Claude')
   }
 
-  return JSON.parse(content.text)
+  return parseClaudeJSON(content.text)
 }
