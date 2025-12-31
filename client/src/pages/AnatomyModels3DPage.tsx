@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Container, Typography, Grid, Card, CardContent, CardActions, Button, Box, Chip, CircularProgress } from '@mui/material'
 import View3DIcon from '@mui/icons-material/ViewInAr'
-import { getAnatomyModels3D } from '@/services/api'
+import { useAnatomyModels3D } from '@/hooks/useAnatomyModels3D'
 import type { AnatomyModel3D } from '@/types'
 import OptimizedImage from '@/components/OptimizedImage'
 
@@ -13,22 +12,7 @@ const AnatomyModels3DPage = () => {
   const { i18n } = useTranslation()
   const lang = i18n.language as 'ru' | 'ro'
   const navigate = useNavigate()
-  const [models, setModels] = useState<AnatomyModel3D[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchModels = async () => {
-      try {
-        const data = await getAnatomyModels3D()
-        setModels(data)
-      } catch (error) {
-        console.error('Error:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchModels()
-  }, [])
+  const { data: models = [], isLoading: loading } = useAnatomyModels3D()
 
   if (loading) {
     return (

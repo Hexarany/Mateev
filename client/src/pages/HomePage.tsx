@@ -1,4 +1,4 @@
-import { useEffect, useState, memo } from 'react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -41,7 +41,7 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
 import ForumIcon from '@mui/icons-material/Forum'
 import SelfImprovementIcon from '@mui/icons-material/SelfImprovement'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import { getCategories } from '@/services/api'
+import { useCategories } from '@/hooks/useCategories'
 import type { Category } from '@/types'
 import { TELEGRAM_BOT_LINK, TELEGRAM_BOT_QR, TELEGRAM_BOT_USERNAME } from '@/config/telegram'
 
@@ -124,8 +124,7 @@ const HomePage = () => {
   const { t, i18n } = useTranslation()
   const theme = useTheme()
   const { isAuthenticated } = useAuth()
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: categories = [], isLoading: loading } = useCategories()
 
   const lang = i18n.language as 'ru' | 'ro'
   const anatomyHighlights = categories.slice(0, 3)
@@ -238,20 +237,6 @@ const HomePage = () => {
   const heroPrimaryCta = isAuthenticated ? t('home.hero.ctaAuthed') : t('home.hero.ctaGuest')
   const heroSecondaryCta = t('home.hero.ctaSecondary')
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories()
-        setCategories(data)
-      } catch (error) {
-        console.error('Failed to fetch categories:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCategories()
-  }, [])
 
   // Theme-aware colors for categories
   const getCategoryColor = (index: number) => {

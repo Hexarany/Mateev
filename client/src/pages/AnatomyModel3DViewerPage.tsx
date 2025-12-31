@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Container, Typography, Box, Button, CircularProgress, Paper, Chip } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import Model3DViewer from '@/components/Model3DViewer'
 import AccessGate from '@/components/AccessGate'
-import { getAnatomyModel3DById } from '@/services/api'
+import { useAnatomyModel3DById } from '@/hooks/useAnatomyModels3D'
 import type { AnatomyModel3D } from '@/types'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'
@@ -15,23 +14,7 @@ const AnatomyModel3DViewerPage = () => {
   const { i18n } = useTranslation()
   const lang = i18n.language as 'ru' | 'ro'
   const navigate = useNavigate()
-  const [model, setModel] = useState<AnatomyModel3D | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchModel = async () => {
-      if (!id) return
-      try {
-        const data = await getAnatomyModel3DById(id)
-        setModel(data)
-      } catch (error) {
-        console.error('Error fetching model:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchModel()
-  }, [id])
+  const { data: model, isLoading: loading } = useAnatomyModel3DById(id)
 
   if (loading) {
     return (
