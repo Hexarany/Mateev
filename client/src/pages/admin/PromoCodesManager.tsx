@@ -271,7 +271,7 @@ const PromoCodesManager = () => {
               <Typography variant="h6" gutterBottom>
                 Использовано
               </Typography>
-              <Typography variant="h3" color="primary.main">
+              <Typography variant="h3" color="primary">
                 {promoCodes.reduce((sum, p) => sum + p.currentUses, 0)}
               </Typography>
             </CardContent>

@@ -215,7 +215,7 @@ export default function ContentGeneratorPage() {
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
       <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-        <AutoAwesomeIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+        <AutoAwesomeIcon sx={{ fontSize: 40, color: (theme) => theme.palette.primary.main }} />
         <Box>
           <Typography variant="h4">
             {lang === 'ru' ? 'AI Генератор Контента' : 'Generator de Conținut AI'}
