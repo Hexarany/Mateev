@@ -4,7 +4,7 @@ import { getTopics, getTopicById, getTopicsByCategory } from '@/services/api'
 export function useTopics() {
   return useQuery({
     queryKey: ['topics'],
-    queryFn: getTopics,
+    queryFn: () => getTopics(),
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000,
   })

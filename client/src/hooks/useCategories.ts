@@ -4,7 +4,7 @@ import { getCategories, getCategoryById } from '@/services/api'
 export function useCategories() {
   return useQuery({
     queryKey: ['categories'],
-    queryFn: getCategories,
+    queryFn: () => getCategories(),
     staleTime: 10 * 60 * 1000, // 10 minutes - категории редко меняются
     gcTime: 30 * 60 * 1000, // 30 minutes
   })

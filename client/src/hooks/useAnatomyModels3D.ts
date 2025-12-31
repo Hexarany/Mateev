@@ -7,7 +7,7 @@ import { getAnatomyModels3D, getAnatomyModel3DById } from '@/services/api'
 export function useAnatomyModels3D() {
   return useQuery({
     queryKey: ['anatomyModels3D'],
-    queryFn: getAnatomyModels3D,
+    queryFn: () => getAnatomyModels3D(),
     staleTime: 10 * 60 * 1000, // 10 minutes - 3D models rarely change
     gcTime: 30 * 60 * 1000, // 30 minutes
   })
