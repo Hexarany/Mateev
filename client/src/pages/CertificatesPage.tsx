@@ -30,6 +30,8 @@ import LockIcon from '@mui/icons-material/Lock'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import SchoolIcon from '@mui/icons-material/School'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import ShareIcon from '@mui/icons-material/Share'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   getAvailableCertificates,
@@ -53,6 +55,7 @@ const CertificatesPage = () => {
   const [selectedCert, setSelectedCert] = useState<AvailableCertificate | null>(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [shareSuccess, setShareSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -117,6 +120,39 @@ const CertificatesPage = () => {
     setDetailsDialogOpen(true)
   }
 
+  const handleShareCertificate = async (certificateNumber: string) => {
+    const verifyUrl = `${window.location.origin}/verify-certificate/${certificateNumber}`
+
+    try {
+      if (navigator.share) {
+        // Use Web Share API if available
+        await navigator.share({
+          title: lang === 'ru' ? 'Мой сертификат' : 'Certificatul meu',
+          text: lang === 'ru'
+            ? 'Проверьте мой сертификат от Anatomia Study Platform'
+            : 'Verificați certificatul meu de la Anatomia Study Platform',
+          url: verifyUrl,
+        })
+        setShareSuccess(lang === 'ru' ? 'Ссылка отправлена!' : 'Link partajat!')
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(verifyUrl)
+        setShareSuccess(lang === 'ru' ? 'Ссылка скопирована!' : 'Link copiat!')
+      }
+      setTimeout(() => setShareSuccess(null), 3000)
+    } catch (err: any) {
+      console.error('Error sharing:', err)
+      // If share fails, try clipboard
+      try {
+        await navigator.clipboard.writeText(verifyUrl)
+        setShareSuccess(lang === 'ru' ? 'Ссылка скопирована!' : 'Link copiat!')
+        setTimeout(() => setShareSuccess(null), 3000)
+      } catch (clipErr) {
+        setError(lang === 'ru' ? 'Не удалось скопировать ссылку' : 'Nu s-a putut copia linkul')
+      }
+    }
+  }
+
   const getProgressPercentage = (cert: AvailableCertificate, metric: 'topics' | 'quizzes' | 'score') => {
     if (metric === 'topics') {
       return Math.min((cert.progress.topicsCompleted / cert.requirements.minTopicsCompleted) * 100, 100)
@@ -168,6 +204,12 @@ const CertificatesPage = () => {
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
           {error}
+        </Alert>
+      )}
+
+      {shareSuccess && (
+        <Alert severity="success" sx={{ mb: 3 }} onClose={() => setShareSuccess(null)}>
+          {shareSuccess}
         </Alert>
       )}
 
@@ -230,15 +272,24 @@ const CertificatesPage = () => {
                         {new Date(cert.issuedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'ro-RO')}
                       </Typography>
                     </Box>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      startIcon={<DownloadIcon />}
-                      onClick={() => handleDownloadCertificate(cert._id, cert.certificateNumber)}
-                      sx={{ mt: 2 }}
-                    >
-                      {lang === 'ru' ? 'Скачать PDF' : 'Descarcă PDF'}
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        startIcon={<DownloadIcon />}
+                        onClick={() => handleDownloadCertificate(cert._id, cert.certificateNumber)}
+                      >
+                        {lang === 'ru' ? 'Скачать' : 'Descarcă'}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        startIcon={<ShareIcon />}
+                        onClick={() => handleShareCertificate(cert.certificateNumber)}
+                      >
+                        {lang === 'ru' ? 'Поделиться' : 'Partajează'}
+                      </Button>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
