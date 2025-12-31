@@ -24,10 +24,11 @@ import GradeIcon from '@mui/icons-material/Grade'
 import EventIcon from '@mui/icons-material/Event'
 import AnnouncementIcon from '@mui/icons-material/Announcement'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 export default function NotificationSettingsPage() {
-  const { lang } = useLanguage()
+  const { i18n } = useTranslation()
+  const lang = i18n.language as 'ru' | 'ro'
   const {
     isSupported,
     isSubscribed,

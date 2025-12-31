@@ -28,7 +28,7 @@ import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
 import GroupAddIcon from '@mui/icons-material/GroupAdd'
 import api from '@/services/api'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -46,7 +46,8 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export default function BulkOperationsPage() {
-  const { lang } = useLanguage()
+  const { i18n } = useTranslation()
+  const lang = i18n.language as 'ru' | 'ro'
   const [tab, setTab] = useState(0)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
