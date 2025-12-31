@@ -42,6 +42,7 @@ import groupFileRoutes from './routes/groupFileRoutes'
 import scheduleRoutes from './routes/scheduleRoutes'
 import assignmentRoutes from './routes/assignmentRoutes'
 import telegramRoutes from './routes/telegramRoutes'
+import aiRoutes from './routes/aiRoutes'
 import { initTelegramBot, telegramWebhookCallback, telegramWebhookPath } from './services/telegram'
 
 // Load environment variables
@@ -194,6 +195,7 @@ app.use('/api/group-files', groupFileRoutes)
 app.use('/api/schedule', scheduleRoutes)
 app.use('/api/assignments', assignmentRoutes)
 app.use('/api/telegram', telegramRoutes)
+app.use('/api/ai', aiRoutes)
 
 // Serve static files from React app whenever the bundle exists
 const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist');

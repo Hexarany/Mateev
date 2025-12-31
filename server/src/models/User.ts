@@ -65,6 +65,9 @@ export interface IUser extends Document {
     grades: boolean
     schedule: boolean
   }
+  // AI assistant tracking
+  aiRequestsToday?: number
+  lastAiRequestDate?: Date
   createdAt: Date
   updatedAt: Date
   // DEPRECATED: Use hasAccessToContent instead
@@ -225,6 +228,14 @@ const userSchema = new Schema<IUser>(
       homework: { type: Boolean, default: true },
       grades: { type: Boolean, default: true },
       schedule: { type: Boolean, default: true },
+    },
+    // AI assistant tracking
+    aiRequestsToday: {
+      type: Number,
+      default: 0,
+    },
+    lastAiRequestDate: {
+      type: Date,
     },
   },
   {
