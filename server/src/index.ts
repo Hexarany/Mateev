@@ -1,10 +1,13 @@
+// Load environment variables FIRST before any other imports
+import dotenv from 'dotenv'
+dotenv.config()
+
 import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import cors from 'cors'
 import helmet from 'helmet'
 import compression from 'compression'
-import dotenv from 'dotenv'
 import path from 'path'
 import fs from 'fs'
 import { connectDB } from './config/database'
@@ -49,9 +52,6 @@ import bulkOperationsRoutes from './routes/bulkOperations'
 import contentGeneratorRoutes from './routes/contentGenerator'
 import externalImportRoutes from './routes/externalImport'
 import { initTelegramBot, telegramWebhookCallback, telegramWebhookPath } from './services/telegram'
-
-// Load environment variables
-dotenv.config()
 
 const app = express()
 const httpServer = createServer(app)
