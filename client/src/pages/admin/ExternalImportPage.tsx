@@ -55,7 +55,7 @@ export default function ExternalImportPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <ImportIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
+        <ImportIcon sx={{ fontSize: 40, mr: 2, color: (theme) => theme.palette.primary.main }} />
         <Box>
           <Typography variant="h4" gutterBottom>
             Импорт из внешних источников
