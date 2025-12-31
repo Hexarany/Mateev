@@ -143,7 +143,7 @@ const TriggerPointDetailPage = () => {
         <Divider sx={{ my: 4 }} />
 
         {/* Техника массажа */}
-        <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'primary.50', borderLeft: 4, borderColor: 'primary.main' }}>
+        <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'primary.50', borderLeft: 4, borderColor: (theme) => theme.palette.primary.main }}>
           <Typography variant="h6" gutterBottom fontWeight={600} color="primary">
             {lang === 'ru' ? 'Техника массажа' : 'Tehnica de masaj'}
           </Typography>
@@ -152,7 +152,7 @@ const TriggerPointDetailPage = () => {
 
         {/* Противопоказания */}
         {point.contraindications && (point.contraindications.ru || point.contraindications.ro) && (
-          <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'error.50', borderLeft: 4, borderColor: 'error.main' }}>
+          <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'error.50', borderLeft: 4, borderColor: (theme) => theme.palette.error.main }}>
             <Typography variant="h6" gutterBottom fontWeight={600} color="error">
               <WarningIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
               {lang === 'ru' ? 'Противопоказания' : 'Contraindicații'}

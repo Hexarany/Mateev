@@ -88,7 +88,7 @@ export default function CertificateVerifyPage() {
             p: 4,
             textAlign: 'center',
             border: '2px solid',
-            borderColor: 'error.main',
+            borderColor: (theme) => theme.palette.error.main,
           }}
         >
           <ErrorIcon sx={{ fontSize: 80, color: (theme) => theme.palette.error.main, mb: 2 }} />
@@ -149,7 +149,7 @@ export default function CertificateVerifyPage() {
         sx={{
           p: { xs: 3, md: 4 },
           border: '3px solid',
-          borderColor: 'success.main',
+          borderColor: (theme) => theme.palette.success.main,
           borderRadius: 3,
           position: 'relative',
           overflow: 'hidden',

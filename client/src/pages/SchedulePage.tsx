@@ -506,7 +506,7 @@ export default function SchedulePage() {
                     fontWeight: 600,
                   },
                   '& .rbc-event': {
-                    backgroundColor: 'primary.main',
+                    backgroundColor: (theme) => theme.palette.primary.main,
                     borderRadius: '4px',
                     fontSize: { xs: '0.7rem', sm: '0.8rem' },
                   },

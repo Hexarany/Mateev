@@ -48,7 +48,7 @@ const ContentLock = ({ previewText }: ContentLockProps) => {
         sx={{
           p: 4,
           textAlign: 'center',
-          backgroundColor: 'primary.main',
+          backgroundColor: (theme) => theme.palette.primary.main,
           color: 'white',
           position: 'relative',
           overflow: 'hidden',

@@ -154,7 +154,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 fontWeight: 700,
                 color: (theme) => theme.palette.primary.main,
                 borderBottom: '4px solid',
-                borderColor: 'primary.main',
+                borderColor: (theme) => theme.palette.primary.main,
                 pb: 1.5,
                 background: 'linear-gradient(90deg, rgba(25,118,210,0.1) 0%, rgba(25,118,210,0.05) 50%, transparent 100%)',
                 px: 2,
@@ -177,7 +177,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 fontWeight: 600,
                 color: 'primary.dark',
                 borderLeft: '5px solid',
-                borderColor: 'primary.main',
+                borderColor: (theme) => theme.palette.primary.main,
                 pl: 2,
                 py: 1,
                 background: 'linear-gradient(90deg, rgba(25,118,210,0.08) 0%, transparent 100%)',
@@ -199,7 +199,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 fontWeight: 600,
                 color: 'primary.dark',
                 borderLeft: '3px solid',
-                borderColor: 'secondary.main',
+                borderColor: (theme) => theme.palette.secondary.main,
                 pl: 2,
                 py: 0.5,
               }}
@@ -455,7 +455,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
               elevation={0}
               sx={{
                 borderLeft: '5px solid',
-                borderColor: 'info.main',
+                borderColor: (theme) => theme.palette.info.main,
                 bgcolor: 'info.light',
                 color: 'info.dark',
                 p: 2.5,

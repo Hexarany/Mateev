@@ -188,7 +188,7 @@ const CategoryPage = () => {
                   mb: 3,
                   pb: 1,
                   borderBottom: 2,
-                  borderColor: 'primary.main',
+                  borderColor: (theme) => theme.palette.primary.main,
                   fontWeight: 700,
                 }}
               >
@@ -215,7 +215,7 @@ const CategoryPage = () => {
                     '&:hover': {
                       transform: 'translateY(-4px)',
                       boxShadow: (theme) => theme.shadows[8],
-                      borderColor: 'primary.main',
+                      borderColor: (theme) => theme.palette.primary.main,
                     },
                     border: '1px solid',
                     borderColor: favorited ? 'error.main' : 'divider',
@@ -363,7 +363,7 @@ const CategoryPage = () => {
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: (theme) => theme.shadows[8],
-                          borderColor: 'primary.main',
+                          borderColor: (theme) => theme.palette.primary.main,
                         },
                         border: '1px solid',
                         borderColor: favorited ? 'error.main' : 'divider',

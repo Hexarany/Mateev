@@ -432,7 +432,7 @@ const AboutInstructorPage = () => {
                 bgcolor: 'success.50',
                 borderRadius: 2,
                 borderLeft: '4px solid',
-                borderColor: 'success.main',
+                borderColor: (theme) => theme.palette.success.main,
               }}
             >
               <Typography variant="h6" fontWeight={600} gutterBottom>

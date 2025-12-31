@@ -71,7 +71,7 @@ const AnatomyModel3DViewerPage = () => {
       </AccessGate>
 
       {model.attribution && (model.attribution.author || model.attribution.source) && (
-        <Paper elevation={0} sx={{ p: 2, mt: 2, bgcolor: 'background.default', borderLeft: 3, borderColor: 'primary.main' }}>
+        <Paper elevation={0} sx={{ p: 2, mt: 2, bgcolor: 'background.default', borderLeft: 3, borderColor: (theme) => theme.palette.primary.main }}>
           <Typography variant="caption" color="text.secondary" display="block">
             <strong>{lang === 'ru' ? 'Авторство:' : 'Atribuire:'}</strong>
           </Typography>
