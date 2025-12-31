@@ -14,6 +14,8 @@ import {
   CircularProgress,
   Button,
   LinearProgress,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import {
   Close as CloseIcon,
@@ -45,6 +47,8 @@ export default function AIChatDialog({
   topicName,
 }: AIChatDialogProps) {
   const { t } = useTranslation()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -133,14 +137,16 @@ export default function AIChatDialog({
       onClose={onClose}
       maxWidth="md"
       fullWidth
+      fullScreen={isMobile}
       PaperProps={{
         sx: {
-          height: '80vh',
-          maxHeight: 700,
+          height: isMobile ? '100vh' : '80vh',
+          maxHeight: isMobile ? '100vh' : 700,
+          m: isMobile ? 0 : 2,
         },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1, px: { xs: 2, sm: 3 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <AIIcon color="primary" />
           <Typography variant="h6">
@@ -173,7 +179,7 @@ export default function AIChatDialog({
         </Box>
       )}
 
-      <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 3 }}>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: { xs: 2, sm: 3 } }}>
         {error && (
           <Alert severity="error" onClose={() => setError('')}>
             {error}
@@ -279,7 +285,7 @@ export default function AIChatDialog({
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ p: 3, pt: 0 }}>
+      <DialogActions sx={{ p: { xs: 2, sm: 3 }, pt: 0 }}>
         <TextField
           fullWidth
           multiline

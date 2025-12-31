@@ -74,10 +74,10 @@ const RegisterPage = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          py: 4,
+          py: { xs: 2, sm: 4 },
         }}
       >
-        <Paper elevation={3} sx={{ p: 4 }}>
+        <Paper elevation={3} sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Typography variant="h4" component="h1" align="center" gutterBottom>
             Регистрация
           </Typography>
@@ -163,7 +163,12 @@ const RegisterPage = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                minHeight: { xs: 44, sm: 48 },
+                fontSize: { xs: '0.9375rem', sm: '1rem' },
+              }}
               disabled={loading}
             >
               {loading ? 'Регистрация...' : 'Зарегистрироваться'}
