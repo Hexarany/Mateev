@@ -288,7 +288,7 @@ const DashboardPage = () => {
                   elevation={0}
                   sx={{
                     border: '2px solid',
-                    borderColor: 'warning.light',
+                    borderColor: (theme) => theme.palette.warning.light,
                     bgcolor: 'warning.50',
                     transition: 'transform 0.2s',
                     '&:hover': {
@@ -371,7 +371,7 @@ const DashboardPage = () => {
                         elevation={0}
                         sx={{
                           border: '2px solid',
-                          borderColor: 'success.light',
+                          borderColor: (theme) => theme.palette.success.light,
                           bgcolor: 'success.50',
                           cursor: 'pointer',
                           transition: 'transform 0.2s',
@@ -420,7 +420,7 @@ const DashboardPage = () => {
                           elevation={0}
                           sx={{
                             border: '2px solid',
-                            borderColor: 'primary.light',
+                            borderColor: (theme) => theme.palette.primary.light,
                             bgcolor: 'primary.50',
                             cursor: 'pointer',
                             transition: 'transform 0.2s',

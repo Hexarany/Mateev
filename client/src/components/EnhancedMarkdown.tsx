@@ -220,7 +220,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                 color: 'text.primary',
                 pl: 1,
                 borderLeft: '2px solid',
-                borderColor: 'grey.400',
+                borderColor: (theme) => theme.palette.grey[400],
               }}
             >
               {children}
@@ -313,7 +313,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
               sx={{
                 fontWeight: 700,
                 borderBottom: '2px solid',
-                borderColor: 'primary.dark',
+                borderColor: (theme) => theme.palette.primary.dark,
                 py: 2,
               }}
             >
@@ -421,7 +421,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                     fontFamily: 'monospace',
                     fontSize: '0.9em',
                     border: '1px solid',
-                    borderColor: 'warning.main',
+                    borderColor: (theme) => theme.palette.warning.main,
                   }}
                 >
                   {children}
@@ -439,7 +439,7 @@ const EnhancedMarkdown: React.FC<EnhancedMarkdownProps> = ({ children }) => {
                   borderRadius: 2,
                   overflow: 'auto',
                   border: '1px solid',
-                  borderColor: 'grey.700',
+                  borderColor: (theme) => theme.palette.grey[700],
                 }}
               >
                 <Box component="code" sx={{ fontFamily: 'monospace', fontSize: '0.9em' }}>

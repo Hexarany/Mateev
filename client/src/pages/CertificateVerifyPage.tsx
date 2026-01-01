@@ -274,7 +274,7 @@ export default function CertificateVerifyPage() {
               bgcolor: 'success.50',
               borderRadius: 2,
               border: '1px solid',
-              borderColor: 'success.light',
+              borderColor: (theme) => theme.palette.success.light,
             }}
           >
             <CheckIcon sx={{ color: 'success.dark' }} />

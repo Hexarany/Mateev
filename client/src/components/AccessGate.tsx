@@ -184,7 +184,7 @@ const AccessGate = ({ requiredTier, children, preview, contentType = 'конте
                 sx={{
                   borderColor: 'white',
                   color: 'white',
-                  '&:hover': { borderColor: 'grey.200', bgcolor: 'rgba(255,255,255,0.1)' },
+                  '&:hover': { borderColor: (theme) => theme.palette.grey[200], bgcolor: 'rgba(255,255,255,0.1)' },
                 }}
               >
                 Регистрация

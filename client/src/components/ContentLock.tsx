@@ -90,7 +90,7 @@ const ContentLock = ({ previewText }: ContentLockProps) => {
                 backgroundColor: 'white',
                 color: (theme) => theme.palette.primary.main,
                 '&:hover': {
-                  backgroundColor: 'grey.100',
+                  backgroundColor: (theme) => theme.palette.grey[100],
                 },
                 fontWeight: 'bold',
                 px: 4,

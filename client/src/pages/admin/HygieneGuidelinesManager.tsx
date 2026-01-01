@@ -157,7 +157,7 @@ const HygieneGuidelinesManager = () => {
           },
           '& .MuiTableCell-head': {
             fontWeight: 600,
-            backgroundColor: 'action.hover',
+            backgroundColor: (theme) => theme.palette.action.hover,
           }
         }}
       >

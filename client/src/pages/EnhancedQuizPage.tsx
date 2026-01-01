@@ -253,7 +253,7 @@ const EnhancedQuizPage = () => {
                 sx={{
                   cursor: 'pointer',
                   border: '2px solid',
-                  borderColor: 'warning.main',
+                  borderColor: (theme) => theme.palette.warning.main,
                   '&:hover': {
                     bgcolor: 'warning.50',
                     transform: 'scale(1.05)',

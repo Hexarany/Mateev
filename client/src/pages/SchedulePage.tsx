@@ -337,7 +337,7 @@ export default function SchedulePage() {
               startIcon={<NotificationsIcon />}
               onClick={() => setNotificationsDialogOpen(true)}
               variant="outlined"
-              color={notificationsEnabled ? 'success' : 'default'}
+              color={notificationsEnabled ? 'success' : 'inherit'}
             >
               <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>
                 {lang === 'ru' ? 'Напоминания' : 'Memento-uri'}
@@ -511,7 +511,7 @@ export default function SchedulePage() {
                     fontSize: { xs: '0.7rem', sm: '0.8rem' },
                   },
                   '& .rbc-today': {
-                    backgroundColor: 'action.hover',
+                    backgroundColor: (theme) => theme.palette.action.hover,
                   },
                   '& .rbc-toolbar button': {
                     fontSize: { xs: '0.75rem', sm: '0.875rem' },

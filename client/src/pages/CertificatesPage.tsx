@@ -232,7 +232,7 @@ const CertificatesPage = () => {
                   elevation={3}
                   sx={{
                     border: '2px solid',
-                    borderColor: 'success.light',
+                    borderColor: (theme) => theme.palette.success.light,
                     bgcolor: 'success.50',
                   }}
                 >
