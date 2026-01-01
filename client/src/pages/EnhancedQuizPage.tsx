@@ -40,7 +40,7 @@ const EnhancedQuizPage = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const lang = i18n.language as 'ru' | 'ro'
-  const { hasAccess, isAuthenticated } = useAuth()
+  const { hasAccess, isAuthenticated, user } = useAuth()
   const { saveQuizResult } = useProgress()
 
   const [mode, setMode] = useState<'practice' | 'exam' | null>(null)
@@ -336,11 +336,12 @@ const EnhancedQuizPage = () => {
             </CardContent>
           </Card>
 
-          {/* Detailed Review - All Questions */}
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              {lang === 'ru' ? 'Детальный разбор' : 'Revizuire detaliată'}
-            </Typography>
+          {/* Detailed Review - Practice mode OR Teachers/Admins */}
+          {(mode === 'practice' || user?.role === 'teacher' || user?.role === 'admin') && (
+            <Paper sx={{ p: 3, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                {lang === 'ru' ? 'Детальный разбор' : 'Revizuire detaliată'}
+              </Typography>
             <List>
               {quiz.questions.map((question, qIndex) => {
                 const userAnswer = answers[qIndex]
@@ -388,6 +389,7 @@ const EnhancedQuizPage = () => {
               })}
             </List>
           </Paper>
+          )}
 
           {/* Error Analysis */}
           {incorrectQuestions.length > 0 && false && (

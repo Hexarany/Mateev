@@ -18,6 +18,12 @@ import {
   Paper,
   List,
   ListItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Chip,
+  Grid,
 } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
@@ -45,7 +51,7 @@ const QuizPage = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const lang = i18n.language as 'ru' | 'ro'
-  const { hasAccess, token, loading: authLoading } = useAuth()
+  const { hasAccess, token, loading: authLoading, user } = useAuth()
   const { setMainButton, hideMainButton } = useMainButton()
   const { isInTelegram } = useTelegram()
   const canAccess = hasAccess('premium')
@@ -57,6 +63,8 @@ const QuizPage = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>('')
   const [answers, setAnswers] = useState<number[]>([])
   const [showResults, setShowResults] = useState(false)
+  const [mode, setMode] = useState<'practice' | 'exam' | null>(null)
+  const [showModeDialog, setShowModeDialog] = useState(true)
 
   // Load quiz from API
   useEffect(() => {
@@ -266,8 +274,9 @@ const QuizPage = () => {
             </CardContent>
           </Card>
 
-          {/* Detailed Review */}
-          <Paper sx={{ p: 3, mt: 3 }}>
+          {/* Detailed Review - Practice mode OR Teachers/Admins */}
+          {(mode === 'practice' || user?.role === 'teacher' || user?.role === 'admin') && (
+            <Paper sx={{ p: 3, mt: 3 }}>
             <Typography variant="h6" gutterBottom>
               {lang === 'ru' ? 'Детальный разбор' : 'Revizuire detaliată'}
             </Typography>
@@ -325,6 +334,7 @@ const QuizPage = () => {
               })}
             </List>
           </Paper>
+          )}
 
           <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center' }}>
             <Button
@@ -343,6 +353,71 @@ const QuizPage = () => {
   }
 
   const question = quiz.questions[currentQuestion]
+
+  // Mode selection dialog
+  if (showModeDialog && !showResults) {
+    return (
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Dialog open={showModeDialog} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            {lang === 'ru' ? 'Выберите режим теста' : 'Alegeți modul de test'}
+          </DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2} sx={{ mt: 1 }}>
+              <Grid item xs={12} sm={6}>
+                <Card
+                  sx={{
+                    cursor: 'pointer',
+                    border: (theme) => `2px solid ${theme.palette.primary.main}`,
+                    '&:hover': { boxShadow: 6 },
+                  }}
+                  onClick={() => {
+                    setMode('practice')
+                    setShowModeDialog(false)
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color="primary">
+                      📚 {lang === 'ru' ? 'Практика' : 'Practică'}
+                    </Typography>
+                    <Typography variant="body2">
+                      {lang === 'ru'
+                        ? 'Обучающий режим с пояснениями после каждого вопроса'
+                        : 'Mod de învățare cu explicații după fiecare întrebare'}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Card
+                  sx={{
+                    cursor: 'pointer',
+                    border: (theme) => `2px solid ${theme.palette.warning.main}`,
+                    '&:hover': { boxShadow: 6 },
+                  }}
+                  onClick={() => {
+                    setMode('exam')
+                    setShowModeDialog(false)
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color="warning.main">
+                      🎯 {lang === 'ru' ? 'Экзамен' : 'Examen'}
+                    </Typography>
+                    <Typography variant="body2">
+                      {lang === 'ru'
+                        ? 'Проверка знаний. Только итоговый результат'
+                        : 'Testare cunoștințe. Doar rezultat final'}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </DialogContent>
+        </Dialog>
+      </Container>
+    )
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
