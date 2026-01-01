@@ -15,12 +15,8 @@ import {
   LinearProgress,
   Alert,
   CircularProgress,
-  Fab,
-  Tooltip,
 } from '@mui/material'
-import SmartToyIcon from '@mui/icons-material/SmartToy'
 import AccessGate from '@/components/AccessGate'
-import AIChatDialog from '@/components/AIChatDialog'
 import { useAuth } from '@/contexts/AuthContext'
 import { useMainButton } from '@/contexts/MainButtonContext'
 import { useTelegram } from '@/contexts/TelegramContext'
@@ -46,7 +42,6 @@ const QuizPage = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>('')
   const [answers, setAnswers] = useState<number[]>([])
   const [showResults, setShowResults] = useState(false)
-  const [aiChatOpen, setAiChatOpen] = useState(false)
 
   // Load quiz from API
   useEffect(() => {
@@ -310,31 +305,6 @@ const QuizPage = () => {
           </CardContent>
         </Card>
       </AccessGate>
-
-      {/* Floating AI Assistant Button */}
-      {!showResults && quiz && (
-        <>
-          <Tooltip title={t('ai.askAI')} placement="left">
-            <Fab
-              color="secondary"
-              onClick={() => setAiChatOpen(true)}
-              sx={{
-                position: 'fixed',
-                bottom: 24,
-                right: 24,
-              }}
-            >
-              <SmartToyIcon />
-            </Fab>
-          </Tooltip>
-
-          <AIChatDialog
-            open={aiChatOpen}
-            onClose={() => setAiChatOpen(false)}
-            contextMessage={`Помоги с вопросом квиза: "${question.question[lang]}". Варианты ответа: ${question.options.map((opt, i) => `${i + 1}. ${opt[lang]}`).join(', ')}`}
-          />
-        </>
-      )}
     </Container>
   )
 }

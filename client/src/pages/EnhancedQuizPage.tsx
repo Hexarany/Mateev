@@ -336,8 +336,55 @@ const EnhancedQuizPage = () => {
             </CardContent>
           </Card>
 
+          {/* Detailed Review - All Questions */}
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              {lang === 'ru' ? 'Детальный разбор' : 'Revizuire detaliată'}
+            </Typography>
+            <List>
+              {quiz.questions.map((question, qIndex) => {
+                const userAnswer = answers[qIndex]
+                const isCorrect = userAnswer === question.correctAnswer
+
+                return (
+                  <ListItem key={qIndex} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1 }}>
+                      {isCorrect ? (
+                        <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+                      ) : (
+                        <CancelIcon color="error" sx={{ mr: 1 }} />
+                      )}
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        {qIndex + 1}. {question.question[lang]}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ pl: 4, width: '100%' }}>
+                      {!isCorrect && (
+                        <Typography variant="body2" color="error.main" sx={{ mb: 0.5 }}>
+                          {lang === 'ru' ? 'Ваш ответ:' : 'Răspunsul dvs.:'}{' '}
+                          {userAnswer >= 0 ? question.options[userAnswer][lang] : (lang === 'ru' ? 'Не отвечено' : 'Nicio alegere')}
+                        </Typography>
+                      )}
+                      <Typography variant="body2" color="success.main" sx={{ mb: 0.5 }}>
+                        {lang === 'ru' ? 'Правильный ответ:' : 'Răspuns corect:'}{' '}
+                        {question.options[question.correctAnswer][lang]}
+                      </Typography>
+                      {question.explanation && question.explanation[lang] && (
+                        <Box sx={{ mt: 1, p: 1.5, bgcolor: (theme) => theme.palette.info.light, borderRadius: 1 }}>
+                          <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                            <strong>{lang === 'ru' ? '💡 Пояснение:' : '💡 Explicație:'}</strong> {question.explanation[lang]}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
+                  </ListItem>
+                )
+              })}
+            </List>
+          </Paper>
+
           {/* Error Analysis */}
-          {incorrectQuestions.length > 0 && (
+          {incorrectQuestions.length > 0 && false && (
             <Paper sx={{ p: 3, mb: 3 }}>
               <Typography variant="h6" gutterBottom>
                 {lang === 'ru' ? 'Анализ ошибок' : 'Analiza erorilor'}
@@ -360,6 +407,13 @@ const EnhancedQuizPage = () => {
                         {lang === 'ru' ? 'Правильный ответ:' : 'Răspuns corect:'}{' '}
                         {item.question.options[item.correctAnswer][lang]}
                       </Typography>
+                      {item.question.explanation && item.question.explanation[lang] && (
+                        <Box sx={{ mt: 1, p: 1.5, bgcolor: (theme) => theme.palette.info.light, borderRadius: 1 }}>
+                          <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                            <strong>{lang === 'ru' ? '💡 Пояснение:' : '💡 Explicație:'}</strong> {item.question.explanation[lang]}
+                          </Typography>
+                        </Box>
+                      )}
                     </Box>
                   </ListItem>
                 ))}
