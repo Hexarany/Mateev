@@ -118,13 +118,19 @@ Return ONLY valid JSON, no additional text.`
 
   const response = await getAnthropicClient().messages.create({
     model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 4000,
+    max_tokens: 6000,
     messages: [{ role: 'user', content: prompt }],
   })
 
   const content = response.content[0]
   if (content.type !== 'text') {
     throw new Error('Unexpected response type from Claude')
+  }
+
+  // Check if response was truncated
+  if (response.stop_reason === 'max_tokens') {
+    console.error('Topic generation response was truncated due to max_tokens limit')
+    throw new Error('Ответ был обрезан из-за ограничения токенов. Попробуйте упростить описание темы.')
   }
 
   const generatedContent = parseClaudeJSON(content.text)
@@ -206,13 +212,19 @@ Return ONLY valid JSON, no additional text.`
 
   const response = await getAnthropicClient().messages.create({
     model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 6000,
+    max_tokens: 8000,
     messages: [{ role: 'user', content: prompt }],
   })
 
   const content = response.content[0]
   if (content.type !== 'text') {
     throw new Error('Unexpected response type from Claude')
+  }
+
+  // Check if response was truncated
+  if (response.stop_reason === 'max_tokens') {
+    console.error('Quiz generation response was truncated due to max_tokens limit')
+    throw new Error('Ответ был обрезан из-за ограничения токенов. Попробуйте уменьшить количество вопросов или сложность.')
   }
 
   const generatedQuestions = parseClaudeJSON(content.text)
@@ -302,13 +314,19 @@ Return ONLY valid JSON, no additional text.`
 
   const response = await getAnthropicClient().messages.create({
     model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 5000,
+    max_tokens: 7000,
     messages: [{ role: 'user', content: prompt }],
   })
 
   const content = response.content[0]
   if (content.type !== 'text') {
     throw new Error('Unexpected response type from Claude')
+  }
+
+  // Check if response was truncated
+  if (response.stop_reason === 'max_tokens') {
+    console.error('Protocol generation response was truncated due to max_tokens limit')
+    throw new Error('Ответ был обрезан из-за ограничения токенов. Попробуйте уменьшить длительность или количество шагов протокола.')
   }
 
   const generatedProtocol = parseClaudeJSON(content.text)
@@ -398,13 +416,19 @@ Return ONLY valid JSON.`
 
   const response = await getAnthropicClient().messages.create({
     model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 8000,
+    max_tokens: 10000,
     messages: [{ role: 'user', content: prompt }],
   })
 
   const content = response.content[0]
   if (content.type !== 'text') {
     throw new Error('Unexpected response type from Claude')
+  }
+
+  // Check if response was truncated
+  if (response.stop_reason === 'max_tokens') {
+    console.error('Course structure generation response was truncated due to max_tokens limit')
+    throw new Error('Ответ был обрезан из-за ограничения токенов. Попробуйте уменьшить количество модулей.')
   }
 
   return parseClaudeJSON(content.text)
