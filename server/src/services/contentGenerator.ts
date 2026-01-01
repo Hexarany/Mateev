@@ -129,8 +129,16 @@ Return ONLY valid JSON, no additional text.`
 
   const generatedContent = parseClaudeJSON(content.text)
 
+  // Generate slug from topic title
+  const slug = topicTitle.ru
+    .toLowerCase()
+    .replace(/[^a-zа-я0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    + '-' + Date.now()
+
   return {
     name: topicTitle,
+    slug,
     category: categoryId,
     description: {
       ru: generatedContent.description_ru,
