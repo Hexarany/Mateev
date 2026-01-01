@@ -53,6 +53,11 @@ const EnhancedQuizPage = () => {
   const [showModeDialog, setShowModeDialog] = useState(true)
   const [savingProgress, setSavingProgress] = useState(false)
 
+  // Answer checking state (for Practice mode)
+  const [answerChecked, setAnswerChecked] = useState(false)
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(false)
+  const [attempts, setAttempts] = useState<number[]>([])
+
   // Mock quiz data
   const quiz = {
     _id: quizId || 'mock-quiz-1',
@@ -152,9 +157,38 @@ const EnhancedQuizPage = () => {
 
   const handleAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAnswer(event.target.value)
+    // Reset answer check when user changes selection
+    setAnswerChecked(false)
+    setIsAnswerCorrect(false)
+  }
+
+  const checkAnswer = () => {
+    const answerIndex = parseInt(selectedAnswer)
+    const correct = answerIndex === quiz.questions[currentQuestion].correctAnswer
+    setIsAnswerCorrect(correct)
+    setAnswerChecked(true)
+
+    // Track attempts
+    if (attempts[currentQuestion] === undefined) {
+      const newAttempts = [...attempts]
+      newAttempts[currentQuestion] = 1
+      setAttempts(newAttempts)
+    }
   }
 
   const handleNext = () => {
+    // In Practice mode, check answer first if not already checked
+    if (mode === 'practice' && !answerChecked) {
+      checkAnswer()
+      return
+    }
+
+    // In Practice mode, don't allow proceeding if answer is wrong
+    if (mode === 'practice' && !isAnswerCorrect) {
+      return
+    }
+
+    // Proceed to next question
     const answerIndex = parseInt(selectedAnswer)
     const newAnswers = [...answers, answerIndex]
     setAnswers(newAnswers)
@@ -162,6 +196,9 @@ const EnhancedQuizPage = () => {
     if (currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
       setSelectedAnswer('')
+      // Reset answer check state for next question
+      setAnswerChecked(false)
+      setIsAnswerCorrect(false)
     } else {
       handleSubmit(newAnswers)
     }
@@ -336,8 +373,8 @@ const EnhancedQuizPage = () => {
             </CardContent>
           </Card>
 
-          {/* Detailed Review - Practice mode OR Teachers/Admins */}
-          {(mode === 'practice' || user?.role === 'teacher' || user?.role === 'admin') && (
+          {/* Detailed Review - ONLY for Teachers/Admins */}
+          {(user?.role === 'teacher' || user?.role === 'admin') && (
             <Paper sx={{ p: 3, mb: 3 }}>
               <Typography variant="h6" gutterBottom>
                 {lang === 'ru' ? 'Детальный разбор' : 'Revizuire detaliată'}
@@ -371,7 +408,7 @@ const EnhancedQuizPage = () => {
                             {userAnswer >= 0 ? question.options[userAnswer][lang] : (lang === 'ru' ? 'Не отвечено' : 'Nicio alegere')}
                           </Typography>
                           <Typography variant="body2" color="success.main" sx={{ mb: 0.5 }}>
-                            {lang === 'ru' ? 'Правильный ответ:' : 'Răspuns corect:'}{' '}
+                            {lang === 'ru' ? 'Правильный ответ:' : 'Răспuns corect:'}{' '}
                             {question.options[question.correctAnswer][lang]}
                           </Typography>
                           {question.explanation && question.explanation[lang] && (
@@ -532,6 +569,40 @@ const EnhancedQuizPage = () => {
                 ))}
               </RadioGroup>
             </FormControl>
+
+            {/* Visual Feedback for Answer Check */}
+            {mode === 'practice' && answerChecked && (
+              <Box
+                sx={{
+                  mt: 3,
+                  p: 2,
+                  borderRadius: 1,
+                  bgcolor: isAnswerCorrect
+                    ? (theme) => theme.palette.success.light
+                    : (theme) => theme.palette.error.light,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                }}
+              >
+                {isAnswerCorrect ? (
+                  <>
+                    <CheckCircleIcon color="success" />
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      {lang === 'ru' ? '✅ Правильно!' : '✅ Corect!'}
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <CancelIcon color="error" />
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      {lang === 'ru' ? '❌ Неправильно, попробуйте еще раз' : '❌ Incorect, încercați din nou'}
+                    </Typography>
+                  </>
+                )}
+              </Box>
+            )}
+
             <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
               <Button
                 variant="outlined"
@@ -546,7 +617,9 @@ const EnhancedQuizPage = () => {
                 {lang === 'ru' ? 'Назад' : 'Înapoi'}
               </Button>
               <Button variant="contained" onClick={handleNext} disabled={!selectedAnswer}>
-                {currentQuestion === quiz.questions.length - 1
+                {mode === 'practice' && !answerChecked
+                  ? (lang === 'ru' ? 'Проверить' : 'Verifică')
+                  : currentQuestion === quiz.questions.length - 1
                   ? (lang === 'ru' ? 'Завершить' : 'Finalizează')
                   : (lang === 'ru' ? 'Далее' : 'Următorul')}
               </Button>

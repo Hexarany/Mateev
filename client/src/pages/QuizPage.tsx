@@ -65,6 +65,9 @@ const QuizPage = () => {
   const [showResults, setShowResults] = useState(false)
   const [mode, setMode] = useState<'practice' | 'exam' | null>(null)
   const [showModeDialog, setShowModeDialog] = useState(true)
+  const [answerChecked, setAnswerChecked] = useState(false)
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(false)
+  const [attempts, setAttempts] = useState<number[]>([]) // Track attempts per question
 
   // Load quiz from API
   useEffect(() => {
@@ -212,16 +215,50 @@ const QuizPage = () => {
 
   const handleAnswerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAnswer(event.target.value)
+    setAnswerChecked(false) // Reset check when selecting new answer
+  }
+
+  const checkAnswer = () => {
+    const answerIndex = parseInt(selectedAnswer)
+    const correct = answerIndex === quiz.questions[currentQuestion].correctAnswer
+    setIsAnswerCorrect(correct)
+    setAnswerChecked(true)
+
+    // Track attempt (only first attempt counts for score)
+    if (attempts[currentQuestion] === undefined) {
+      const newAttempts = [...attempts]
+      newAttempts[currentQuestion] = 1
+      setAttempts(newAttempts)
+    }
   }
 
   const handleNext = () => {
     const answerIndex = parseInt(selectedAnswer)
-    const newAnswers = [...answers, answerIndex]
-    setAnswers(newAnswers)
 
+    // In Practice mode, check answer first
+    if (mode === 'practice' && !answerChecked) {
+      checkAnswer()
+      return
+    }
+
+    // In Practice mode, don't proceed if answer is wrong
+    if (mode === 'practice' && !isAnswerCorrect) {
+      return
+    }
+
+    // Save answer (only if first attempt or exam mode)
+    if (mode === 'exam' || attempts[currentQuestion] === 1) {
+      const newAnswers = [...answers]
+      newAnswers[currentQuestion] = answerIndex
+      setAnswers(newAnswers)
+    }
+
+    // Move to next question or show results
     if (currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
       setSelectedAnswer('')
+      setAnswerChecked(false)
+      setIsAnswerCorrect(false)
     } else {
       setShowResults(true)
     }
@@ -274,8 +311,8 @@ const QuizPage = () => {
             </CardContent>
           </Card>
 
-          {/* Detailed Review - Practice mode OR Teachers/Admins */}
-          {(mode === 'practice' || user?.role === 'teacher' || user?.role === 'admin') && (
+          {/* Detailed Review - ONLY for Teachers/Admins */}
+          {(user?.role === 'teacher' || user?.role === 'admin') && (
             <Paper sx={{ p: 3, mt: 3 }}>
             <Typography variant="h6" gutterBottom>
               {lang === 'ru' ? 'Детальный разбор' : 'Revizuire detaliată'}
@@ -466,13 +503,48 @@ const QuizPage = () => {
               </RadioGroup>
             </FormControl>
 
+            {/* Visual Feedback for Answer Check */}
+            {mode === 'practice' && answerChecked && (
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  borderRadius: 1,
+                  bgcolor: isAnswerCorrect
+                    ? (theme) => theme.palette.success.light
+                    : (theme) => theme.palette.error.light,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                }}
+              >
+                {isAnswerCorrect ? (
+                  <>
+                    <CheckCircleIcon color="success" />
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      {lang === 'ru' ? '✅ Правильно!' : '✅ Corect!'}
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <CancelIcon color="error" />
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      {lang === 'ru' ? '❌ Неправильно, попробуйте еще раз' : '❌ Incorect, încercați din nou'}
+                    </Typography>
+                  </>
+                )}
+              </Box>
+            )}
+
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 variant="contained"
                 onClick={handleNext}
                 disabled={!selectedAnswer}
               >
-                {currentQuestion < quiz.questions.length - 1
+                {mode === 'practice' && !answerChecked
+                  ? (lang === 'ru' ? 'Проверить' : 'Verifică')
+                  : currentQuestion < quiz.questions.length - 1
                   ? t('quiz.next')
                   : t('quiz.finish')}
               </Button>
