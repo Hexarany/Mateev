@@ -224,12 +224,10 @@ const QuizPage = () => {
     setIsAnswerCorrect(correct)
     setAnswerChecked(true)
 
-    // Track attempt (only first attempt counts for score)
-    if (attempts[currentQuestion] === undefined) {
-      const newAttempts = [...attempts]
-      newAttempts[currentQuestion] = 1
-      setAttempts(newAttempts)
-    }
+    // Increment attempt counter every time user checks an answer
+    const newAttempts = [...attempts]
+    newAttempts[currentQuestion] = (newAttempts[currentQuestion] || 0) + 1
+    setAttempts(newAttempts)
   }
 
   const handleNext = () => {
@@ -321,19 +319,18 @@ const QuizPage = () => {
               {quiz.questions.map((question, qIndex) => {
                 const userAnswer = answers[qIndex]
                 const isCorrect = userAnswer === question.correctAnswer
-
-                // Debug logging
-                if (qIndex === 0) {
-                  console.log('🔍 Rendering question 0:', question)
-                  console.log('🔍 Has explanation?', question.explanation)
-                  console.log('🔍 Is correct?', isCorrect)
-                }
+                const attemptCount = attempts[qIndex] || 1
+                const hadMistakes = attemptCount > 1
 
                 return (
                   <ListItem key={qIndex} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 2, px: 0 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1 }}>
                       {isCorrect ? (
-                        <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+                        hadMistakes ? (
+                          <CheckCircleIcon sx={{ mr: 1, color: (theme) => theme.palette.warning.main }} />
+                        ) : (
+                          <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+                        )
                       ) : (
                         <CancelIcon color="error" sx={{ mr: 1 }} />
                       )}
@@ -343,9 +340,32 @@ const QuizPage = () => {
                     </Box>
                     <Box sx={{ pl: 4, width: '100%' }}>
                       {isCorrect ? (
-                        <Typography variant="body2" color="success.main">
-                          {lang === 'ru' ? '✓ Правильно!' : '✓ Corect!'}
-                        </Typography>
+                        <>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: hadMistakes
+                                ? (theme) => theme.palette.warning.main
+                                : (theme) => theme.palette.success.main,
+                              fontWeight: hadMistakes ? 600 : 400
+                            }}
+                          >
+                            {hadMistakes
+                              ? (lang === 'ru'
+                                  ? `⚠️ Правильно (после ${attemptCount} ${attemptCount === 2 ? 'попыток' : attemptCount === 3 ? 'попыток' : 'попыток'})`
+                                  : `⚠️ Corect (după ${attemptCount} încercări)`)
+                              : (lang === 'ru' ? '✓ Правильно с первой попытки!' : '✓ Corect din prima încercare!')
+                            }
+                          </Typography>
+                          {/* Показать объяснение если были ошибки */}
+                          {hadMistakes && question.explanation && question.explanation[lang] && (
+                            <Box sx={{ mt: 1, p: 1.5, bgcolor: (theme) => theme.palette.warning.light, borderRadius: 1 }}>
+                              <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                                <strong>{lang === 'ru' ? '💡 Пояснение:' : '💡 Explicație:'}</strong> {question.explanation[lang]}
+                              </Typography>
+                            </Box>
+                          )}
+                        </>
                       ) : (
                         <>
                           <Typography variant="body2" color="error.main" sx={{ mb: 0.5 }}>
