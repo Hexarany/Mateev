@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, MenuItem, Snackbar, Alert } from '@mui/material'
+import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, MenuItem, Snackbar, Alert, CircularProgress } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import ImageIcon from '@mui/icons-material/Image'
 import type { AnatomyModel3D } from '@/types'
-import { getAnatomyModels3D, createAnatomyModel3D, updateAnatomyModel3D, deleteAnatomyModel3D } from '@/services/api'
+import { getAnatomyModels3D, createAnatomyModel3D, updateAnatomyModel3D, deleteAnatomyModel3D, uploadMedia } from '@/services/api'
 
 const categories = [
   { value: 'bones', label: 'Кости / Oase' },
@@ -37,6 +39,8 @@ const AnatomyModels3DManager = () => {
     order: 0,
   })
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
+  const [uploadingModel, setUploadingModel] = useState(false)
+  const [uploadingPreview, setUploadingPreview] = useState(false)
 
   useEffect(() => { loadModels() }, [])
 
@@ -88,6 +92,54 @@ const AnatomyModels3DManager = () => {
     setOpen(true)
   }
 
+  const handleModelUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!token || !event.target.files || !event.target.files[0]) return
+
+    const file = event.target.files[0]
+
+    // Проверка формата файла
+    if (!file.name.endsWith('.glb') && !file.name.endsWith('.gltf')) {
+      showSnackbar('Поддерживаются только .glb и .gltf файлы', 'error')
+      return
+    }
+
+    try {
+      setUploadingModel(true)
+      const response = await uploadMedia(file, token)
+      setFormData({ ...formData, modelUrl: response.fileUrl })
+      showSnackbar('3D модель загружена успешно', 'success')
+    } catch (error) {
+      console.error('Model upload error:', error)
+      showSnackbar('Ошибка загрузки модели', 'error')
+    } finally {
+      setUploadingModel(false)
+    }
+  }
+
+  const handlePreviewUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!token || !event.target.files || !event.target.files[0]) return
+
+    const file = event.target.files[0]
+
+    // Проверка формата файла
+    if (!file.type.startsWith('image/')) {
+      showSnackbar('Поддерживаются только изображения', 'error')
+      return
+    }
+
+    try {
+      setUploadingPreview(true)
+      const response = await uploadMedia(file, token)
+      setFormData({ ...formData, previewImage: response.fileUrl })
+      showSnackbar('Превью загружено успешно', 'success')
+    } catch (error) {
+      console.error('Preview upload error:', error)
+      showSnackbar('Ошибка загрузки превью', 'error')
+    } finally {
+      setUploadingPreview(false)
+    }
+  }
+
   const handleSave = async () => {
     if (!token) return
 
@@ -101,7 +153,7 @@ const AnatomyModels3DManager = () => {
       return
     }
     if (!formData.modelUrl.trim()) {
-      showSnackbar('Укажите URL модели', 'error')
+      showSnackbar('Укажите URL модели или загрузите файл', 'error')
       return
     }
 
@@ -223,8 +275,79 @@ const AnatomyModels3DManager = () => {
             <TextField select label="Категория" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value as any })} fullWidth size="small">
               {categories.map((cat) => (<MenuItem key={cat.value} value={cat.value}>{cat.label}</MenuItem>))}
             </TextField>
-            <TextField label="URL модели (.glb)" value={formData.modelUrl} onChange={(e) => setFormData({ ...formData, modelUrl: e.target.value })} fullWidth size="small" helperText="Cloudinary URL для .glb файла" />
-            <TextField label="URL превью" value={formData.previewImage} onChange={(e) => setFormData({ ...formData, previewImage: e.target.value })} fullWidth size="small" />
+
+            {/* 3D Model Upload */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                3D модель (.glb или .gltf)
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={uploadingModel ? <CircularProgress size={20} /> : <UploadFileIcon />}
+                  disabled={uploadingModel}
+                  fullWidth
+                >
+                  {uploadingModel ? 'Загрузка...' : 'Загрузить 3D модель'}
+                  <input
+                    type="file"
+                    hidden
+                    accept=".glb,.gltf"
+                    onChange={handleModelUpload}
+                  />
+                </Button>
+              </Box>
+              <TextField
+                label="или введите URL вручную"
+                value={formData.modelUrl}
+                onChange={(e) => setFormData({ ...formData, modelUrl: e.target.value })}
+                fullWidth
+                size="small"
+                helperText={formData.modelUrl ? `Текущий файл: ${formData.modelUrl}` : 'Загрузите файл или вставьте URL'}
+              />
+            </Box>
+
+            {/* Preview Image Upload */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                Превью изображение
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={uploadingPreview ? <CircularProgress size={20} /> : <ImageIcon />}
+                  disabled={uploadingPreview}
+                  fullWidth
+                >
+                  {uploadingPreview ? 'Загрузка...' : 'Загрузить превью'}
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handlePreviewUpload}
+                  />
+                </Button>
+              </Box>
+              <TextField
+                label="или введите URL вручную"
+                value={formData.previewImage}
+                onChange={(e) => setFormData({ ...formData, previewImage: e.target.value })}
+                fullWidth
+                size="small"
+                helperText={formData.previewImage ? `Текущий файл: ${formData.previewImage}` : 'Загрузите файл или вставьте URL'}
+              />
+              {formData.previewImage && (
+                <Box sx={{ mt: 1, textAlign: 'center' }}>
+                  <img
+                    src={formData.previewImage.startsWith('http') ? formData.previewImage : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}${formData.previewImage}`}
+                    alt="Preview"
+                    style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '4px' }}
+                  />
+                </Box>
+              )}
+            </Box>
 
             <Typography variant="subtitle2" sx={{ mt: { xs: 1, sm: 2 }, mb: { xs: 0.5, sm: 1 }, fontWeight: 600, fontSize: { xs: '0.875rem', sm: '1rem' } }}>Авторство (для CC BY лицензий)</Typography>
             <TextField
