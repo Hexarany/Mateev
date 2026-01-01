@@ -39,6 +39,16 @@ function parseClaudeJSON(text: string): any {
 
   cleanedText = cleanedText.trim()
 
+  // Replace typographic quotes with regular quotes
+  // Romanian/German quotes: „" → ""
+  // French quotes: «» → ""
+  // Curly quotes: "" → ""
+  cleanedText = cleanedText
+    .replace(/[„"]/g, '"')  // Romanian/German quotes
+    .replace(/[«»]/g, '"')   // French quotes
+    .replace(/['']/g, "'")   // Curly single quotes
+    .replace(/—/g, '-')      // Em dash to regular dash
+
   try {
     return JSON.parse(cleanedText)
   } catch (error) {
@@ -207,6 +217,7 @@ Requirements:
 - Cover different aspects of the topic
 - Include practical application questions
 - Explanations should be educational
+- IMPORTANT: Use only regular ASCII quotes (") in JSON, NOT typographic quotes („" «» "")
 
 Return ONLY valid JSON, no additional text.`
 
