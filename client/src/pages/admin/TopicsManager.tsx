@@ -101,12 +101,15 @@ const TopicsManager = () => {
   const handleOpenDialog = (topic?: Topic) => {
     if (topic) {
       setEditingTopic(topic)
+      const categoryId = topic.categoryId
+        ? (typeof topic.categoryId === 'string' ? topic.categoryId : topic.categoryId._id)
+        : ''
+
       setFormData({
         name: topic.name,
         description: topic.description,
         content: topic.content,
-        // Проверка: topic.categoryId может быть ObjectId (string) или populated object (Category)
-        categoryId: typeof topic.categoryId === 'string' ? topic.categoryId : topic.categoryId._id,
+        categoryId,
         imageUrl: topic.imageUrl || '',
         modelUrl: topic.modelUrl || '',
         order: topic.order,
@@ -183,12 +186,13 @@ const TopicsManager = () => {
     setSnackbar({ open: true, message, severity })
   }
 
-  const getCategoryName = (categoryId: string | Category) => {
+  const getCategoryName = (categoryId: string | Category | null | undefined) => {
+    if (!categoryId) return 'Без категории'
     if (typeof categoryId === 'string') {
       const cat = categories.find(c => c._id === categoryId)
       return cat?.name.ru || categoryId
     }
-    return categoryId.name.ru
+    return categoryId.name?.ru || 'Без категории'
   }
 
   return (

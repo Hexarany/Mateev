@@ -105,11 +105,15 @@ const QuizzesManager = () => {
       const loadedTopics = await getTopics()
       setTopics(loadedTopics)
       if (loadedTopics.length > 0 && !formData.topicId) {
+        const firstTopic = loadedTopics[0]
+        const categoryId = firstTopic.categoryId
+          ? (typeof firstTopic.categoryId === 'string' ? firstTopic.categoryId : firstTopic.categoryId._id)
+          : ''
+
         setFormData(prev => ({
           ...prev,
-          topicId: loadedTopics[0]._id,
-          // categoryId теперь может быть объектом или строкой, здесь берем ID
-          categoryId: loadedTopics[0].categoryId._id || loadedTopics[0].categoryId as string, 
+          topicId: firstTopic._id,
+          categoryId,
         }));
       }
     } catch (error) {
@@ -141,12 +145,17 @@ const QuizzesManager = () => {
       })
     } else {
       setEditingQuiz(null)
+      const firstTopic = topics[0]
+      const categoryId = firstTopic?.categoryId
+        ? (typeof firstTopic.categoryId === 'string' ? firstTopic.categoryId : firstTopic.categoryId._id)
+        : ''
+
       setFormData({
         title: { ru: '', ro: '' },
         description: { ru: '', ro: '' },
-        topicId: topics[0]?._id || '',
+        topicId: firstTopic?._id || '',
         questions: [{ ...newQuestionBase }],
-        categoryId: topics[0]?.categoryId._id || topics[0]?.categoryId as string || '',
+        categoryId,
       })
     }
     setOpenDialog(true)
