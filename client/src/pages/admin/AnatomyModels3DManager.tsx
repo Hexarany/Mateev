@@ -144,15 +144,15 @@ const AnatomyModels3DManager = () => {
     if (!token) return
 
     // Валидация обязательных полей
-    if (!formData.name.ru.trim()) {
+    if (!formData.name?.ru?.trim()) {
       showSnackbar('Заполните название на русском', 'error')
       return
     }
-    if (!formData.name.ro.trim()) {
+    if (!formData.name?.ro?.trim()) {
       showSnackbar('Заполните название на румынском', 'error')
       return
     }
-    if (!formData.modelUrl.trim()) {
+    if (!formData.modelUrl?.trim()) {
       showSnackbar('Укажите URL модели или загрузите файл', 'error')
       return
     }
