@@ -155,7 +155,7 @@ Return ONLY valid JSON, no additional text.`
   return {
     name: topicTitle,
     slug,
-    category: categoryId,
+    categoryId: categoryId,
     description: {
       ru: generatedContent.description_ru,
       ro: generatedContent.description_ro,
