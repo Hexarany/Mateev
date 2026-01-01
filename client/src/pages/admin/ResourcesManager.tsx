@@ -272,7 +272,7 @@ const ResourcesManager = () => {
                     {resource.title.ru}
                   </Typography>
                   {resource.author && (
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                    <Typography variant="caption" color="textSecondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                       ({resource.author})
                     </Typography>
                   )}

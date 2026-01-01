@@ -544,7 +544,7 @@ const GroupsManager = () => {
                 ))}
               </List>
             ) : (
-              <Typography color="text.secondary" sx={{ py: 2, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+              <Typography color="textSecondary" sx={{ py: 2, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                 В группе пока нет студентов
               </Typography>
             )}
@@ -579,7 +579,7 @@ const GroupsManager = () => {
                 </Select>
               </FormControl>
             ) : (
-              <Typography color="text.secondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+              <Typography color="textSecondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                 Все студенты уже добавлены в группу
               </Typography>
             )}

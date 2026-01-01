@@ -186,13 +186,13 @@ const SearchPage = () => {
               {result.title[lang]}
             </Typography>
             {result.description && (
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
                 {result.description[lang].substring(0, 100)}
                 {result.description[lang].length > 100 ? '...' : ''}
               </Typography>
             )}
             {result.category && (
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="textSecondary">
                 {result.category}
               </Typography>
             )}
@@ -209,7 +209,7 @@ const SearchPage = () => {
         <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
           {lang === 'ru' ? 'Поиск' : 'Căutare'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru'
             ? 'Найдите темы анатомии, протоколы массажа, триггерные точки и многое другое'
             : 'Găsiți teme de anatomie, protocoale de masaj, puncte trigger și multe altele'}
@@ -274,7 +274,7 @@ const SearchPage = () => {
         <>
           {/* Results Count */}
           {query.trim().length >= 2 && (
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
               {lang === 'ru'
                 ? `Найдено результатов: ${totalResults}`
                 : `Rezultate găsite: ${totalResults}`}
@@ -289,10 +289,10 @@ const SearchPage = () => {
           ) : query.trim().length >= 2 ? (
             <Box sx={{ textAlign: 'center', py: 8 }}>
               <SearchIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary">
+              <Typography variant="h6" color="textSecondary">
                 {lang === 'ru' ? 'Ничего не найдено' : 'Niciun rezultat'}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="textSecondary">
                 {lang === 'ru'
                   ? 'Попробуйте изменить запрос или фильтры'
                   : 'Încercați să schimbați interogarea sau filtrele'}
@@ -301,7 +301,7 @@ const SearchPage = () => {
           ) : (
             <Box sx={{ textAlign: 'center', py: 8 }}>
               <SearchIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary">
+              <Typography variant="h6" color="textSecondary">
                 {lang === 'ru'
                   ? 'Введите запрос для поиска'
                   : 'Introduceți o interogare pentru a căuta'}

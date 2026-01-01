@@ -90,7 +90,7 @@ const CategoryCard = memo(({ category, index, colorScheme, lang, themeMode, getS
           </Typography>
           <Typography
             variant="body2"
-            color="text.secondary"
+            color="textSecondary"
             sx={{ lineHeight: 1.6 }}
           >
             {category.description[lang]}
@@ -472,7 +472,7 @@ const HomePage = () => {
                 <Typography variant="h6" component="h3" gutterBottom fontWeight={600}>
                   {item.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.875rem' }}>
                   {item.description}
                 </Typography>
               </Card>
@@ -496,7 +496,7 @@ const HomePage = () => {
         >
           {t('home.subscription.title')}
         </Typography>
-        <Typography align="center" color="text.secondary" sx={{ mb: 5, maxWidth: 720, mx: 'auto' }}>
+        <Typography align="center" color="textSecondary" sx={{ mb: 5, maxWidth: 720, mx: 'auto' }}>
           {t('home.subscription.subtitle')}
         </Typography>
         <Grid container spacing={3} alignItems="stretch">
@@ -543,7 +543,7 @@ const HomePage = () => {
                     ${plan.price}
                   </Typography>
                 </Box>
-                <Typography color="text.secondary" sx={{ mb: 3 }}>
+                <Typography color="textSecondary" sx={{ mb: 3 }}>
                   {plan.description}
                 </Typography>
                 <List dense sx={{ textAlign: 'left', mb: 3 }}>
@@ -646,7 +646,7 @@ const HomePage = () => {
                   >
                     {stat.value}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
+                  <Typography variant="body1" color="textSecondary" sx={{ fontWeight: 500 }}>
                     {stat.label}
                   </Typography>
                 </Box>
@@ -680,7 +680,7 @@ const HomePage = () => {
           >
             {t('home.anatomyModule.title')}
           </Typography>
-          <Typography align="center" color="text.secondary" sx={{ mb: 5, maxWidth: 720, mx: 'auto' }}>
+          <Typography align="center" color="textSecondary" sx={{ mb: 5, maxWidth: 720, mx: 'auto' }}>
             {t('home.anatomyModule.description')}
           </Typography>
           {loading ? (
@@ -765,7 +765,7 @@ const HomePage = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   {step.title}
                 </Typography>
-                <Typography color="text.secondary">
+                <Typography color="textSecondary">
                   {step.description}
                 </Typography>
               </Card>
@@ -827,7 +827,7 @@ const HomePage = () => {
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
                     {segment.title}
                   </Typography>
-                  <Typography color="text.secondary">
+                  <Typography color="textSecondary">
                     {segment.description}
                   </Typography>
                 </Card>
@@ -874,7 +874,7 @@ const HomePage = () => {
                   </Avatar>
                   <Box>
                     <Typography fontWeight={700}>{item.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="textSecondary">
                       {item.role}
                     </Typography>
                   </Box>
@@ -885,7 +885,7 @@ const HomePage = () => {
                     sx={{ ml: 'auto', fontWeight: 600 }}
                   />
                 </Box>
-                <Typography variant="body1" color="text.secondary">
+                <Typography variant="body1" color="textSecondary">
                   “{item.quote}”
                 </Typography>
               </Card>

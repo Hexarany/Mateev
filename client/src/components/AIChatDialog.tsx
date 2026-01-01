@@ -164,7 +164,7 @@ export default function AIChatDialog({
       {remainingRequests !== null && (
         <Box sx={{ px: 3, pb: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="textSecondary">
               {t('ai.remainingRequests')}
             </Typography>
             <Typography variant="caption" fontWeight={600}>
@@ -188,7 +188,7 @@ export default function AIChatDialog({
 
         {messages.length === 0 && !loading && (
           <Box>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
               {t('ai.exampleQuestions.title')}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
@@ -273,7 +273,7 @@ export default function AIChatDialog({
               <Paper elevation={1} sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CircularProgress size={16} />
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     {t('ai.thinking')}
                   </Typography>
                 </Box>

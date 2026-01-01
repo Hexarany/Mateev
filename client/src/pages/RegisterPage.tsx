@@ -81,7 +81,7 @@ const RegisterPage = () => {
           <Typography variant="h4" component="h1" align="center" gutterBottom>
             Регистрация
           </Typography>
-          <Typography variant="body2" align="center" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 3 }}>
             Создайте новый аккаунт
           </Typography>
 

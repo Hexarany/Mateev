@@ -460,7 +460,7 @@ const PricingPage = () => {
         <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
           Тарифные планы / Planuri tarifare
         </Typography>
-        <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography variant="h6" color="textSecondary" sx={{ mb: 2 }}>
           Выберите подходящий план для обучения массажу
         </Typography>
         {user && (
@@ -556,7 +556,7 @@ const PricingPage = () => {
                       <Typography variant="body1" fontWeight={600}>
                         MAIB E-Commerce (Рекомендуется)
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="textSecondary">
                         Карты Visa/Mastercard • Молдавский банк • Быстро и безопасно
                       </Typography>
                     </Box>
@@ -570,7 +570,7 @@ const PricingPage = () => {
                       <Typography variant="body1" fontWeight={600}>
                         PayPal
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="textSecondary">
                         Международные платежи • Требуется аккаунт PayPal
                       </Typography>
                     </Box>
@@ -737,7 +737,7 @@ const PricingPage = () => {
                       </>
                     )}
                     {plan.price !== 0 && billingLabel && (
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="textSecondary">
                         / {billingLabel}
                       </Typography>
                     )}
@@ -784,13 +784,13 @@ const PricingPage = () => {
       </Grid>
 
       <Box sx={{ mt: 6, textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="textSecondary">
           Все платежи обрабатываются безопасно через MAIB E-Commerce или PayPal
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="textSecondary">
           Toate plățile sunt procesate în siguranță prin MAIB E-Commerce sau PayPal
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
           Единоразовая оплата • Доступ на выбранный период • Без автопродления
         </Typography>
       </Box>

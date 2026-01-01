@@ -149,7 +149,7 @@ const PaymentCallbackPage = () => {
           <Typography variant="h5" gutterBottom>
             Обработка платежа...
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="textSecondary">
             Пожалуйста, подождите. Не закрывайте эту страницу.
           </Typography>
         </Box>
@@ -177,7 +177,7 @@ const PaymentCallbackPage = () => {
             <Alert severity="error" sx={{ mb: 3, textAlign: 'left' }}>
               {error}
             </Alert>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography variant="body1" color="textSecondary" sx={{ mb: 3 }}>
               Ваша карта не была списана. Пожалуйста, попробуйте снова или свяжитесь с
               поддержкой.
             </Typography>
@@ -216,7 +216,7 @@ const PaymentCallbackPage = () => {
           <Typography variant="h4" gutterBottom fontWeight={700}>
             Оплата успешна!
           </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="h6" color="textSecondary" sx={{ mb: 3 }}>
             Спасибо за покупку
           </Typography>
 
@@ -262,7 +262,7 @@ const PaymentCallbackPage = () => {
             </Paper>
           )}
 
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
             Квитанция отправлена на вашу почту. Вы можете начать использовать платформу прямо
             сейчас!
           </Typography>

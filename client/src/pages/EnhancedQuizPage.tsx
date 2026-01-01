@@ -240,7 +240,7 @@ const EnhancedQuizPage = () => {
                   <Typography variant="h6" gutterBottom>
                     {lang === 'ru' ? 'Практика' : 'Practică'}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     {lang === 'ru'
                       ? '• Без ограничения времени\n• Можно пересдавать\n• Для обучения'
                       : '• Fără limită de timp\n• Se poate relua\n• Pentru învățare'}
@@ -267,7 +267,7 @@ const EnhancedQuizPage = () => {
                   <Typography variant="h6" gutterBottom>
                     {lang === 'ru' ? 'Экзамен' : 'Examen'}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     {lang === 'ru'
                       ? '• 10 минут на тест\n• Финальная оценка\n• Для проверки знаний'
                       : '• 10 minute pentru test\n• Notă finală\n• Pentru verificare'}
@@ -329,7 +329,7 @@ const EnhancedQuizPage = () => {
                 </Alert>
               )}
               {savingProgress && (
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                <Typography variant="caption" color="textSecondary" sx={{ mt: 2, display: 'block' }}>
                   {lang === 'ru' ? 'Сохранение прогресса...' : 'Salvare progres...'}
                 </Typography>
               )}

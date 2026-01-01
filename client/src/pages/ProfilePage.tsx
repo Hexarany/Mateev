@@ -179,7 +179,7 @@ const ProfilePage = () => {
               <Divider sx={{ mb: 2 }} />
 
               <Box sx={{ mb: 3 }}>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
+                <Typography variant="body2" color="textSecondary" gutterBottom>
                   {lang === 'ru' ? 'Текущий тариф' : 'Tarif curent'}
                 </Typography>
                 <Chip
@@ -192,7 +192,7 @@ const ProfilePage = () => {
 
               {user.paymentAmount && user.paymentAmount > 0 && (
                 <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography variant="body2" color="textSecondary" gutterBottom>
                     {lang === 'ru' ? 'Оплачено' : 'Plătit'}
                   </Typography>
                   <Typography variant="h6" fontWeight={600}>
@@ -203,7 +203,7 @@ const ProfilePage = () => {
 
               {user.paymentDate && (
                 <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography variant="body2" color="textSecondary" gutterBottom>
                     {lang === 'ru' ? 'Дата оплаты' : 'Data plății'}
                   </Typography>
                   <Typography variant="body1">
@@ -221,7 +221,7 @@ const ProfilePage = () => {
 
               {shouldShowSubscriptionTimer && (
                 <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography variant="body2" color="textSecondary" gutterBottom>
                     {lang === 'ru' ? 'До окончания подписки' : 'Până la expirare'}
                   </Typography>
                   {subscriptionTimeLeft ? (
@@ -305,7 +305,7 @@ const ProfilePage = () => {
                       >
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={12} sm={3}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="textSecondary">
                               {lang === 'ru' ? 'Тариф' : 'Tarif'}
                             </Typography>
                             <Typography variant="body1" fontWeight={600}>
@@ -314,7 +314,7 @@ const ProfilePage = () => {
                           </Grid>
 
                           <Grid item xs={12} sm={3}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="textSecondary">
                               {lang === 'ru' ? 'Дата' : 'Dată'}
                             </Typography>
                             <Typography variant="body1">
@@ -325,7 +325,7 @@ const ProfilePage = () => {
                           </Grid>
 
                           <Grid item xs={12} sm={2}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="textSecondary">
                               {lang === 'ru' ? 'Сумма' : 'Sumă'}
                             </Typography>
                             <Typography variant="body1" fontWeight={600} color="success.main">
@@ -334,7 +334,7 @@ const ProfilePage = () => {
                           </Grid>
 
                           <Grid item xs={12} sm={2}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="textSecondary">
                               {lang === 'ru' ? 'Метод' : 'Metodă'}
                             </Typography>
                             <Typography variant="body1">
@@ -344,7 +344,7 @@ const ProfilePage = () => {
 
                           {payment.paypalOrderId && (
                             <Grid item xs={12} sm={2}>
-                              <Typography variant="body2" color="text.secondary">
+                              <Typography variant="body2" color="textSecondary">
                                 Order ID
                               </Typography>
                               <Typography variant="caption" sx={{ wordBreak: 'break-all' }}>

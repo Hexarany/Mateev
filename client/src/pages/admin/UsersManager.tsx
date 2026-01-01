@@ -396,7 +396,7 @@ const UsersManager = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
-                <Typography color="text.secondary" gutterBottom>
+                <Typography color="textSecondary" gutterBottom>
                   Всего пользователей
                 </Typography>
                 <Typography variant="h4">{stats.totalUsers}</Typography>
@@ -406,7 +406,7 @@ const UsersManager = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
-                <Typography color="text.secondary" gutterBottom>
+                <Typography color="textSecondary" gutterBottom>
                   Premium пользователей
                 </Typography>
                 <Typography variant="h4">{stats.byAccessLevel.premium}</Typography>
@@ -416,7 +416,7 @@ const UsersManager = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
-                <Typography color="text.secondary" gutterBottom>
+                <Typography color="textSecondary" gutterBottom>
                   Общий доход
                 </Typography>
                 <Typography variant="h4">${stats.revenue.total}</Typography>
@@ -426,7 +426,7 @@ const UsersManager = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
-                <Typography color="text.secondary" gutterBottom>
+                <Typography color="textSecondary" gutterBottom>
                   Новых за 7 дней
                 </Typography>
                 <Typography variant="h4">{stats.recentActivity.newUsersLast7Days}</Typography>
@@ -607,7 +607,7 @@ const UsersManager = () => {
                         size="small"
                         sx={{ fontSize: '0.75rem', height: 24 }}
                       />
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
+                      <Typography variant="caption" color="textSecondary" sx={{ fontSize: '0.65rem' }}>
                         {user.subscriptionEndDate ? `до ${formatDateDisplay(user.subscriptionEndDate)}` : '—'}
                       </Typography>
                     </Box>

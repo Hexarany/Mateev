@@ -95,7 +95,7 @@ export default function StreakCounter({ currentStreak, longestStreak }: StreakCo
                 {lang === 'ru' ? 'дней' : 'zile'}
               </Typography>
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
               {getStreakTitle(currentStreak)}
             </Typography>
           </Box>
@@ -103,7 +103,7 @@ export default function StreakCounter({ currentStreak, longestStreak }: StreakCo
 
         <Box sx={{ mb: 1 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="textSecondary">
               {lang === 'ru' ? 'До следующей цели:' : 'Până la următorul obiectiv:'}{' '}
               {nextMilestone - currentStreak} {lang === 'ru' ? 'дней' : 'zile'}
             </Typography>
@@ -140,7 +140,7 @@ export default function StreakCounter({ currentStreak, longestStreak }: StreakCo
               borderColor: 'divider',
             }}
           >
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="textSecondary">
               {lang === 'ru' ? 'Рекорд:' : 'Record:'}{' '}
               <Typography component="span" variant="caption" fontWeight={600}>
                 {longestStreak} {lang === 'ru' ? 'дней' : 'zile'}

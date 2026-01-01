@@ -125,7 +125,7 @@ const SendEmailDialog = ({ open, onClose, users, onSuccess }: SendEmailDialogPro
       <DialogContent>
         {/* Recipients */}
         <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+          <Typography variant="subtitle2" color="textSecondary" gutterBottom>
             Получатели:
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>

@@ -131,7 +131,7 @@ const ResourcesLibraryPage = () => {
         <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
           {lang === 'ru' ? 'Библиотека материалов' : 'Biblioteca de materiale'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru'
             ? 'Учебные материалы, книги, статьи и полезные ресурсы для изучения массажа'
             : 'Materiale educaționale, cărți, articole și resurse utile pentru studiul masajului'}
@@ -212,24 +212,24 @@ const ResourcesLibraryPage = () => {
                     <Typography variant="h6" gutterBottom>
                       {resource.title[lang]}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
                       {resource.description[lang].substring(0, 120)}
                       {resource.description[lang].length > 120 ? '...' : ''}
                     </Typography>
 
                     {resource.author && (
-                      <Typography variant="caption" color="text.secondary" display="block">
+                      <Typography variant="caption" color="textSecondary" display="block">
                         {lang === 'ru' ? 'Автор:' : 'Autor:'} {resource.author}
                       </Typography>
                     )}
 
                     {resource.fileSize && (
-                      <Typography variant="caption" color="text.secondary" display="block">
+                      <Typography variant="caption" color="textSecondary" display="block">
                         {lang === 'ru' ? 'Размер:' : 'Dimensiune:'} {formatFileSize(resource.fileSize)}
                       </Typography>
                     )}
 
-                    <Typography variant="caption" color="text.secondary" display="block">
+                    <Typography variant="caption" color="textSecondary" display="block">
                       {lang === 'ru' ? 'Загрузок:' : 'Descărcări:'} {resource.downloads}
                     </Typography>
                   </CardContent>
@@ -259,7 +259,7 @@ const ResourcesLibraryPage = () => {
 
       {!loading && resources.length === 0 && (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="h6" color="textSecondary">
             {lang === 'ru' ? 'Материалы не найдены' : 'Nu s-au găsit materiale'}
           </Typography>
         </Box>

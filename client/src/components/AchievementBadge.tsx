@@ -125,7 +125,7 @@ export default function AchievementBadge({
           <Typography variant={config.titleVariant} fontWeight={700} gutterBottom>
             {achievement.title[lang]}
           </Typography>
-          <Typography variant={config.descVariant} color="text.secondary" sx={{ lineHeight: 1.3 }}>
+          <Typography variant={config.descVariant} color="textSecondary" sx={{ lineHeight: 1.3 }}>
             {achievement.description[lang]}
           </Typography>
           {!locked && size !== 'small' && (

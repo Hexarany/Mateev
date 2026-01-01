@@ -194,7 +194,7 @@ const CertificatesPage = () => {
           <WorkspacePremiumIcon sx={{ fontSize: 40, verticalAlign: 'middle', mr: 1 }} />
           {lang === 'ru' ? 'Сертификаты' : 'Certificate'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru'
             ? 'Получайте сертификаты за достижения в обучении'
             : 'Obțineți certificate pentru realizări în învățare'}
@@ -260,15 +260,15 @@ const CertificatesPage = () => {
                     <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                       {cert.title[lang]}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
                       {cert.description[lang]}
                     </Typography>
                     <Divider sx={{ my: 2 }} />
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="textSecondary">
                         {lang === 'ru' ? 'Номер' : 'Număr'}: {cert.certificateNumber}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="textSecondary">
                         {new Date(cert.issuedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'ro-RO')}
                       </Typography>
                     </Box>
@@ -342,7 +342,7 @@ const CertificatesPage = () => {
                     <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                       {cert.title[lang]}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
                       {cert.description[lang]}
                     </Typography>
 
@@ -435,7 +435,7 @@ const CertificatesPage = () => {
                 {getCertificateIcon(selectedCert.type)}
                 <Box>
                   <Typography variant="h6">{selectedCert.title[lang]}</Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="textSecondary">
                     {selectedCert.description[lang]}
                   </Typography>
                 </Box>

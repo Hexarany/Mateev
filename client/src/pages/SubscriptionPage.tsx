@@ -26,7 +26,7 @@ const SubscriptionPage = () => {
         }}
       >
         <CircularProgress size={48} sx={{ mb: 2 }} />
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           Перенаправление на страницу тарифов...
         </Typography>
       </Box>

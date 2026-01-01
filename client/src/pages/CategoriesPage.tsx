@@ -62,7 +62,7 @@ const CategoriesPage = () => {
         </Typography>
         <Typography
           variant="h6"
-          color="text.secondary"
+          color="textSecondary"
           sx={{ fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' } }}
         >
           {i18n.language === 'ru'
@@ -93,7 +93,7 @@ const CategoriesPage = () => {
         </Grid>
       ) : categories.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="h6" color="textSecondary">
             {i18n.language === 'ru'
               ? 'Категории пока не добавлены'
               : 'Categoriile nu au fost adăugate încă'}
@@ -139,7 +139,7 @@ const CategoriesPage = () => {
                     </Typography>
                     <Typography
                       variant="body2"
-                      color="text.secondary"
+                      color="textSecondary"
                       sx={{ lineHeight: 1.6 }}
                     >
                       {category.description[lang]}

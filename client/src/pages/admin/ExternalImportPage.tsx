@@ -60,7 +60,7 @@ export default function ExternalImportPage() {
           <Typography variant="h4" gutterBottom>
             Импорт из внешних источников
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="textSecondary">
             Импортируйте контент из Wikipedia, Wikimedia Commons, PubMed и других источников
           </Typography>
         </Box>
@@ -148,7 +148,7 @@ function WikipediaImport() {
       <Typography variant="h6" gutterBottom>
         Импорт темы из Wikipedia
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
         Автоматически создает тему с контентом, переводом и изображениями из Wikipedia
       </Typography>
 
@@ -269,7 +269,7 @@ function WikimediaImagesSearch() {
       <Typography variant="h6" gutterBottom>
         Поиск изображений на Wikimedia Commons
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
         Ищите бесплатные медицинские изображения с открытыми лицензиями
       </Typography>
 
@@ -419,7 +419,7 @@ function PubMedSearch() {
       <Typography variant="h6" gutterBottom>
         Поиск медицинской литературы в PubMed
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
         Ищите научные статьи и исследования в базе данных PubMed/NLM
       </Typography>
 
@@ -474,10 +474,10 @@ function PubMedSearch() {
                   primary={article.title}
                   secondary={
                     <>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="textSecondary">
                         {article.authors}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="textSecondary">
                         {article.source} • {article.pubdate}
                       </Typography>
                     </>
@@ -529,7 +529,7 @@ function TextTranslator() {
       <Typography variant="h6" gutterBottom>
         Медицинский переводчик (Claude AI)
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
         Переводите медицинский контент с сохранением терминологии и точности
       </Typography>
 

@@ -255,7 +255,7 @@ const TriggerPointsManager = () => {
               {points.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
-                    <Typography variant="body2" color="text.secondary" sx={{ py: 3, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    <Typography variant="body2" color="textSecondary" sx={{ py: 3, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                       Нет триггерных точек. Добавьте первую точку используя кнопку выше.
                     </Typography>
                   </TableCell>

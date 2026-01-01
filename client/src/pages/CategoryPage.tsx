@@ -124,7 +124,7 @@ const CategoryPage = () => {
           <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
           {t('nav.home')}
         </Link>
-        <Typography color="text.primary">{category.name[lang]}</Typography>
+        <Typography color="textPrimary">{category.name[lang]}</Typography>
       </Breadcrumbs>
 
       {/* Category Header */}
@@ -132,7 +132,7 @@ const CategoryPage = () => {
         <Typography variant="h3" component="h1" gutterBottom>
           {category.name[lang]}
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="textSecondary" paragraph>
           {category.description[lang]}
         </Typography>
 
@@ -158,7 +158,7 @@ const CategoryPage = () => {
       {/* Topics Count */}
       {topics.length > 0 && (
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="textSecondary">
             {lang === 'ru'
               ? `Найдено: ${filteredTopics.length} из ${topics.length}`
               : `Găsite: ${filteredTopics.length} din ${topics.length}`}
@@ -168,11 +168,11 @@ const CategoryPage = () => {
 
       {/* Topics by Region */}
       {topics.length === 0 ? (
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru' ? 'Темы скоро появятся...' : 'Subiectele vor apărea în curând...'}
         </Typography>
       ) : filteredTopics.length === 0 ? (
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru' ? 'Ничего не найдено. Попробуйте другой запрос.' : 'Nu s-a găsit nimic. Încercați o altă căutare.'}
         </Typography>
       ) : (
@@ -266,7 +266,7 @@ const CategoryPage = () => {
 
                     <Typography
                       variant="body2"
-                      color="text.secondary"
+                      color="textSecondary"
                       sx={{ mb: 2, lineHeight: 1.6 }}
                     >
                       {topic.description[lang]}
@@ -414,7 +414,7 @@ const CategoryPage = () => {
 
                         <Typography
                           variant="body2"
-                          color="text.secondary"
+                          color="textSecondary"
                           sx={{ mb: 2, lineHeight: 1.6 }}
                         >
                           {topic.description[lang]}

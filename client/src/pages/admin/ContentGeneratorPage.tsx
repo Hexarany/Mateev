@@ -220,7 +220,7 @@ export default function ContentGeneratorPage() {
           <Typography variant="h4">
             {lang === 'ru' ? 'AI Генератор Контента' : 'Generator de Conținut AI'}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="textSecondary">
             {lang === 'ru'
               ? 'Автоматическая генерация тем, тестов, протоколов и курсов с помощью Claude AI'
               : 'Generare automată de teme, teste, protocoale și cursuri cu Claude AI'}

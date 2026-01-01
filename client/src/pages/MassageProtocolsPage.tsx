@@ -81,7 +81,7 @@ const MassageProtocolsPage = () => {
           <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
           {t('nav.home')}
         </Link>
-        <Typography color="text.primary">
+        <Typography color="textPrimary">
           {lang === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj'}
         </Typography>
       </Breadcrumbs>
@@ -92,7 +92,7 @@ const MassageProtocolsPage = () => {
         <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
           {lang === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj'}
         </Typography>
-        <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto' }}>
+        <Typography variant="h6" color="textSecondary" sx={{ maxWidth: 800, mx: 'auto' }}>
           {lang === 'ru'
             ? 'Изучите различные техники массажа с подробными описаниями, иллюстрациями и видео-уроками'
             : 'Învățați diferite tehnici de masaj cu descrieri detaliate, ilustrații și lecții video'}
@@ -130,7 +130,7 @@ const MassageProtocolsPage = () => {
                 <Typography variant="h6" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
                   {protocol.name[lang]}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph sx={{ flexGrow: 1 }}>
+                <Typography variant="body2" color="textSecondary" paragraph sx={{ flexGrow: 1 }}>
                   {protocol.description[lang]}
                 </Typography>
 
@@ -164,7 +164,7 @@ const MassageProtocolsPage = () => {
 
       {protocols.length === 0 && (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="h6" color="textSecondary">
             {lang === 'ru' ? 'Протоколы массажа пока не добавлены' : 'Nu există protocoale de masaj încă'}
           </Typography>
         </Box>

@@ -413,14 +413,14 @@ const ScheduleManager = () => {
                           timeStyle: 'short',
                         })}
                         <br />
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                        <Typography variant="caption" color="textSecondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                           {lesson.duration} мин
                         </Typography>
                       </TableCell>
                       <TableCell>
                         {lesson.title.ru}
                         <br />
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                        <Typography variant="caption" color="textSecondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                           {lesson.location}
                         </Typography>
                       </TableCell>

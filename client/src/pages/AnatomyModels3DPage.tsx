@@ -43,7 +43,7 @@ const AnatomyModels3DPage = () => {
         >
           {lang === 'ru' ? 'Интерактивные 3D модели' : 'Modele 3D interactive'}
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+        <Typography variant="body1" color="textSecondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
           {lang === 'ru' ? 'Изучайте анатомию с помощью интерактивных 3D моделей' : 'Studiați anatomia cu ajutorul modelelor 3D interactive'}
         </Typography>
       </Box>
@@ -64,7 +64,7 @@ const AnatomyModels3DPage = () => {
                 <Typography variant="h6" gutterBottom>
                   {model.name[lang]}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
+                <Typography variant="body2" color="textSecondary" paragraph>
                   {model.description[lang]}
                 </Typography>
                 <Chip

@@ -135,7 +135,7 @@ const DashboardPage = () => {
           <TrendingUpIcon sx={{ fontSize: 40, verticalAlign: 'middle', mr: 1 }} />
           {lang === 'ru' ? 'Мой прогресс' : 'Progresul meu'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru'
             ? 'Отслеживайте свои достижения и статистику обучения'
             : 'Urmăriți realizările și statisticile dvs. de învățare'}
@@ -166,10 +166,10 @@ const DashboardPage = () => {
                 <Typography variant="h3" component="div" sx={{ fontWeight: 700, mb: 0.5 }}>
                   {stat.value}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
+                <Typography variant="body2" color="textSecondary" gutterBottom>
                   {stat.title}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="textSecondary">
                   {stat.subtitle}
                 </Typography>
               </CardContent>
@@ -274,7 +274,7 @@ const DashboardPage = () => {
         {progress.achievements.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 4 }}>
             <EmojiEventsIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="textSecondary">
               {lang === 'ru'
                 ? 'Начните обучение, чтобы разблокировать достижения!'
                 : 'Începeți să învățați pentru a debloca realizări!'}
@@ -304,10 +304,10 @@ const DashboardPage = () => {
                       <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                         {achievement.title[lang]}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="textSecondary">
                         {achievement.description[lang]}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                      <Typography variant="caption" color="textSecondary" sx={{ mt: 1, display: 'block' }}>
                         {new Date(achievement.unlockedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'ro-RO')}
                       </Typography>
                     </Box>
@@ -350,7 +350,7 @@ const DashboardPage = () => {
         ) : certificates.length === 0 && availableCerts.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 4 }}>
             <WorkspacePremiumIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="textSecondary">
               {lang === 'ru'
                 ? 'Продолжайте обучение, чтобы получить сертификаты!'
                 : 'Continuați să învățați pentru a obține certificate!'}
@@ -387,7 +387,7 @@ const DashboardPage = () => {
                             <Typography variant="body2" fontWeight="bold" gutterBottom>
                               {cert.title[lang]}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography variant="caption" color="textSecondary" display="block">
                               {new Date(cert.issuedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'ro-RO')}
                             </Typography>
                           </Box>
@@ -397,7 +397,7 @@ const DashboardPage = () => {
                   ))}
                 </Grid>
                 {certificates.length > 3 && (
-                  <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block', textAlign: 'center' }}>
+                  <Typography variant="caption" color="textSecondary" sx={{ mt: 2, display: 'block', textAlign: 'center' }}>
                     {lang === 'ru' ? `+ ещё ${certificates.length - 3}` : `+ încă ${certificates.length - 3}`}
                   </Typography>
                 )}

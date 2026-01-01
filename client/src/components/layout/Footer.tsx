@@ -30,16 +30,16 @@ const Footer = () => {
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SchoolIcon color="primary" />
-            <Typography variant="h6" color="text.primary">
+            <Typography variant="h6" color="textPrimary">
               {t('app.title')}
             </Typography>
           </Box>
 
-          <Typography variant="body2" color="text.secondary" align="center">
+          <Typography variant="body2" color="textSecondary" align="center">
             {t('footer.description')}
           </Typography>
 
-          <Typography variant="body2" color="text.secondary" align="center">
+          <Typography variant="body2" color="textSecondary" align="center">
             {t('footer.createdBy')}{' '}
             <Link
               component={RouterLink}
@@ -58,7 +58,7 @@ const Footer = () => {
             , {t('footer.instructorTitle')}
           </Typography>
 
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="textSecondary">
             {t('footer.copyright')}
           </Typography>
         </Box>

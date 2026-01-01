@@ -214,7 +214,7 @@ const TriggerPointDetailPage = () => {
         )}
 
         <Box sx={{ mt: 4, p: 2, bgcolor: 'warning.50', borderRadius: 1 }}>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" color="textSecondary">
             {lang === 'ru'
               ? 'Информация предоставлена в образовательных целях. Перед применением любых техник проконсультируйтесь со специалистом.'
               : 'Informațiile sunt furnizate în scopuri educaționale. Înainte de a aplica orice tehnici, consultați un specialist.'}

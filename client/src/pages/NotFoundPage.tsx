@@ -11,7 +11,7 @@ const NotFoundPage = () => {
       <Typography variant="h4" gutterBottom>
         Страница не найдена / Pagina nu a fost găsită
       </Typography>
-      <Typography variant="body1" color="text.secondary" paragraph>
+      <Typography variant="body1" color="textSecondary" paragraph>
         Запрашиваемая страница не существует или была перемещена.
         <br />
         Pagina solicitată nu există sau a fost mutată.

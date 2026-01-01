@@ -122,7 +122,7 @@ const HygieneGuidelinesPage = () => {
         <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
           {lang === 'ru' ? 'Профессиональные стандарты и гигиена' : 'Standarde profesionale și igienă'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru'
             ? 'Важные рекомендации по гигиене, стерилизации и профессиональным стандартам для массажистов'
             : 'Recomandări importante privind igiena, sterilizarea și standardele profesionale pentru terapeuți'}
@@ -189,7 +189,7 @@ const HygieneGuidelinesPage = () => {
                               />
                               {image.caption && image.caption[lang] && (
                                 <Box sx={{ p: 1 }}>
-                                  <Typography variant="caption" color="text.secondary">
+                                  <Typography variant="caption" color="textSecondary">
                                     {image.caption[lang]}
                                   </Typography>
                                 </Box>
@@ -210,7 +210,7 @@ const HygieneGuidelinesPage = () => {
       {/* Empty State */}
       {guidelines.length === 0 && (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="h6" color="textSecondary">
             {lang === 'ru' ? 'Нет доступных рекомендаций' : 'Nu există recomandări disponibile'}
           </Typography>
         </Box>

@@ -334,7 +334,7 @@ const PromoCodesManager = () => {
                         {code.code}
                       </Typography>
                       {code.metadata?.description && (
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                        <Typography variant="caption" color="textSecondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                           {code.metadata.description}
                         </Typography>
                       )}
@@ -350,7 +350,7 @@ const PromoCodesManager = () => {
                       <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         {code.currentUses} / {code.maxUses}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                      <Typography variant="caption" color="textSecondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                         {usagePercentage(code.currentUses, code.maxUses)}%
                       </Typography>
                     </Box>

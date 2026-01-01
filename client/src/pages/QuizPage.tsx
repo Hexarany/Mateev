@@ -261,7 +261,7 @@ const QuizPage = () => {
             {quiz.title[lang]}
           </Typography>
           <LinearProgress variant="determinate" value={progress} sx={{ mb: 1 }} />
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="textSecondary">
             {t('quiz.question')} {currentQuestion + 1} {t('quiz.of')}{' '}
             {quiz.questions.length}
           </Typography>

@@ -219,7 +219,7 @@ const NotificationBell = () => {
         ) : notifications.length === 0 ? (
           <Box sx={{ py: 4, textAlign: 'center' }}>
             <NotificationsNoneIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }} />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
               {lang === 'ru' ? 'Нет уведомлений' : 'Fără notificări'}
             </Typography>
           </Box>
@@ -250,10 +250,10 @@ const NotificationBell = () => {
                   }
                   secondary={
                     <>
-                      <Typography variant="caption" display="block" color="text.secondary">
+                      <Typography variant="caption" display="block" color="textSecondary">
                         {notification.message[lang]}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="textSecondary">
                         {formatTimeAgo(notification.sentAt)}
                       </Typography>
                     </>

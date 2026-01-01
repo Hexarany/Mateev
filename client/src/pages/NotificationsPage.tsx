@@ -180,7 +180,7 @@ const NotificationsPage = () => {
             />
           )}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru'
             ? 'Все ваши уведомления в одном месте'
             : 'Toate notificările dvs. într-un singur loc'}
@@ -238,10 +238,10 @@ const NotificationsPage = () => {
       ) : notifications.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <NotificationsNoneIcon sx={{ fontSize: 80, color: 'text.disabled', mb: 2 }} />
-          <Typography variant="h6" color="text.secondary" gutterBottom>
+          <Typography variant="h6" color="textSecondary" gutterBottom>
             {lang === 'ru' ? 'Нет уведомлений' : 'Fără notificări'}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="textSecondary">
             {tab === 1
               ? lang === 'ru'
                 ? 'У вас нет непрочитанных уведомлений'
@@ -290,10 +290,10 @@ const NotificationsPage = () => {
                         </IconButton>
                       </Box>
                     </Box>
-                    <Typography variant="body2" color="text.secondary" paragraph>
+                    <Typography variant="body2" color="textSecondary" paragraph>
                       {notification.message[lang]}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" color="textSecondary">
                       {formatDate(notification.sentAt)}
                     </Typography>
                     {notification.actionText && notification.actionUrl && (

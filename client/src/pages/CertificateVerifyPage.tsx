@@ -95,10 +95,10 @@ export default function CertificateVerifyPage() {
           <Typography variant="h4" gutterBottom fontWeight={600} color="error.main">
             Invalid Certificate
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="body1" color="textSecondary" sx={{ mb: 3 }}>
             {error || 'The certificate number you provided could not be verified.'}
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
             Certificate Number: <strong>{certificateNumber}</strong>
           </Typography>
           <Button variant="outlined" onClick={() => navigate('/')}>
@@ -138,7 +138,7 @@ export default function CertificateVerifyPage() {
         <Typography variant="h4" gutterBottom fontWeight={700} color="success.dark">
           Verified Certificate
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           This certificate has been verified and is authentic
         </Typography>
       </Box>
@@ -173,7 +173,7 @@ export default function CertificateVerifyPage() {
               <Typography variant="h5" fontWeight={700}>
                 {certificate.title.ru}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="textSecondary">
                 {certificate.title.ro}
               </Typography>
             </Box>
@@ -187,7 +187,7 @@ export default function CertificateVerifyPage() {
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                 <PersonIcon sx={{ color: 'text.secondary', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography variant="caption" color="textSecondary" display="block">
                     Recipient
                   </Typography>
                   <Typography variant="body1" fontWeight={600}>
@@ -201,7 +201,7 @@ export default function CertificateVerifyPage() {
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                 <CalendarIcon sx={{ color: 'text.secondary', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography variant="caption" color="textSecondary" display="block">
                     Issued On
                   </Typography>
                   <Typography variant="body1" fontWeight={600}>
@@ -215,7 +215,7 @@ export default function CertificateVerifyPage() {
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                 <BusinessIcon sx={{ color: 'text.secondary', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography variant="caption" color="textSecondary" display="block">
                     Institution
                   </Typography>
                   <Typography variant="body1" fontWeight={600}>
@@ -229,7 +229,7 @@ export default function CertificateVerifyPage() {
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                 <FingerprintIcon sx={{ color: 'text.secondary', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography variant="caption" color="textSecondary" display="block">
                     Certificate Number
                   </Typography>
                   <Typography variant="body1" fontWeight={600}>
@@ -243,7 +243,7 @@ export default function CertificateVerifyPage() {
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                 <FingerprintIcon sx={{ color: 'text.secondary', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography variant="caption" color="textSecondary" display="block">
                     Credential ID
                   </Typography>
                   <Typography

@@ -143,7 +143,7 @@ const TopicImagesManager: React.FC<TopicImagesManagerProps> = ({ topicId, images
           ))}
         </List>
       ) : (
-        <Typography color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
+        <Typography color="textSecondary" sx={{ textAlign: 'center', py: 3 }}>
           Нет добавленных иллюстраций
         </Typography>
       )}

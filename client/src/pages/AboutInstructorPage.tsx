@@ -160,7 +160,7 @@ const AboutInstructorPage = () => {
         <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
           {profile.name[isRu ? 'ru' : 'ro']}
         </Typography>
-        <Typography variant="h5" color="text.secondary" gutterBottom>
+        <Typography variant="h5" color="textSecondary" gutterBottom>
           {profile.title[isRu ? 'ru' : 'ro']}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', mt: 2, flexWrap: 'wrap' }}>
@@ -378,7 +378,7 @@ const AboutInstructorPage = () => {
                   <Typography variant="h4" color="primary.main" fontWeight={700}>
                     500+
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     {isRu ? 'Студентов обучено' : 'Studenți instruiți'}
                   </Typography>
                 </Box>
@@ -388,7 +388,7 @@ const AboutInstructorPage = () => {
                   <Typography variant="h4" color="primary.main" fontWeight={700}>
                     10+
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     {isRu ? 'Лет опыта' : 'Ani de experiență'}
                   </Typography>
                 </Box>
@@ -398,7 +398,7 @@ const AboutInstructorPage = () => {
                   <Typography variant="h4" color="primary.main" fontWeight={700}>
                     15+
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     {isRu ? 'Протоколов массажа' : 'Protocoale de masaj'}
                   </Typography>
                 </Box>

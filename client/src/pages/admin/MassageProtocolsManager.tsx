@@ -665,7 +665,7 @@ const MassageProtocolsManager = () => {
                             sx={{ objectFit: 'cover' }}
                           />
                           <CardContent>
-                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                            <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mb: 1 }}>
                               {image.filename}
                             </Typography>
                             {image.caption && (
@@ -705,7 +705,7 @@ const MassageProtocolsManager = () => {
                   </Grid>
 
                   {(!editingProtocol.images || editingProtocol.images.length === 0) && (
-                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
                       Нет загруженных изображений
                     </Typography>
                   )}
@@ -752,7 +752,7 @@ const MassageProtocolsManager = () => {
                             </video>
                           </Box>
                           <CardContent>
-                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                            <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mb: 1 }}>
                               {video.filename}
                             </Typography>
                             {video.caption && (
@@ -792,7 +792,7 @@ const MassageProtocolsManager = () => {
                   </Grid>
 
                   {(!editingProtocol.videos || editingProtocol.videos.length === 0) && (
-                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
                       Нет загруженных видео
                     </Typography>
                   )}

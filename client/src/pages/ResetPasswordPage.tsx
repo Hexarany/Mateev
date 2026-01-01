@@ -67,7 +67,7 @@ const ResetPasswordPage = () => {
         <Typography variant="h4" gutterBottom fontWeight={700}>
           {t('auth.reset.title')}
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body1" color="textSecondary" sx={{ mb: 3 }}>
           {t('auth.reset.subtitle')}
         </Typography>
 

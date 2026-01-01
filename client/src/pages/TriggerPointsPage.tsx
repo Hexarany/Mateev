@@ -97,7 +97,7 @@ const TriggerPointsPage = () => {
         >
           {lang === 'ru' ? 'Триггерные точки' : 'Puncte Trigger'}
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+        <Typography variant="body1" color="textSecondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
           {lang === 'ru'
             ? 'Изучите локализацию, симптомы и техники работы с триггерными точками'
             : 'Studiați localizarea, simptomele și tehnicile de lucru cu punctele trigger'}
@@ -129,10 +129,10 @@ const TriggerPointsPage = () => {
                 <Typography variant="h6" gutterBottom>
                   {point.name[lang]}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
+                <Typography variant="body2" color="textSecondary" paragraph>
                   <strong>{lang === 'ru' ? 'Мышца:' : 'Mușchi:'}</strong> {point.muscle}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
+                <Typography variant="body2" color="textSecondary" paragraph>
                   {point.symptoms[lang].substring(0, 100)}...
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
@@ -162,7 +162,7 @@ const TriggerPointsPage = () => {
 
       {filteredPoints.length === 0 && (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" color="textSecondary">
             {lang === 'ru' ? 'Нет триггерных точек в этой категории' : 'Nu există puncte trigger în această categorie'}
           </Typography>
         </Box>

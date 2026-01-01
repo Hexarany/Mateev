@@ -113,7 +113,7 @@ const EmailNotificationSettings = () => {
           <Divider sx={{ mb: 2 }} />
 
           <Box sx={{ mb: 3 }}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
               {lang === 'ru' ? 'Ваш email' : 'Email-ul tău'}
             </Typography>
             <Typography variant="body1" fontWeight={500}>
@@ -148,7 +148,7 @@ const EmailNotificationSettings = () => {
                       ? 'Включить email уведомления'
                       : 'Activează notificările email'}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="textSecondary">
                     {lang === 'ru'
                       ? 'Главный переключатель для всех email уведомлений'
                       : 'Comutator principal pentru toate notificările email'}
@@ -173,7 +173,7 @@ const EmailNotificationSettings = () => {
                       <Typography variant="body1" fontWeight={500}>
                         {lang === 'ru' ? 'Домашние задания' : 'Teme pentru acasă'}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="textSecondary">
                         {lang === 'ru'
                           ? 'Уведомления о новых заданиях и дедлайнах'
                           : 'Notificări despre teme noi și deadline-uri'}
@@ -196,7 +196,7 @@ const EmailNotificationSettings = () => {
                       <Typography variant="body1" fontWeight={500}>
                         {lang === 'ru' ? 'Оценки' : 'Note'}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="textSecondary">
                         {lang === 'ru'
                           ? 'Уведомления о выставленных оценках'
                           : 'Notificări despre notele primite'}
@@ -219,7 +219,7 @@ const EmailNotificationSettings = () => {
                       <Typography variant="body1" fontWeight={500}>
                         {lang === 'ru' ? 'Расписание' : 'Program'}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="textSecondary">
                         {lang === 'ru'
                           ? 'Уведомления об изменениях в расписании'
                           : 'Notificări despre modificări în program'}

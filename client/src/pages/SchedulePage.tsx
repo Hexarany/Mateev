@@ -407,7 +407,7 @@ export default function SchedulePage() {
           <>
             {viewMode === 'list' ? (
               <>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
                   {lang === 'ru'
                     ? `Показано занятий: ${filteredSchedule.length}`
                     : `Afișate lecții: ${filteredSchedule.length}`}

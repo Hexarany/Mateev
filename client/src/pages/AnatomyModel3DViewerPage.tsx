@@ -72,7 +72,7 @@ const AnatomyModel3DViewerPage = () => {
 
       {model.attribution && (model.attribution.author || model.attribution.source) && (
         <Paper elevation={0} sx={{ p: 2, mt: 2, bgcolor: 'background.default', borderLeft: 3, borderColor: (theme) => theme.palette.primary.main }}>
-          <Typography variant="caption" color="text.secondary" display="block">
+          <Typography variant="caption" color="textSecondary" display="block">
             <strong>{lang === 'ru' ? 'Авторство:' : 'Atribuire:'}</strong>
           </Typography>
           <Typography variant="body2" sx={{ mt: 0.5 }}>
@@ -97,7 +97,7 @@ const AnatomyModel3DViewerPage = () => {
             )}
           </Typography>
           {model.attribution.license && (
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+            <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, display: 'block' }}>
               {lang === 'ru' ? 'Лицензия: ' : 'Licență: '}{model.attribution.license}
             </Typography>
           )}

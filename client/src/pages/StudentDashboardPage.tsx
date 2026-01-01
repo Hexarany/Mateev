@@ -141,7 +141,7 @@ export default function StudentDashboardPage() {
         <Typography variant="h3" fontWeight={700} gutterBottom>
           {lang === 'ru' ? 'Мой прогресс' : 'Progresul meu'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {lang === 'ru'
             ? 'Отслеживайте свои достижения и прогресс в обучении'
             : 'Urmăriți-vă realizările și progresul în învățare'}
@@ -183,7 +183,7 @@ export default function StudentDashboardPage() {
                 <Typography variant="h6" fontWeight={600}>
                   {lang === 'ru' ? 'Последняя активность' : 'Ultima activitate'}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                   {new Date(stats.lastActivityDate).toLocaleDateString(
                     lang === 'ru' ? 'ru-RU' : 'ro-RO',
                     {
@@ -196,7 +196,7 @@ export default function StudentDashboardPage() {
               </Box>
             </Box>
             <Divider sx={{ my: 2 }} />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
               {lang === 'ru'
                 ? 'Продолжайте заниматься каждый день, чтобы увеличить свою серию!'
                 : 'Continuați să studiați în fiecare zi pentru a vă crește seria!'}
@@ -235,7 +235,7 @@ export default function StudentDashboardPage() {
                   <Typography variant="h4" fontWeight={700} color={stat.color} gutterBottom>
                     {stat.value}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                  <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.8rem' }}>
                     {stat.title}
                   </Typography>
                 </CardContent>
@@ -293,7 +293,7 @@ export default function StudentDashboardPage() {
               </ResponsiveContainer>
               {stats.averageQuizScore > 0 && (
                 <Box sx={{ mt: 2 }}>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="textSecondary">
                     {lang === 'ru' ? 'Средний балл:' : 'Scor mediu:'} {stats.averageQuizScore}%
                   </Typography>
                   <LinearProgress
@@ -325,7 +325,7 @@ export default function StudentDashboardPage() {
                 <Typography variant="h5" fontWeight={600}>
                   {lang === 'ru' ? 'Достижения' : 'Realizări'}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                   {lang === 'ru'
                     ? `Получено: ${achievements.length} достижений`
                     : `Obținute: ${achievements.length} realizări`}

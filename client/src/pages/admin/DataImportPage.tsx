@@ -164,7 +164,7 @@ const DataImportPage = () => {
         <CloudUploadIcon sx={{ fontSize: 32, verticalAlign: 'middle', mr: 1 }} />
         {lang === 'ru' ? 'Импорт данных' : 'Import date'}
       </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+      <Typography variant="body1" color="textSecondary" sx={{ mb: 4 }}>
         {lang === 'ru'
           ? 'Массовая загрузка контента из CSV файлов'
           : 'Încărcare în masă a conținutului din fișiere CSV'}
@@ -262,7 +262,7 @@ const DataImportPage = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+              <Typography variant="caption" color="textSecondary" sx={{ mt: 1, display: 'block' }}>
                 {lang === 'ru' ? 'Показаны первые 5 строк' : 'Primele 5 rânduri afișate'}
               </Typography>
             </Box>

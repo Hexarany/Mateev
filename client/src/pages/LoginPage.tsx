@@ -51,7 +51,7 @@ const LoginPage = () => {
           <Typography variant="h4" component="h1" align="center" gutterBottom>
             Вход в систему
           </Typography>
-          <Typography variant="body2" align="center" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 3 }}>
             Введите свои учетные данные
           </Typography>
 

@@ -156,7 +156,7 @@ export default function NotificationSettingsPage() {
                 ? 'Push-уведомления'
                 : 'Notificări push'}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
               {permission === 'granted'
                 ? isSubscribed
                   ? lang === 'ru'
@@ -219,7 +219,7 @@ export default function NotificationSettingsPage() {
               ? 'Типы уведомлений'
               : 'Tipuri de notificări'}
           </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             {lang === 'ru'
               ? 'Выберите, какие уведомления вы хотите получать'
               : 'Alegeți ce notificări doriți să primiți'}
@@ -264,7 +264,7 @@ export default function NotificationSettingsPage() {
               ? 'Тестовое уведомление'
               : 'Notificare de test'}
           </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             {lang === 'ru'
               ? 'Проверьте работу уведомлений'
               : 'Verificați funcționarea notificărilor'}

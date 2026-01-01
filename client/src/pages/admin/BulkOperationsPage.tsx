@@ -201,7 +201,7 @@ student2@example.com,65abc123def,85,Good job`
             </Button>
           </Box>
 
-          <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             {lang === 'ru'
               ? 'Формат CSV: email,firstName,lastName,role,password'
               : 'Format CSV: email,firstName,lastName,role,password'}
@@ -307,7 +307,7 @@ student2@example.com,65abc123def,85,Good job`
             </Button>
           </Box>
 
-          <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             {lang === 'ru'
               ? 'Формат CSV: studentEmail,assignmentId,grade,feedback'
               : 'Format CSV: studentEmail,assignmentId,grade,feedback'}

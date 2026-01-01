@@ -206,7 +206,7 @@ const TopicPage = () => {
         <Link component={RouterLink} to={`/category/${categoryId}`} color="inherit">
           {t('nav.categories')}
         </Link>
-        <Typography color="text.primary">{topic.name[lang]}</Typography>
+        <Typography color="textPrimary">{topic.name[lang]}</Typography>
       </Breadcrumbs>
 
       {/* Topic Header */}
@@ -265,7 +265,7 @@ const TopicPage = () => {
                 </Box>
               )}
             </Box>
-            <Typography variant="body1" color="text.secondary" paragraph sx={{ mt: 1 }}>
+            <Typography variant="body1" color="textSecondary" paragraph sx={{ mt: 1 }}>
               {topic.description[lang]}
             </Typography>
           </Box>
@@ -340,7 +340,7 @@ const TopicPage = () => {
                     />
                     {image.caption && image.caption[lang] && (
                       <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="textSecondary">
                           {image.caption[lang]}
                         </Typography>
                       </CardContent>
@@ -381,7 +381,7 @@ const TopicPage = () => {
                     </Box>
                     {video.caption && video.caption[lang] && (
                       <CardContent>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="textSecondary">
                           {video.caption[lang]}
                         </Typography>
                       </CardContent>

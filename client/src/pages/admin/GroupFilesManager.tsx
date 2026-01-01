@@ -312,10 +312,10 @@ const GroupFilesManager = () => {
 
                 {selectedGroupData && (
                   <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="textSecondary">
                       Группа: <strong>{selectedGroupData.name.ru}</strong>
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="textSecondary">
                       Студентов: <strong>{(selectedGroupData.students as any[]).length}</strong>
                     </Typography>
                   </Box>
@@ -323,13 +323,13 @@ const GroupFilesManager = () => {
 
                 {selectedMediaData && (
                   <Box>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="textSecondary">
                       Файл: <strong>{selectedMediaData.originalName}</strong>
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="textSecondary">
                       Размер: <strong>{(selectedMediaData.size / 1024 / 1024).toFixed(2)} MB</strong>
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="textSecondary">
                       Тип: <strong>{selectedMediaData.mimetype}</strong>
                     </Typography>
                   </Box>
@@ -474,7 +474,7 @@ const GroupFilesManager = () => {
               <Card>
                 <CardContent>
                   <Typography variant="h6">{stats.totalFiles}</Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     Всего файлов
                   </Typography>
                 </CardContent>
@@ -486,7 +486,7 @@ const GroupFilesManager = () => {
                   <Typography variant="h6" color="success">
                     {stats.successfulDeliveries}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     Успешных доставок
                   </Typography>
                 </CardContent>
@@ -498,7 +498,7 @@ const GroupFilesManager = () => {
                   <Typography variant="h6" color="error">
                     {stats.failedDeliveries}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     Неудачных доставок
                   </Typography>
                 </CardContent>
@@ -515,7 +515,7 @@ const GroupFilesManager = () => {
                       : 0}
                     %
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="textSecondary">
                     Успешность
                   </Typography>
                 </CardContent>

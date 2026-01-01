@@ -202,7 +202,7 @@ const MassageProtocolPage = () => {
         <Link component={RouterLink} to="/massage-protocols" color="inherit">
           {lang === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj'}
         </Link>
-        <Typography color="text.primary">{protocol.name[lang]}</Typography>
+        <Typography color="textPrimary">{protocol.name[lang]}</Typography>
       </Breadcrumbs>
 
       {/* Protocol Header */}
@@ -213,7 +213,7 @@ const MassageProtocolPage = () => {
             <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
               {protocol.name[lang]}
             </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
+            <Typography variant="body1" color="textSecondary" paragraph>
               {protocol.description[lang]}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
@@ -334,7 +334,7 @@ const MassageProtocolPage = () => {
                     />
                     {image.caption && image.caption[lang] && (
                       <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="textSecondary">
                           {image.caption[lang]}
                         </Typography>
                       </CardContent>
@@ -375,7 +375,7 @@ const MassageProtocolPage = () => {
                     </Box>
                     {video.caption && video.caption[lang] && (
                       <CardContent>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="textSecondary">
                           {video.caption[lang]}
                         </Typography>
                       </CardContent>

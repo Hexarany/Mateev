@@ -515,7 +515,7 @@ const AdminDashboard = () => {
                 <Typography variant="h6" fontWeight={700}>
                   Быстрый доступ / Acces rapid
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                   Перейдите к нужному разделу или откройте частые инструменты.
                 </Typography>
               </Box>
@@ -549,7 +549,7 @@ const AdminDashboard = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="subtitle2">{option.shortLabel}</Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="textSecondary">
                             {option.description}
                           </Typography>
                         </Box>
@@ -631,13 +631,13 @@ const AdminDashboard = () => {
                   {ActiveIcon ? <ActiveIcon fontSize="small" /> : null}
                 </Avatar>
                 <Box>
-                  <Typography variant="overline" color="text.secondary">
+                  <Typography variant="overline" color="textSecondary">
                     Активный раздел / Sectiune activa
                   </Typography>
                   <Typography variant="h6">{activeSection?.label ?? '—'}</Typography>
                 </Box>
               </Stack>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="textSecondary">
                 {activeSection?.description ?? 'Выберите раздел для работы.'}
               </Typography>
               <Stack direction="row" spacing={1}>
@@ -705,7 +705,7 @@ const AdminDashboard = () => {
                       <Typography variant="subtitle1" fontWeight={700}>
                         {group.title}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="textSecondary">
                         {group.description}
                       </Typography>
                     </Box>

@@ -35,7 +35,7 @@ const ChatPage = () => {
         </Typography>
         <Typography
           variant="h6"
-          color="text.secondary"
+          color="textSecondary"
           sx={{
             mb: 4,
             fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
@@ -114,7 +114,7 @@ const ChatPage = () => {
                 <Typography variant="h6" gutterBottom fontWeight={600}>
                   {feature.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                   {feature.description}
                 </Typography>
               </CardContent>
@@ -135,17 +135,17 @@ const ChatPage = () => {
         <Typography variant="h6" gutterBottom fontWeight={600}>
           {i18n.language === 'ru' ? 'Как начать?' : 'Cum să începeți?'}
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="textSecondary" paragraph>
           {i18n.language === 'ru'
             ? '1. Нажмите на кнопку выше для открытия бота в Telegram'
             : '1. Apăsați butonul de mai sus pentru a deschide bot-ul în Telegram'}
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="textSecondary" paragraph>
           {i18n.language === 'ru'
             ? '2. Нажмите "Start" или отправьте /start'
             : '2. Apăsați "Start" sau trimiteți /start'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="textSecondary">
           {i18n.language === 'ru'
             ? '3. Начните общение и изучение!'
             : '3. Începeți să comunicați și să învățați!'}

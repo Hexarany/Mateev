@@ -90,7 +90,7 @@ const QuizzesPage = () => {
           <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
           {t('nav.home')}
         </Link>
-        <Typography color="text.primary">
+        <Typography color="textPrimary">
           {lang === 'ru' ? 'Тесты' : 'Teste'}
         </Typography>
       </Breadcrumbs>
@@ -101,7 +101,7 @@ const QuizzesPage = () => {
         <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
           {lang === 'ru' ? 'Тесты по анатомии' : 'Teste de anatomie'}
         </Typography>
-        <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto' }}>
+        <Typography variant="h6" color="textSecondary" sx={{ maxWidth: 800, mx: 'auto' }}>
           {lang === 'ru'
             ? 'Проверьте свои знания с помощью интерактивных тестов. Каждый тест связан с соответствующей темой для углубленного изучения.'
             : 'Verificați-vă cunoștințele cu teste interactive. Fiecare test este legat de subiectul corespunzător pentru studiu aprofundat.'}
@@ -136,7 +136,7 @@ const QuizzesPage = () => {
                     </Typography>
                   </Box>
 
-                  <Typography variant="body2" color="text.secondary" paragraph sx={{ flexGrow: 1 }}>
+                  <Typography variant="body2" color="textSecondary" paragraph sx={{ flexGrow: 1 }}>
                     {quiz.description[lang]}
                   </Typography>
 
@@ -190,7 +190,7 @@ const QuizzesPage = () => {
 
       {quizzes.length === 0 && (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="h6" color="textSecondary">
             {lang === 'ru' ? 'Тесты пока не добавлены' : 'Nu există teste încă'}
           </Typography>
         </Box>
