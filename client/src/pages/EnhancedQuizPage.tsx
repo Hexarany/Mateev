@@ -359,22 +359,28 @@ const EnhancedQuizPage = () => {
                       </Typography>
                     </Box>
                     <Box sx={{ pl: 4, width: '100%' }}>
-                      {!isCorrect && (
-                        <Typography variant="body2" color="error.main" sx={{ mb: 0.5 }}>
-                          {lang === 'ru' ? 'Ваш ответ:' : 'Răspunsul dvs.:'}{' '}
-                          {userAnswer >= 0 ? question.options[userAnswer][lang] : (lang === 'ru' ? 'Не отвечено' : 'Nicio alegere')}
+                      {isCorrect ? (
+                        <Typography variant="body2" color="success.main">
+                          {lang === 'ru' ? '✓ Правильно!' : '✓ Corect!'}
                         </Typography>
-                      )}
-                      <Typography variant="body2" color="success.main" sx={{ mb: 0.5 }}>
-                        {lang === 'ru' ? 'Правильный ответ:' : 'Răspuns corect:'}{' '}
-                        {question.options[question.correctAnswer][lang]}
-                      </Typography>
-                      {question.explanation && question.explanation[lang] && (
-                        <Box sx={{ mt: 1, p: 1.5, bgcolor: (theme) => theme.palette.info.light, borderRadius: 1 }}>
-                          <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-                            <strong>{lang === 'ru' ? '💡 Пояснение:' : '💡 Explicație:'}</strong> {question.explanation[lang]}
+                      ) : (
+                        <>
+                          <Typography variant="body2" color="error.main" sx={{ mb: 0.5 }}>
+                            {lang === 'ru' ? 'Ваш ответ:' : 'Răspunsul dvs.:'}{' '}
+                            {userAnswer >= 0 ? question.options[userAnswer][lang] : (lang === 'ru' ? 'Не отвечено' : 'Nicio alegere')}
                           </Typography>
-                        </Box>
+                          <Typography variant="body2" color="success.main" sx={{ mb: 0.5 }}>
+                            {lang === 'ru' ? 'Правильный ответ:' : 'Răspuns corect:'}{' '}
+                            {question.options[question.correctAnswer][lang]}
+                          </Typography>
+                          {question.explanation && question.explanation[lang] && (
+                            <Box sx={{ mt: 1, p: 1.5, bgcolor: (theme) => theme.palette.info.light, borderRadius: 1 }}>
+                              <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                                <strong>{lang === 'ru' ? '💡 Пояснение:' : '💡 Explicație:'}</strong> {question.explanation[lang]}
+                              </Typography>
+                            </Box>
+                          )}
+                        </>
                       )}
                     </Box>
                   </ListItem>
