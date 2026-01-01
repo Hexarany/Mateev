@@ -120,11 +120,19 @@ export const generateCourse = async (req: CustomRequest, res: Response) => {
 
     // Create categories and topics
     for (const module of courseStructure.modules) {
+      // Generate slug for category
+      const categorySlug = module.name_ru
+        .toLowerCase()
+        .replace(/[^a-zа-я0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        + '-' + Date.now()
+
       const category = await Category.create({
         name: {
           ru: module.name_ru,
           ro: module.name_ro,
         },
+        slug: categorySlug,
         description: {
           ru: module.description_ru,
           ro: module.description_ro,
@@ -160,11 +168,19 @@ export const generateCourse = async (req: CustomRequest, res: Response) => {
       } else {
         // Create topics with basic info only
         for (const topicInfo of module.topics) {
+          // Generate slug for topic
+          const topicSlug = topicInfo.name_ru
+            .toLowerCase()
+            .replace(/[^a-zа-я0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            + '-' + Date.now()
+
           const topic = await Topic.create({
             name: {
               ru: topicInfo.name_ru,
               ro: topicInfo.name_ro,
             },
+            slug: topicSlug,
             category: category._id,
             estimatedTime: topicInfo.estimatedTime,
             difficulty: topicInfo.difficulty,
