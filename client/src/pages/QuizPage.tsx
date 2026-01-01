@@ -15,7 +15,12 @@ import {
   LinearProgress,
   Alert,
   CircularProgress,
+  Paper,
+  List,
+  ListItem,
 } from '@mui/material'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
 import AccessGate from '@/components/AccessGate'
 import { useAuth } from '@/contexts/AuthContext'
 import { useMainButton } from '@/contexts/MainButtonContext'
@@ -24,6 +29,16 @@ import axios from 'axios'
 import type { Quiz } from '@/types'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
+
+// Fisher-Yates shuffle algorithm
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
 
 const QuizPage = () => {
   const { quizId } = useParams<{ quizId: string }>()
@@ -63,7 +78,27 @@ const QuizPage = () => {
         const response = await axios.get(`${API_BASE_URL}/quizzes/${quizId}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         })
-        setQuiz(response.data)
+
+        // Shuffle answer options for each question
+        const quizData = response.data
+        const shuffledQuiz = {
+          ...quizData,
+          questions: quizData.questions.map((q: any) => {
+            const correctOption = q.options[q.correctAnswer]
+            const shuffledOptions = shuffleArray(q.options)
+            const newCorrectIndex = shuffledOptions.findIndex(
+              (opt: any) => opt.ru === correctOption.ru && opt.ro === correctOption.ro
+            )
+
+            return {
+              ...q,
+              options: shuffledOptions,
+              correctAnswer: newCorrectIndex,
+            }
+          }),
+        }
+
+        setQuiz(shuffledQuiz)
         setError(null)
       } catch (err: any) {
         console.error('Error loading quiz:', err)
@@ -224,19 +259,73 @@ const QuizPage = () => {
                   Попробуйте еще раз! / Încercați din nou!
                 </Alert>
               )}
-              <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center' }}>
-                <Button
-                  variant="contained"
-                  onClick={handleRetry}
-                >
-                  {t('quiz.tryAgain')}
-                </Button>
-                <Button variant="outlined" onClick={() => navigate('/')}>
-                  {t('quiz.backToHome')}
-                </Button>
-              </Box>
             </CardContent>
           </Card>
+
+          {/* Detailed Review */}
+          <Paper sx={{ p: 3, mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              {lang === 'ru' ? 'Детальный разбор' : 'Revizuire detaliată'}
+            </Typography>
+            <List>
+              {quiz.questions.map((question, qIndex) => {
+                const userAnswer = answers[qIndex]
+                const isCorrect = userAnswer === question.correctAnswer
+
+                return (
+                  <ListItem key={qIndex} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 2, px: 0 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1 }}>
+                      {isCorrect ? (
+                        <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+                      ) : (
+                        <CancelIcon color="error" sx={{ mr: 1 }} />
+                      )}
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        {qIndex + 1}. {question.question[lang]}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ pl: 4, width: '100%' }}>
+                      {isCorrect ? (
+                        <Typography variant="body2" color="success.main">
+                          {lang === 'ru' ? '✓ Правильно!' : '✓ Corect!'}
+                        </Typography>
+                      ) : (
+                        <>
+                          <Typography variant="body2" color="error.main" sx={{ mb: 0.5 }}>
+                            {lang === 'ru' ? 'Ваш ответ:' : 'Răspunsul dvs.:'}{' '}
+                            {userAnswer >= 0 ? question.options[userAnswer][lang] : (lang === 'ru' ? 'Не отвечено' : 'Nicio alegere')}
+                          </Typography>
+                          <Typography variant="body2" color="success.main" sx={{ mb: 0.5 }}>
+                            {lang === 'ru' ? 'Правильный ответ:' : 'Răspuns corect:'}{' '}
+                            {question.options[question.correctAnswer][lang]}
+                          </Typography>
+                          {question.explanation && question.explanation[lang] && (
+                            <Box sx={{ mt: 1, p: 1.5, bgcolor: (theme) => theme.palette.info.light, borderRadius: 1 }}>
+                              <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                                <strong>{lang === 'ru' ? '💡 Пояснение:' : '💡 Explicație:'}</strong> {question.explanation[lang]}
+                              </Typography>
+                            </Box>
+                          )}
+                        </>
+                      )}
+                    </Box>
+                  </ListItem>
+                )
+              })}
+            </List>
+          </Paper>
+
+          <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              onClick={handleRetry}
+            >
+              {t('quiz.tryAgain')}
+            </Button>
+            <Button variant="outlined" onClick={() => navigate('/')}>
+              {t('quiz.backToHome')}
+            </Button>
+          </Box>
         </AccessGate>
       </Container>
     )
