@@ -29,6 +29,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AccessGate from '@/components/AccessGate'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProgress } from '@/contexts/ProgressContext'
 import { useMainButton } from '@/contexts/MainButtonContext'
 import { useTelegram } from '@/contexts/TelegramContext'
 import axios from 'axios'
@@ -51,13 +52,16 @@ const QuizPage = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const lang = i18n.language as 'ru' | 'ro'
-  const { hasAccess, token, loading: authLoading, user } = useAuth()
+  const { hasAccess, token, loading: authLoading, user, isAuthenticated } = useAuth()
+  const { saveQuizResult } = useProgress()
   const { setMainButton, hideMainButton } = useMainButton()
   const { isInTelegram } = useTelegram()
   const canAccess = hasAccess('premium')
 
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [loading, setLoading] = useState(true)
+  const [startTime] = useState<number>(Date.now())
+  const [savingProgress, setSavingProgress] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string>('')
@@ -258,7 +262,35 @@ const QuizPage = () => {
       setAnswerChecked(false)
       setIsAnswerCorrect(false)
     } else {
-      setShowResults(true)
+      // Quiz finished - save results
+      handleSubmit()
+    }
+  }
+
+  const handleSubmit = async () => {
+    setShowResults(true)
+
+    // Save to progress if authenticated
+    if (isAuthenticated && mode && quiz) {
+      try {
+        setSavingProgress(true)
+        const score = calculateScore()
+        const percentage = (score / quiz.questions.length) * 100
+        const timeSpent = Math.floor((Date.now() - startTime) / 1000)
+
+        await saveQuizResult({
+          quizId: quiz._id,
+          score: Math.round(percentage),
+          totalQuestions: quiz.questions.length,
+          correctAnswers: score,
+          timeSpent,
+          mode,
+        })
+      } catch (error) {
+        console.error('Error saving quiz result:', error)
+      } finally {
+        setSavingProgress(false)
+      }
     }
   }
 
@@ -305,6 +337,11 @@ const QuizPage = () => {
                 <Alert severity="info" sx={{ mt: 2 }}>
                   Попробуйте еще раз! / Încercați din nou!
                 </Alert>
+              )}
+              {savingProgress && (
+                <Typography variant="caption" color="textSecondary" sx={{ mt: 2, display: 'block' }}>
+                  {lang === 'ru' ? 'Сохранение прогресса...' : 'Salvare progres...'}
+                </Typography>
               )}
             </CardContent>
           </Card>
