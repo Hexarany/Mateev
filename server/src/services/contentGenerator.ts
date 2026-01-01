@@ -37,7 +37,27 @@ function parseClaudeJSON(text: string): any {
     cleanedText = cleanedText.replace(/\s*```$/, '')
   }
 
-  return JSON.parse(cleanedText.trim())
+  cleanedText = cleanedText.trim()
+
+  try {
+    return JSON.parse(cleanedText)
+  } catch (error) {
+    console.error('JSON Parse Error:')
+    console.error('Position:', (error as any).message)
+    console.error('Raw text length:', text.length)
+    console.error('First 500 chars:', text.substring(0, 500))
+    console.error('Last 500 chars:', text.substring(text.length - 500))
+
+    // Try to find the error position
+    const match = (error as any).message.match(/position (\d+)/)
+    if (match) {
+      const pos = parseInt(match[1])
+      console.error('Context around error:')
+      console.error(cleanedText.substring(Math.max(0, pos - 100), Math.min(cleanedText.length, pos + 100)))
+    }
+
+    throw new Error(`Failed to parse Claude response: ${(error as any).message}`)
+  }
 }
 
 interface GenerateTopicParams {
