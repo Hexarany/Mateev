@@ -98,6 +98,10 @@ const QuizPage = () => {
           }),
         }
 
+        console.log('📝 Quiz loaded:', shuffledQuiz)
+        console.log('📝 First question:', shuffledQuiz.questions[0])
+        console.log('📝 Has explanation?', shuffledQuiz.questions[0]?.explanation)
+
         setQuiz(shuffledQuiz)
         setError(null)
       } catch (err: any) {
@@ -271,6 +275,13 @@ const QuizPage = () => {
               {quiz.questions.map((question, qIndex) => {
                 const userAnswer = answers[qIndex]
                 const isCorrect = userAnswer === question.correctAnswer
+
+                // Debug logging
+                if (qIndex === 0) {
+                  console.log('🔍 Rendering question 0:', question)
+                  console.log('🔍 Has explanation?', question.explanation)
+                  console.log('🔍 Is correct?', isCorrect)
+                }
 
                 return (
                   <ListItem key={qIndex} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 2, px: 0 }}>
