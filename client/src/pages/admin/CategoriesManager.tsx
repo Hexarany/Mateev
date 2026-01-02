@@ -48,7 +48,9 @@ const CategoriesManager = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/categories`)
+      const response = await axios.get(`${API_BASE_URL}/categories`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      })
       setCategories(response.data)
     } catch (error) {
       showSnackbar('Ошибка загрузки категорий', 'error')
