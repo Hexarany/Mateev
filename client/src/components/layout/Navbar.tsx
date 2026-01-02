@@ -102,6 +102,7 @@ const Navbar = () => {
 
   const learningResources: NavItem[] = [
     { name: i18n.language === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj', to: '/massage-protocols' },
+    { name: i18n.language === 'ru' ? 'Триггерные точки' : 'Puncte trigger', to: '/trigger-points' },
     { name: i18n.language === 'ru' ? 'Домашки и тесты' : 'Teme și teste', to: '/assignments' },
     { name: i18n.language === 'ru' ? '3D модели и атласы' : 'Modele 3D și atlase', to: '/anatomy-models-3d' },
     { name: i18n.language === 'ru' ? 'Гигиена и безопасность' : 'Igienă și siguranță', to: '/hygiene-guidelines' },
