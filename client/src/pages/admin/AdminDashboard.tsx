@@ -196,6 +196,7 @@ const ADMIN_SECTIONS: AdminSection[] = [
     icon: MyLocationIcon,
     component: TriggerPointsManager,
     group: 'content',
+    quickAccess: true,
   },
   {
     key: 'resources',
