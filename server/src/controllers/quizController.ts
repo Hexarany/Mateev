@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import Quiz from '../models/Quiz'
 import User from '../models/User'
 import { TelegramNotificationService } from '../services/telegram/notificationService'
+import { createAuditLog } from '../services/auditLogService'
 
 interface CustomRequest extends Request {
   userId?: string
@@ -108,6 +109,22 @@ export const createQuiz = async (req: Request, res: Response) => {
       })
     }
 
+    // Audit log - quiz created
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'create_quiz',
+      entityType: 'quiz',
+      entityId: quiz._id.toString(),
+      changes: {
+        title: quiz.title,
+        questionsCount: quiz.questions?.length || 0,
+        categoryId: quiz.categoryId,
+        topicId: quiz.topicId,
+      },
+      req,
+      status: 'success',
+    })
+
     res.status(201).json(quiz)
   } catch (error: any) {
     console.error('Quiz creation error:', error)
@@ -132,6 +149,18 @@ export const updateQuiz = async (req: Request, res: Response) => {
     if (!quiz) {
       return res.status(404).json({ error: { message: 'Quiz not found' } })
     }
+
+    // Audit log - quiz updated
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'update_quiz',
+      entityType: 'quiz',
+      entityId: req.params.id,
+      changes: req.body,
+      req,
+      status: 'success',
+    })
+
     res.json(quiz)
   } catch (error) {
     res.status(400).json({ error: { message: 'Failed to update quiz' } })
@@ -145,6 +174,20 @@ export const deleteQuiz = async (req: Request, res: Response) => {
     if (!quiz) {
       return res.status(404).json({ error: { message: 'Quiz not found' } })
     }
+
+    // Audit log - quiz deleted
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'delete_quiz',
+      entityType: 'quiz',
+      entityId: req.params.id,
+      changes: {
+        title: quiz.title,
+      },
+      req,
+      status: 'success',
+    })
+
     res.json({ message: 'Quiz deleted successfully' })
   } catch (error) {
     res.status(500).json({ error: { message: 'Failed to delete quiz' } })

@@ -3,6 +3,7 @@ import { getTierPlanById } from '../config/tier-plans'
 import { createPayPalOrder, capturePayPalPayment } from '../services/paypalService'
 import User from '../models/User'
 import PromoCode, { IPromoCode } from '../models/PromoCode'
+import { createAuditLog } from '../services/auditLogService'
 
 // POST /api/tier-payment/create-order - Create PayPal order for tier purchase
 export const createTierOrder = async (req: Request, res: Response) => {
@@ -76,6 +77,24 @@ export const createTierOrder = async (req: Request, res: Response) => {
 
     const order = await createPayPalOrder(finalPrice, plan.currency, description, tierId)
 
+    // Audit log - tier order created
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'create_tier_order',
+      entityType: 'payment',
+      changes: {
+        tierId,
+        originalPrice,
+        discount,
+        finalPrice,
+        isUpgrade,
+        orderId: order.id,
+      },
+      req,
+      status: 'success',
+    })
+
     res.json({
       orderId: order.id,
       approvalUrl: order.links.find((link: any) => link.rel === 'approve')?.href,
@@ -127,6 +146,21 @@ export const captureTierOrder = async (req: Request, res: Response) => {
     const captureData = await capturePayPalPayment(orderId)
 
     if (captureData.status !== 'COMPLETED') {
+      // Audit log - failed tier payment
+      await createAuditLog({
+        userId: user._id.toString(),
+        userEmail: user.email,
+        action: 'capture_tier_payment',
+        entityType: 'payment',
+        changes: {
+          orderId,
+          tierId,
+          status: captureData.status,
+        },
+        req,
+        status: 'failure',
+        errorMessage: 'Payment not completed',
+      })
       return res.status(400).json({
         message: 'Платеж не завершен',
         status: captureData.status,
@@ -180,6 +214,25 @@ export const captureTierOrder = async (req: Request, res: Response) => {
     user.paymentDate = new Date()
 
     await user.save()
+
+    // Audit log - successful tier payment
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'capture_tier_payment',
+      entityType: 'payment',
+      changes: {
+        orderId,
+        tierId,
+        fromTier,
+        toTier: plan.tierLevel,
+        paidAmount,
+        currency: paymentDetails.amount.currency_code,
+        subscriptionEndsAt,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({
       message: 'Доступ успешно обновлен',

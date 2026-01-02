@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import User from '../models/User'
 import mongoose from 'mongoose'
 import emailService from '../services/emailService'
+import { createAuditLog } from '../services/auditLogService'
 
 interface CustomRequest extends Request {
   userId?: string
@@ -133,6 +134,28 @@ export const updateUser = async (req: Request, res: Response) => {
 
     await user.save({ validateBeforeSave: true })
 
+    // Audit log - user update
+    const customReq = req as CustomRequest
+    await createAuditLog({
+      userId: customReq.userId,
+      userEmail: user.email,
+      action: 'update',
+      entityType: 'user',
+      entityId: id,
+      changes: {
+        firstName,
+        lastName,
+        role,
+        accessLevel,
+        paymentAmount,
+        paymentDate,
+        subscriptionStatus,
+        subscriptionEndDate,
+      },
+      req,
+      status: 'success',
+    })
+
     // Return user without password
     const updatedUser = await User.findById(id).select('-password -__v')
 
@@ -179,6 +202,17 @@ export const deleteUser = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: 'Пользователь не найден' })
     }
+
+    // Audit log - user deletion
+    await createAuditLog({
+      userId: customReq.userId,
+      userEmail: user.email,
+      action: 'delete',
+      entityType: 'user',
+      entityId: id,
+      req,
+      status: 'success',
+    })
 
     res.json({ message: 'Пользователь успешно удален' })
   } catch (error) {
@@ -302,6 +336,17 @@ export const sendEmailToUser = async (req: CustomRequest, res: Response) => {
     console.log('Email send result:', success)
 
     if (success) {
+      // Audit log - email sent to user
+      await createAuditLog({
+        userId: req.userId,
+        action: 'send_email',
+        entityType: 'user',
+        entityId: userId,
+        changes: { subject, recipientEmail: user.email },
+        req,
+        status: 'success',
+      })
+
       res.json({
         message: 'Email sent successfully',
         recipient: {

@@ -7,6 +7,7 @@ import Submission from '../models/Submission'
 import bcrypt from 'bcryptjs'
 import mongoose from 'mongoose'
 import { sendNotificationToUser } from './pushNotificationController'
+import { createAuditLog } from '../services/auditLogService'
 
 /**
  * Export users to CSV
@@ -146,6 +147,20 @@ export const importUsersFromCSV = async (req: CustomRequest, res: Response) => {
       }
     }
 
+    // Audit log - users imported
+    await createAuditLog({
+      userId: req.userId,
+      action: 'import_users_csv',
+      entityType: 'user',
+      changes: {
+        created: results.created,
+        skipped: results.skipped,
+        errors: results.errors.length,
+      },
+      req,
+      status: 'success',
+    })
+
     res.json({
       message: 'Import completed',
       ...results,
@@ -174,6 +189,19 @@ export const bulkDeleteUsers = async (req: CustomRequest, res: Response) => {
 
     // Delete users
     const result = await User.deleteMany({ _id: { $in: userIds } })
+
+    // Audit log - bulk delete users
+    await createAuditLog({
+      userId: req.userId,
+      action: 'bulk_delete_users',
+      entityType: 'user',
+      changes: {
+        userIds,
+        deletedCount: result.deletedCount,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({
       message: 'Users deleted successfully',
@@ -210,6 +238,20 @@ export const bulkUpdateUserRoles = async (req: CustomRequest, res: Response) => 
       { _id: { $in: userIds } },
       { $set: { role } }
     )
+
+    // Audit log - bulk update roles
+    await createAuditLog({
+      userId: req.userId,
+      action: 'bulk_update_user_roles',
+      entityType: 'user',
+      changes: {
+        userIds,
+        role,
+        modifiedCount: result.modifiedCount,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({
       message: 'User roles updated successfully',
@@ -254,6 +296,21 @@ export const bulkAddUsersToGroup = async (req: CustomRequest, res: Response) => 
       group.students.push(...newStudents.map(id => new mongoose.Types.ObjectId(id)))
       await group.save()
     }
+
+    // Audit log - bulk add users to group
+    await createAuditLog({
+      userId: req.userId,
+      action: 'bulk_add_users_to_group',
+      entityType: 'group',
+      entityId: groupId,
+      changes: {
+        userIds,
+        addedCount: newStudents.length,
+        skippedCount: userIds.length - newStudents.length,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({
       message: 'Users added to group successfully',

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import Topic from '../models/Topic'
 import User from '../models/User'
 import mongoose from 'mongoose'
+import { createAuditLog } from '../services/auditLogService'
 
 // Расширяем Request для доступа к данным пользователя после аутентификации
 interface CustomRequest extends Request {
@@ -108,6 +109,18 @@ export const createTopic = async (req: Request, res: Response) => {
   try {
     const topic = new Topic(req.body)
     await topic.save()
+
+    // Audit log - topic created
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'create_topic',
+      entityType: 'topic',
+      entityId: topic._id.toString(),
+      changes: { name: topic.name, categoryId: topic.categoryId },
+      req,
+      status: 'success',
+    })
+
     res.status(201).json(topic)
   } catch (error) {
     res.status(400).json({ error: { message: 'Failed to create topic' } })
@@ -121,10 +134,22 @@ export const updateTopic = async (req: Request, res: Response) => {
       req.body,
       { new: true, runValidators: true }
     ).populate('categoryId', 'name slug'); // Populate для лучшего ответа
-    
+
     if (!topic) {
       return res.status(404).json({ error: { message: 'Topic not found' } })
     }
+
+    // Audit log - topic updated
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'update_topic',
+      entityType: 'topic',
+      entityId: req.params.id,
+      changes: req.body,
+      req,
+      status: 'success',
+    })
+
     res.json(topic)
   } catch (error) {
     res.status(400).json({ error: { message: 'Failed to update topic' } })
@@ -137,6 +162,18 @@ export const deleteTopic = async (req: Request, res: Response) => {
     if (!topic) {
       return res.status(404).json({ error: { message: 'Topic not found' } })
     }
+
+    // Audit log - topic deleted
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'delete_topic',
+      entityType: 'topic',
+      entityId: req.params.id,
+      changes: { name: topic.name },
+      req,
+      status: 'success',
+    })
+
     res.json({ message: 'Topic deleted successfully' })
   } catch (error) {
     res.status(500).json({ error: { message: 'Failed to delete topic' } })

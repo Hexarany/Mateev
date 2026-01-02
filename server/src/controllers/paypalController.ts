@@ -4,6 +4,7 @@ import { createPayPalOrder, capturePayPalPayment, getPayPalOrderDetails } from '
 import Subscription from '../models/Subscription'
 import User from '../models/User'
 import mongoose from 'mongoose'
+import { createAuditLog } from '../services/auditLogService'
 
 // POST /api/paypal/create-order - Создать PayPal заказ
 export const createOrder = async (req: Request, res: Response) => {
@@ -28,6 +29,21 @@ export const createOrder = async (req: Request, res: Response) => {
       plan.name.ru, // или выбрать по языку пользователя
       'legacy' // Old subscription system - deprecated
     )
+
+    // Audit log - PayPal order created
+    await createAuditLog({
+      userId,
+      action: 'create_paypal_order',
+      entityType: 'payment',
+      changes: {
+        planId,
+        price: plan.price,
+        currency: plan.currency,
+        orderId: order.id,
+      },
+      req,
+      status: 'success',
+    })
 
     // Сохранить информацию о заказе для последующего использования
     res.json({
@@ -75,6 +91,21 @@ export const captureOrder = async (req: Request, res: Response) => {
 
     // Проверить статус платежа
     if (captureData.status !== 'COMPLETED') {
+      // Audit log - failed PayPal payment
+      await createAuditLog({
+        userId,
+        userEmail: user.email,
+        action: 'capture_paypal_payment',
+        entityType: 'payment',
+        changes: {
+          orderId,
+          planId,
+          status: captureData.status,
+        },
+        req,
+        status: 'failure',
+        errorMessage: 'Payment not completed',
+      })
       return res.status(400).json({
         message: 'Платеж не завершен',
         status: captureData.status
@@ -109,6 +140,24 @@ export const captureOrder = async (req: Request, res: Response) => {
     user.subscriptionStatus = 'active'
     user.subscriptionEndDate = endDate
     await user.save()
+
+    // Audit log - successful PayPal payment
+    await createAuditLog({
+      userId,
+      userEmail: user.email,
+      action: 'capture_paypal_payment',
+      entityType: 'payment',
+      changes: {
+        orderId,
+        planId,
+        amount: plan.price,
+        currency: plan.currency,
+        subscriptionId: subscription._id,
+        endDate,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({
       message: 'Подписка успешно активирована',

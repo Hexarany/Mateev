@@ -3,6 +3,7 @@ import Group from '../models/Group'
 import User from '../models/User'
 import Conversation from '../models/Conversation'
 import { CustomRequest } from '../middleware/auth'
+import { createAuditLog } from '../services/auditLogService'
 
 /**
  * Получить мои группы (для студентов)
@@ -150,6 +151,23 @@ export const createGroup = async (req: Request, res: Response) => {
       .populate('teacher', 'firstName lastName email')
       .populate('students', 'firstName lastName email')
 
+    // Audit log - group created
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'create_group',
+      entityType: 'group',
+      entityId: group._id.toString(),
+      changes: {
+        name,
+        teacher,
+        studentsCount: students?.length || 0,
+        startDate,
+        endDate,
+      },
+      req,
+      status: 'success',
+    })
+
     res.status(201).json(populatedGroup)
   } catch (error) {
     console.error('Error creating group:', error)
@@ -208,6 +226,17 @@ export const updateGroup = async (req: Request, res: Response) => {
       .populate('teacher', 'firstName lastName email')
       .populate('students', 'firstName lastName email')
 
+    // Audit log - group updated
+    await createAuditLog({
+      userId,
+      action: 'update_group',
+      entityType: 'group',
+      entityId: groupId,
+      changes: req.body,
+      req,
+      status: 'success',
+    })
+
     res.json(group)
   } catch (error) {
     console.error('Error updating group:', error)
@@ -221,6 +250,22 @@ export const deleteGroup = async (req: Request, res: Response) => {
     if (!group) {
       return res.status(404).json({ error: { message: 'Группа не найдена' } })
     }
+
+    // Audit log - group deleted
+    await createAuditLog({
+      userId: (req as any).userId,
+      action: 'delete_group',
+      entityType: 'group',
+      entityId: req.params.id,
+      changes: {
+        name: group.name,
+        teacher: group.teacher,
+        studentsCount: group.students.length,
+      },
+      req,
+      status: 'success',
+    })
+
     res.json({ message: 'Группа успешно удалена' })
   } catch (error) {
     console.error('Error deleting group:', error)
@@ -270,6 +315,20 @@ export const addStudentToGroup = async (req: Request, res: Response) => {
       .populate('teacher', 'firstName lastName email')
       .populate('students', 'firstName lastName email')
 
+    // Audit log - student added to group
+    await createAuditLog({
+      userId,
+      action: 'add_student_to_group',
+      entityType: 'group',
+      entityId: groupId,
+      changes: {
+        studentId,
+        groupName: group.name,
+      },
+      req,
+      status: 'success',
+    })
+
     res.json(updatedGroup)
   } catch (error) {
     console.error('Error adding student to group:', error)
@@ -308,6 +367,20 @@ export const removeStudentFromGroup = async (req: Request, res: Response) => {
     const updatedGroup = await Group.findById(groupId)
       .populate('teacher', 'firstName lastName email')
       .populate('students', 'firstName lastName email')
+
+    // Audit log - student removed from group
+    await createAuditLog({
+      userId,
+      action: 'remove_student_from_group',
+      entityType: 'group',
+      entityId: groupId,
+      changes: {
+        studentId,
+        groupName: group.name,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json(updatedGroup)
   } catch (error) {

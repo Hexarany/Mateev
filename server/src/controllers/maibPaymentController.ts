@@ -3,6 +3,7 @@ import { getTierPlanById } from '../config/tier-plans'
 import { registerSMSTransaction, getTransactionResult, getPaymentPageURL } from '../services/maibService'
 import User from '../models/User'
 import PromoCode, { IPromoCode } from '../models/PromoCode'
+import { createAuditLog } from '../services/auditLogService'
 
 // POST /api/maib-payment/create-transaction - Create MAIB transaction for tier purchase
 export const createMAIBTransaction = async (req: Request, res: Response) => {
@@ -81,6 +82,24 @@ export const createMAIBTransaction = async (req: Request, res: Response) => {
     // Get payment page URL
     const paymentUrl = getPaymentPageURL(transaction.TRANSACTION_ID)
 
+    // Audit log - MAIB transaction created
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'create_maib_transaction',
+      entityType: 'payment',
+      changes: {
+        tierId,
+        originalPrice,
+        discount,
+        finalPrice,
+        isUpgrade,
+        transactionId: transaction.TRANSACTION_ID,
+      },
+      req,
+      status: 'success',
+    })
+
     res.json({
       transactionId: transaction.TRANSACTION_ID,
       paymentUrl,
@@ -129,6 +148,22 @@ export const completeMAIBTransaction = async (req: Request, res: Response) => {
     // RESULT: OK means successful
     // RESULT_CODE: 000 means approved
     if (transactionResult.RESULT !== 'OK' || transactionResult.RESULT_CODE !== '000') {
+      // Audit log - failed MAIB payment
+      await createAuditLog({
+        userId: user._id.toString(),
+        userEmail: user.email,
+        action: 'complete_maib_payment',
+        entityType: 'payment',
+        changes: {
+          transactionId,
+          tierId,
+          result: transactionResult.RESULT,
+          resultCode: transactionResult.RESULT_CODE,
+        },
+        req,
+        status: 'failure',
+        errorMessage: 'Payment not completed',
+      })
       return res.status(400).json({
         message: 'Платеж не завершен',
         result: transactionResult.RESULT,
@@ -177,6 +212,25 @@ export const completeMAIBTransaction = async (req: Request, res: Response) => {
     user.paymentDate = new Date()
 
     await user.save()
+
+    // Audit log - successful MAIB payment
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'complete_maib_payment',
+      entityType: 'payment',
+      changes: {
+        transactionId,
+        tierId,
+        fromTier,
+        toTier: plan.tierLevel,
+        paidAmount,
+        currency: plan.currency,
+        subscriptionEndsAt,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({
       message: 'Доступ успешно обновлен',

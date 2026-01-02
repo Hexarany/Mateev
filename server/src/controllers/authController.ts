@@ -5,6 +5,7 @@ import { validationResult } from 'express-validator'
 import crypto from 'crypto'
 import User from '../models/User'
 import emailService from '../services/emailService'
+import { createAuditLog } from '../services/auditLogService'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production'
 const JWT_EXPIRES_IN = '7d' // Токен действителен 7 дней
@@ -24,6 +25,15 @@ export const register = async (req: Request, res: Response) => {
     // Проверка, существует ли уже пользователь с таким email
     const existingUser = await User.findOne({ email })
     if (existingUser) {
+      // Audit log - failed registration (email exists)
+      await createAuditLog({
+        userEmail: email,
+        action: 'register',
+        entityType: 'user',
+        req,
+        status: 'failure',
+        errorMessage: 'Email already exists',
+      })
       return res.status(400).json({ message: 'Пользователь с таким email уже существует' })
     }
 
@@ -42,6 +52,17 @@ export const register = async (req: Request, res: Response) => {
     })
 
     await user.save()
+
+    // Audit log - successful registration
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'register',
+      entityType: 'user',
+      entityId: user._id.toString(),
+      req,
+      status: 'success',
+    })
 
     // Send welcome email (non-blocking)
     const userName = `${user.firstName} ${user.lastName || ''}`.trim()
@@ -93,14 +114,44 @@ export const login = async (req: Request, res: Response) => {
     // Поиск пользователя по email
     const user = await User.findOne({ email })
     if (!user) {
+      // Audit log - failed login (user not found)
+      await createAuditLog({
+        userEmail: email,
+        action: 'login',
+        entityType: 'user',
+        req,
+        status: 'failure',
+        errorMessage: 'User not found',
+      })
       return res.status(401).json({ message: 'Неверный email или пароль' })
     }
 
     // Проверка пароля
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
+      // Audit log - failed login (invalid password)
+      await createAuditLog({
+        userId: user._id.toString(),
+        userEmail: user.email,
+        action: 'login',
+        entityType: 'user',
+        req,
+        status: 'failure',
+        errorMessage: 'Invalid password',
+      })
       return res.status(401).json({ message: 'Неверный email или пароль' })
     }
+
+    // Audit log - successful login
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'login',
+      entityType: 'user',
+      entityId: user._id.toString(),
+      req,
+      status: 'success',
+    })
 
     // Генерация JWT токена
     const token = jwt.sign(
@@ -186,6 +237,18 @@ export const updateProfile = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Пользователь не найден' })
     }
 
+    // Audit log - profile update
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'update_profile',
+      entityType: 'user',
+      entityId: user._id.toString(),
+      changes: updateData,
+      req,
+      status: 'success',
+    })
+
     res.status(200).json({
       message: 'Профиль обновлен',
       user: {
@@ -232,6 +295,17 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
       const fullName = `${user.firstName} ${user.lastName || ''}`.trim()
 
       await emailService.sendPasswordResetEmail(user.email, fullName, resetUrl, language)
+
+      // Audit log - password reset requested
+      await createAuditLog({
+        userId: user._id.toString(),
+        userEmail: user.email,
+        action: 'request_password_reset',
+        entityType: 'user',
+        entityId: user._id.toString(),
+        req,
+        status: 'success',
+      })
     }
 
     res.json({ message: 'Если аккаунт существует, ссылка отправлена на email.' })
@@ -265,6 +339,17 @@ export const resetPassword = async (req: Request, res: Response) => {
     user.resetPasswordToken = undefined
     user.resetPasswordExpires = undefined
     await user.save()
+
+    // Audit log - password reset completed
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'reset_password',
+      entityType: 'user',
+      entityId: user._id.toString(),
+      req,
+      status: 'success',
+    })
 
     res.json({ message: 'Пароль успешно обновлен' })
   } catch (error) {
@@ -341,6 +426,14 @@ export const telegramAuth = async (req: Request, res: Response) => {
 
     const telegramUser = verifyTelegramWebAppData(initData, botToken)
     if (!telegramUser) {
+      // Audit log - failed Telegram auth
+      await createAuditLog({
+        action: 'telegram_auth',
+        entityType: 'user',
+        req,
+        status: 'failure',
+        errorMessage: 'Invalid Telegram data',
+      })
       return res.status(401).json({ message: 'Invalid Telegram data' })
     }
 
@@ -369,12 +462,34 @@ export const telegramAuth = async (req: Request, res: Response) => {
       })
       await user.save()
       console.log('✅ New user created from Telegram:', telegramUser.id)
+
+      // Audit log - new user via Telegram
+      await createAuditLog({
+        userId: user._id.toString(),
+        userEmail: user.email,
+        action: 'telegram_register',
+        entityType: 'user',
+        entityId: user._id.toString(),
+        req,
+        status: 'success',
+      })
     } else {
       // Update existing user info
       user.telegramUsername = telegramUser.username
       user.firstName = telegramUser.first_name
       user.lastName = telegramUser.last_name || user.lastName
       await user.save()
+
+      // Audit log - existing user login via Telegram
+      await createAuditLog({
+        userId: user._id.toString(),
+        userEmail: user.email,
+        action: 'telegram_login',
+        entityType: 'user',
+        entityId: user._id.toString(),
+        req,
+        status: 'success',
+      })
     }
 
     // Generate JWT token

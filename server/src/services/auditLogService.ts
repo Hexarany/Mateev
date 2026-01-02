@@ -7,11 +7,7 @@ interface LogOptions {
   action: string
   entityType: string
   entityId?: string
-  changes?: {
-    field: string
-    oldValue?: any
-    newValue?: any
-  }[]
+  changes?: any // Can be either object or array of changes
   req?: Request
   status?: 'success' | 'failure'
   errorMessage?: string

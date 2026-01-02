@@ -1,6 +1,7 @@
 import { Response } from 'express'
 import PromoCode from '../models/PromoCode'
 import { CustomRequest } from '../middleware/auth'
+import { createAuditLog } from '../services/auditLogService'
 
 // Получить все промокоды (только для админов)
 export const getAllPromoCodes = async (req: CustomRequest, res: Response) => {
@@ -79,6 +80,23 @@ export const createPromoCode = async (req: CustomRequest, res: Response) => {
     })
 
     const savedPromoCode = await promoCode.save()
+
+    // Audit log - promo code created
+    await createAuditLog({
+      userId,
+      action: 'create_promo_code',
+      entityType: 'promo_code',
+      entityId: savedPromoCode._id.toString(),
+      changes: {
+        code: savedPromoCode.code,
+        discountType,
+        discountValue,
+        maxUses,
+        validUntil,
+      },
+      req,
+      status: 'success',
+    })
 
     res.status(201).json({
       message: 'Promo code created successfully',
@@ -165,6 +183,23 @@ export const applyPromoCode = async (req: CustomRequest, res: Response) => {
     // Применяем промокод (увеличиваем счетчик использований)
     await promoCode.apply(userId!)
 
+    // Audit log - promo code applied
+    await createAuditLog({
+      userId,
+      action: 'apply_promo_code',
+      entityType: 'promo_code',
+      entityId: promoCode._id.toString(),
+      changes: {
+        code: promoCode.code,
+        originalPrice,
+        discount,
+        finalPrice,
+        tier,
+      },
+      req,
+      status: 'success',
+    })
+
     res.json({
       success: true,
       originalPrice,
@@ -199,6 +234,17 @@ export const updatePromoCode = async (req: CustomRequest, res: Response) => {
       return res.status(404).json({ error: { message: 'Promo code not found' } })
     }
 
+    // Audit log - promo code updated
+    await createAuditLog({
+      userId: req.userId,
+      action: 'update_promo_code',
+      entityType: 'promo_code',
+      entityId: id,
+      changes: updates,
+      req,
+      status: 'success',
+    })
+
     res.json({
       message: 'Promo code updated successfully',
       promoCode,
@@ -219,6 +265,21 @@ export const deletePromoCode = async (req: CustomRequest, res: Response) => {
     if (!promoCode) {
       return res.status(404).json({ error: { message: 'Promo code not found' } })
     }
+
+    // Audit log - promo code deleted
+    await createAuditLog({
+      userId: req.userId,
+      action: 'delete_promo_code',
+      entityType: 'promo_code',
+      entityId: id,
+      changes: {
+        code: promoCode.code,
+        discountType: promoCode.discountType,
+        discountValue: promoCode.discountValue,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({ message: 'Promo code deleted successfully' })
   } catch (error) {

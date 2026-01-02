@@ -3,6 +3,7 @@ import { SUBSCRIPTION_PLANS, getPlanById, TRIAL_DURATION_DAYS } from '../config/
 import Subscription from '../models/Subscription'
 import User from '../models/User'
 import mongoose from 'mongoose'
+import { createAuditLog } from '../services/auditLogService'
 
 // GET /api/subscriptions/plans - Получить доступные планы подписок
 export const getPlans = async (req: Request, res: Response) => {
@@ -102,6 +103,22 @@ export const startTrial = async (req: Request, res: Response) => {
     user.subscriptionEndDate = endDate
     await user.save()
 
+    // Audit log - trial started
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'start_trial',
+      entityType: 'subscription',
+      entityId: trialSubscription._id.toString(),
+      changes: {
+        plan: 'monthly',
+        trialDays: TRIAL_DURATION_DAYS,
+        endDate,
+      },
+      req,
+      status: 'success',
+    })
+
     res.status(201).json({
       message: 'Пробный период успешно активирован',
       subscription: trialSubscription,
@@ -142,6 +159,21 @@ export const cancelSubscription = async (req: Request, res: Response) => {
       user.subscriptionStatus = 'cancelled'
       await user.save()
     }
+
+    // Audit log - subscription cancelled
+    await createAuditLog({
+      userId: subscription.userId.toString(),
+      userEmail: user?.email,
+      action: 'cancel_subscription',
+      entityType: 'subscription',
+      entityId: subscription._id.toString(),
+      changes: {
+        plan: subscription.plan,
+        endDate: subscription.endDate,
+      },
+      req,
+      status: 'success',
+    })
 
     res.json({
       message: 'Подписка отменена. Доступ сохранится до окончания оплаченного периода',
@@ -229,6 +261,24 @@ export const createSubscription = async (req: Request, res: Response) => {
     user.subscriptionStatus = 'active'
     user.subscriptionEndDate = endDate
     await user.save()
+
+    // Audit log - subscription created
+    await createAuditLog({
+      userId: user._id.toString(),
+      userEmail: user.email,
+      action: 'create_subscription',
+      entityType: 'subscription',
+      entityId: subscription._id.toString(),
+      changes: {
+        plan: plan.id,
+        amount: plan.price,
+        currency: plan.currency,
+        paymentMethod,
+        endDate,
+      },
+      req,
+      status: 'success',
+    })
 
     res.status(201).json({
       message: 'Подписка успешно создана',

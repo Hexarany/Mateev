@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import Resource from '../models/Resource'
+import { createAuditLog } from '../services/auditLogService'
 
 interface CustomRequest extends Request {
   userId?: string
@@ -111,6 +112,17 @@ export const createResource = async (req: CustomRequest, res: Response) => {
       order: order || 0,
     })
 
+    // Audit log - resource created
+    await createAuditLog({
+      userId,
+      action: 'create_resource',
+      entityType: 'resource',
+      entityId: resource._id.toString(),
+      changes: { title, type, category },
+      req,
+      status: 'success',
+    })
+
     res.status(201).json(resource)
   } catch (error) {
     console.error('Create resource error:', error)
@@ -130,6 +142,17 @@ export const updateResource = async (req: CustomRequest, res: Response) => {
       return res.status(404).json({ message: 'Resource not found' })
     }
 
+    // Audit log - resource updated
+    await createAuditLog({
+      userId: req.userId,
+      action: 'update_resource',
+      entityType: 'resource',
+      entityId: resourceId,
+      changes: updates,
+      req,
+      status: 'success',
+    })
+
     res.json(resource)
   } catch (error) {
     console.error('Update resource error:', error)
@@ -147,6 +170,17 @@ export const deleteResource = async (req: CustomRequest, res: Response) => {
     if (!resource) {
       return res.status(404).json({ message: 'Resource not found' })
     }
+
+    // Audit log - resource deleted
+    await createAuditLog({
+      userId: req.userId,
+      action: 'delete_resource',
+      entityType: 'resource',
+      entityId: resourceId,
+      changes: { title: resource.title },
+      req,
+      status: 'success',
+    })
 
     res.json({ message: 'Resource deleted successfully' })
   } catch (error) {
