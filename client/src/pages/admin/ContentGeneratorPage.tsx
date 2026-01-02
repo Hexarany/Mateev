@@ -58,7 +58,7 @@ export default function ContentGeneratorPage() {
   // Quiz generation state
   const [quizData, setQuizData] = useState({
     topicId: '',
-    questionCount: 10,
+    questionCount: 150,
     difficulty: 'medium',
   })
 
@@ -86,7 +86,7 @@ export default function ContentGeneratorPage() {
       setPreview(response.data.quiz)
 
       // Reset form
-      setQuizData({ topicId: '', questionCount: 10, difficulty: 'medium' })
+      setQuizData({ topicId: '', questionCount: 150, difficulty: 'medium' })
     } catch (error: any) {
       setMessage({
         type: 'error',
@@ -177,30 +177,16 @@ export default function ContentGeneratorPage() {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 type="number"
                 label={lang === 'ru' ? 'Количество вопросов' : 'Număr de întrebări'}
                 value={quizData.questionCount}
                 onChange={(e) => setQuizData({ ...quizData, questionCount: parseInt(e.target.value) })}
-                inputProps={{ min: 5, max: 20 }}
+                inputProps={{ min: 10, max: 200 }}
+                helperText={lang === 'ru' ? 'Рекомендуется: 150 вопросов (автоматическое распределение: 60 легких, 60 средних, 30 сложных)' : 'Recomandat: 150 întrebări (distribuție automată: 60 ușoare, 60 medii, 30 dificile)'}
               />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel>{lang === 'ru' ? 'Сложность' : 'Dificultate'}</InputLabel>
-                <Select
-                  value={quizData.difficulty}
-                  label={lang === 'ru' ? 'Сложность' : 'Dificultate'}
-                  onChange={(e) => setQuizData({ ...quizData, difficulty: e.target.value })}
-                >
-                  <MenuItem value="easy">{lang === 'ru' ? 'Легкий' : 'Ușor'}</MenuItem>
-                  <MenuItem value="medium">{lang === 'ru' ? 'Средний' : 'Mediu'}</MenuItem>
-                  <MenuItem value="hard">{lang === 'ru' ? 'Сложный' : 'Dificil'}</MenuItem>
-                </Select>
-              </FormControl>
             </Grid>
 
             <Grid item xs={12}>
@@ -222,8 +208,8 @@ export default function ContentGeneratorPage() {
           <Alert severity="info" sx={{ mt: 2 }}>
             <Typography variant="body2">
               {lang === 'ru'
-                ? 'AI создаст вопросы с множественным выбором, правильными ответами и объяснениями на обоих языках.'
-                : 'AI va crea întrebări cu răspunsuri multiple, răspunsuri corecte și explicații în ambele limbi.'}
+                ? 'AI создаст вопросы с множественным выбором, правильными ответами и объяснениями на обоих языках. При генерации 150 вопросов автоматически создается распределение: 40% легкие, 40% средние, 20% сложные. При тестировании студенты будут видеть 10 случайных вопросов.'
+                : 'AI va crea întrebări cu răspunsuri multiple, răspunsuri corecte și explicații în ambele limbi. La generarea a 150 de întrebări, se creează automat o distribuție: 40% ușoare, 40% medii, 20% dificile. La testare, studenții vor vedea 10 întrebări aleatorii.'}
             </Typography>
           </Alert>
         </TabPanel>
