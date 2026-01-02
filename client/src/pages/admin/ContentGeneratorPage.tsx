@@ -17,14 +17,11 @@ import {
   Card,
   CardContent,
   Divider,
-  Chip,
   Grid,
 } from '@mui/material'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
-import TopicIcon from '@mui/icons-material/Topic'
 import QuizIcon from '@mui/icons-material/Quiz'
-import SpaIcon from '@mui/icons-material/Spa'
-import SchoolIcon from '@mui/icons-material/School'
+import AdjustIcon from '@mui/icons-material/Adjust'
 import api from '@/services/api'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
@@ -49,29 +46,13 @@ export default function ContentGeneratorPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [preview, setPreview] = useState<any>(null)
 
-  // Fetch categories for dropdowns
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const response = await api.get('/categories')
-      return response.data
-    },
-  })
-
+  // Fetch topics for dropdowns
   const { data: topics } = useQuery({
     queryKey: ['topics'],
     queryFn: async () => {
       const response = await api.get('/topics')
       return response.data
     },
-  })
-
-  // Topic generation state
-  const [topicData, setTopicData] = useState({
-    categoryId: '',
-    titleRu: '',
-    titleRo: '',
-    difficulty: 'intermediate',
   })
 
   // Quiz generation state
@@ -81,50 +62,12 @@ export default function ContentGeneratorPage() {
     difficulty: 'medium',
   })
 
-  // Protocol generation state
-  const [protocolData, setProtocolData] = useState({
-    titleRu: '',
-    titleRo: '',
-    targetArea: '',
-    duration: 30,
+  // Trigger points generation state
+  const [triggerPointData, setTriggerPointData] = useState({
+    muscleName: '',
+    region: '',
+    pointCount: 5,
   })
-
-  // Course generation state
-  const [courseData, setCourseData] = useState({
-    courseName: '',
-    moduleCount: 5,
-    generateContent: false,
-  })
-
-  const handleGenerateTopic = async () => {
-    try {
-      setLoading(true)
-      setMessage(null)
-      setPreview(null)
-
-      const response = await api.post('/content-generator/topic', {
-        categoryId: topicData.categoryId,
-        topicTitle: { ru: topicData.titleRu, ro: topicData.titleRo },
-        difficulty: topicData.difficulty,
-      })
-
-      setMessage({
-        type: 'success',
-        text: lang === 'ru' ? 'Тема успешно сгенерирована!' : 'Tema generată cu succes!',
-      })
-      setPreview(response.data.topic)
-
-      // Reset form
-      setTopicData({ categoryId: '', titleRu: '', titleRo: '', difficulty: 'intermediate' })
-    } catch (error: any) {
-      setMessage({
-        type: 'error',
-        text: error.response?.data?.message || 'Generation failed',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleGenerateQuiz = async () => {
     try {
@@ -154,54 +97,24 @@ export default function ContentGeneratorPage() {
     }
   }
 
-  const handleGenerateProtocol = async () => {
+  const handleGenerateTriggerPoints = async () => {
     try {
       setLoading(true)
       setMessage(null)
       setPreview(null)
 
-      const response = await api.post('/content-generator/protocol', {
-        protocolTitle: { ru: protocolData.titleRu, ro: protocolData.titleRo },
-        targetArea: protocolData.targetArea,
-        duration: protocolData.duration,
-      })
-
-      setMessage({
-        type: 'success',
-        text: lang === 'ru' ? 'Протокол успешно сгенерирован!' : 'Protocol generat cu succes!',
-      })
-      setPreview(response.data.protocol)
-
-      // Reset form
-      setProtocolData({ titleRu: '', titleRo: '', targetArea: '', duration: 30 })
-    } catch (error: any) {
-      setMessage({
-        type: 'error',
-        text: error.response?.data?.message || 'Generation failed',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleGenerateCourse = async () => {
-    try {
-      setLoading(true)
-      setMessage(null)
-      setPreview(null)
-
-      const response = await api.post('/content-generator/course', courseData)
+      const response = await api.post('/content-generator/trigger-points', triggerPointData)
 
       setMessage({
         type: 'success',
         text: lang === 'ru'
-          ? `Курс создан: ${response.data.categoriesCreated} модулей, ${response.data.topicsCreated} тем`
-          : `Curs creat: ${response.data.categoriesCreated} module, ${response.data.topicsCreated} teme`,
+          ? `Триггерные точки для ${triggerPointData.muscleName} успешно сгенерированы!`
+          : `Puncte trigger pentru ${triggerPointData.muscleName} generate cu succes!`,
       })
       setPreview(response.data)
 
       // Reset form
-      setCourseData({ courseName: '', moduleCount: 5, generateContent: false })
+      setTriggerPointData({ muscleName: '', region: '', pointCount: 5 })
     } catch (error: any) {
       setMessage({
         type: 'error',
@@ -222,8 +135,8 @@ export default function ContentGeneratorPage() {
           </Typography>
           <Typography variant="body2" color="textSecondary">
             {lang === 'ru'
-              ? 'Автоматическая генерация тем, тестов, протоколов и курсов с помощью Claude AI'
-              : 'Generare automată de teme, teste, protocoale și cursuri cu Claude AI'}
+              ? 'Автоматическая генерация тестов и триггерных точек с помощью Claude AI'
+              : 'Generare automată de teste și puncte trigger cu Claude AI'}
           </Typography>
         </Box>
       </Box>
@@ -236,96 +149,12 @@ export default function ContentGeneratorPage() {
 
       <Paper>
         <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)}>
-          <Tab icon={<TopicIcon />} label={lang === 'ru' ? 'Тема' : 'Temă'} />
           <Tab icon={<QuizIcon />} label={lang === 'ru' ? 'Тест' : 'Test'} />
-          <Tab icon={<SpaIcon />} label={lang === 'ru' ? 'Протокол' : 'Protocol'} />
-          <Tab icon={<SchoolIcon />} label={lang === 'ru' ? 'Курс' : 'Curs'} />
+          <Tab icon={<AdjustIcon />} label={lang === 'ru' ? 'Триггерные точки' : 'Puncte Trigger'} />
         </Tabs>
 
-        {/* Generate Topic */}
-        <TabPanel value={tab} index={0}>
-          <Typography variant="h6" gutterBottom>
-            {lang === 'ru' ? 'Генерация темы' : 'Generare temă'}
-          </Typography>
-
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel>{lang === 'ru' ? 'Категория' : 'Categorie'}</InputLabel>
-                <Select
-                  value={topicData.categoryId}
-                  label={lang === 'ru' ? 'Категория' : 'Categorie'}
-                  onChange={(e) => setTopicData({ ...topicData, categoryId: e.target.value })}
-                >
-                  {categories?.map((cat: any) => (
-                    <MenuItem key={cat._id} value={cat._id}>
-                      {cat.name[lang]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label={lang === 'ru' ? 'Название темы (RU)' : 'Titlu temă (RU)'}
-                value={topicData.titleRu}
-                onChange={(e) => setTopicData({ ...topicData, titleRu: e.target.value })}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label={lang === 'ru' ? 'Название темы (RO)' : 'Titlu temă (RO)'}
-                value={topicData.titleRo}
-                onChange={(e) => setTopicData({ ...topicData, titleRo: e.target.value })}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel>{lang === 'ru' ? 'Сложность' : 'Dificultate'}</InputLabel>
-                <Select
-                  value={topicData.difficulty}
-                  label={lang === 'ru' ? 'Сложность' : 'Dificultate'}
-                  onChange={(e) => setTopicData({ ...topicData, difficulty: e.target.value })}
-                >
-                  <MenuItem value="beginner">{lang === 'ru' ? 'Начальный' : 'Începător'}</MenuItem>
-                  <MenuItem value="intermediate">{lang === 'ru' ? 'Средний' : 'Intermediar'}</MenuItem>
-                  <MenuItem value="advanced">{lang === 'ru' ? 'Продвинутый' : 'Avansat'}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                size="large"
-                startIcon={loading ? <CircularProgress size={20} /> : <AutoAwesomeIcon />}
-                onClick={handleGenerateTopic}
-                disabled={loading || !topicData.categoryId || !topicData.titleRu || !topicData.titleRo}
-                fullWidth
-              >
-                {loading
-                  ? lang === 'ru' ? 'Генерация...' : 'Se generează...'
-                  : lang === 'ru' ? 'Сгенерировать тему' : 'Generează tema'}
-              </Button>
-            </Grid>
-          </Grid>
-
-          <Alert severity="info" sx={{ mt: 2 }}>
-            <Typography variant="body2">
-              {lang === 'ru'
-                ? 'AI создаст полное описание темы, ключевые пункты, цели обучения и предварительные требования на обоих языках.'
-                : 'AI va crea o descriere completă a temei, puncte cheie, obiective de învățare și cerințe prealabile în ambele limbi.'}
-            </Typography>
-          </Alert>
-        </TabPanel>
-
         {/* Generate Quiz */}
-        <TabPanel value={tab} index={1}>
+        <TabPanel value={tab} index={0}>
           <Typography variant="h6" gutterBottom>
             {lang === 'ru' ? 'Генерация теста' : 'Generare test'}
           </Typography>
@@ -399,38 +228,30 @@ export default function ContentGeneratorPage() {
           </Alert>
         </TabPanel>
 
-        {/* Generate Protocol */}
-        <TabPanel value={tab} index={2}>
+        {/* Generate Trigger Points */}
+        <TabPanel value={tab} index={1}>
           <Typography variant="h6" gutterBottom>
-            {lang === 'ru' ? 'Генерация протокола массажа' : 'Generare protocol de masaj'}
+            {lang === 'ru' ? 'Генерация триггерных точек' : 'Generare puncte trigger'}
           </Typography>
 
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
-                label={lang === 'ru' ? 'Название протокола (RU)' : 'Titlu protocol (RU)'}
-                value={protocolData.titleRu}
-                onChange={(e) => setProtocolData({ ...protocolData, titleRu: e.target.value })}
+                label={lang === 'ru' ? 'Название мышцы' : 'Nume mușchi'}
+                value={triggerPointData.muscleName}
+                onChange={(e) => setTriggerPointData({ ...triggerPointData, muscleName: e.target.value })}
+                placeholder={lang === 'ru' ? 'Трапециевидная мышца' : 'Mușchiul trapez'}
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label={lang === 'ru' ? 'Название протокола (RO)' : 'Titlu protocol (RO)'}
-                value={protocolData.titleRo}
-                onChange={(e) => setProtocolData({ ...protocolData, titleRo: e.target.value })}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label={lang === 'ru' ? 'Целевая область' : 'Zona țintă'}
-                value={protocolData.targetArea}
-                onChange={(e) => setProtocolData({ ...protocolData, targetArea: e.target.value })}
-                placeholder={lang === 'ru' ? 'Спина, шея, ноги...' : 'Spate, gât, picioare...'}
+                label={lang === 'ru' ? 'Регион тела' : 'Regiune corporală'}
+                value={triggerPointData.region}
+                onChange={(e) => setTriggerPointData({ ...triggerPointData, region: e.target.value })}
+                placeholder={lang === 'ru' ? 'Шея и плечи' : 'Gât și umeri'}
               />
             </Grid>
 
@@ -438,10 +259,10 @@ export default function ContentGeneratorPage() {
               <TextField
                 fullWidth
                 type="number"
-                label={lang === 'ru' ? 'Длительность (мин)' : 'Durată (min)'}
-                value={protocolData.duration}
-                onChange={(e) => setProtocolData({ ...protocolData, duration: parseInt(e.target.value) })}
-                inputProps={{ min: 15, max: 120 }}
+                label={lang === 'ru' ? 'Количество точек' : 'Număr de puncte'}
+                value={triggerPointData.pointCount}
+                onChange={(e) => setTriggerPointData({ ...triggerPointData, pointCount: parseInt(e.target.value) })}
+                inputProps={{ min: 3, max: 10 }}
               />
             </Grid>
 
@@ -450,13 +271,13 @@ export default function ContentGeneratorPage() {
                 variant="contained"
                 size="large"
                 startIcon={loading ? <CircularProgress size={20} /> : <AutoAwesomeIcon />}
-                onClick={handleGenerateProtocol}
-                disabled={loading || !protocolData.titleRu || !protocolData.titleRo}
+                onClick={handleGenerateTriggerPoints}
+                disabled={loading || !triggerPointData.muscleName}
                 fullWidth
               >
                 {loading
                   ? lang === 'ru' ? 'Генерация...' : 'Se generează...'
-                  : lang === 'ru' ? 'Сгенерировать протокол' : 'Generează protocolul'}
+                  : lang === 'ru' ? 'Сгенерировать точки' : 'Generează punctele'}
               </Button>
             </Grid>
           </Grid>
@@ -464,82 +285,10 @@ export default function ContentGeneratorPage() {
           <Alert severity="info" sx={{ mt: 2 }}>
             <Typography variant="body2">
               {lang === 'ru'
-                ? 'AI создаст пошаговый протокол с техниками, показаниями, противопоказаниями и советами.'
-                : 'AI va crea un protocol pas cu pas cu tehnici, indicații, contraindicații și sfaturi.'}
+                ? 'AI создаст подробное описание триггерных точек с локализацией, симптомами, методами пальпации и техниками воздействия на обоих языках.'
+                : 'AI va crea o descriere detaliată a punctelor trigger cu localizare, simptome, metode de palpare și tehnici de tratare în ambele limbi.'}
             </Typography>
           </Alert>
-        </TabPanel>
-
-        {/* Generate Course */}
-        <TabPanel value={tab} index={3}>
-          <Typography variant="h6" gutterBottom>
-            {lang === 'ru' ? 'Генерация полного курса' : 'Generare curs complet'}
-          </Typography>
-
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            <Typography variant="body2">
-              {lang === 'ru'
-                ? 'Внимание! Генерация полного курса может занять несколько минут и создать множество тем.'
-                : 'Atenție! Generarea cursului complet poate dura câteva minute și va crea multe teme.'}
-            </Typography>
-          </Alert>
-
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label={lang === 'ru' ? 'Название курса' : 'Titlu curs'}
-                value={courseData.courseName}
-                onChange={(e) => setCourseData({ ...courseData, courseName: e.target.value })}
-                placeholder={lang === 'ru' ? 'Основы анатомии и массажа' : 'Bazele anatomiei și masajului'}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                type="number"
-                label={lang === 'ru' ? 'Количество модулей' : 'Număr de module'}
-                value={courseData.moduleCount}
-                onChange={(e) => setCourseData({ ...courseData, moduleCount: parseInt(e.target.value) })}
-                inputProps={{ min: 3, max: 10 }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel>{lang === 'ru' ? 'Генерировать полный контент?' : 'Generează conținut complet?'}</InputLabel>
-                <Select
-                  value={courseData.generateContent ? 'yes' : 'no'}
-                  label={lang === 'ru' ? 'Генерировать полный контент?' : 'Generează conținut complet?'}
-                  onChange={(e) => setCourseData({ ...courseData, generateContent: e.target.value === 'yes' })}
-                >
-                  <MenuItem value="no">
-                    {lang === 'ru' ? 'Только структура (быстро)' : 'Doar structură (rapid)'}
-                  </MenuItem>
-                  <MenuItem value="yes">
-                    {lang === 'ru' ? 'Полный контент (медленно)' : 'Conținut complet (lent)'}
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                size="large"
-                color="secondary"
-                startIcon={loading ? <CircularProgress size={20} /> : <AutoAwesomeIcon />}
-                onClick={handleGenerateCourse}
-                disabled={loading || !courseData.courseName}
-                fullWidth
-              >
-                {loading
-                  ? lang === 'ru' ? 'Генерация курса... (это может занять время)' : 'Se generează cursul... (poate dura)'
-                  : lang === 'ru' ? 'Сгенерировать курс' : 'Generează cursul'}
-              </Button>
-            </Grid>
-          </Grid>
         </TabPanel>
       </Paper>
 

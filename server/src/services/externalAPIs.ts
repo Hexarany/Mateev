@@ -1,6 +1,14 @@
 import axios from 'axios'
 import Anthropic from '@anthropic-ai/sdk'
 
+// Create axios instance with default timeout
+const axiosInstance = axios.create({
+  timeout: 30000, // 30 seconds timeout for all external API requests
+  headers: {
+    'User-Agent': 'Anatomia-Platform/1.0',
+  },
+})
+
 // Lazy initialization to ensure env vars are loaded
 let anthropicClient: Anthropic | null = null
 function getAnthropicClient() {
@@ -21,7 +29,7 @@ function getAnthropicClient() {
  */
 export async function searchWikimediaImages(query: string, limit: number = 10) {
   try {
-    const response = await axios.get('https://commons.wikimedia.org/w/api.php', {
+    const response = await axiosInstance.get('https://commons.wikimedia.org/w/api.php', {
       params: {
         action: 'query',
         format: 'json',
@@ -69,7 +77,7 @@ export async function searchWikipediaArticles(query: string, language: 'ru' | 'e
       ? 'https://ru.wikipedia.org/w/api.php'
       : 'https://en.wikipedia.org/w/api.php'
 
-    const response = await axios.get(baseUrl, {
+    const response = await axiosInstance.get(baseUrl, {
       params: {
         action: 'query',
         format: 'json',
@@ -105,7 +113,7 @@ export async function getWikipediaContent(pageTitle: string, language: 'ru' | 'e
       ? 'https://ru.wikipedia.org/w/api.php'
       : 'https://en.wikipedia.org/w/api.php'
 
-    const response = await axios.get(baseUrl, {
+    const response = await axiosInstance.get(baseUrl, {
       params: {
         action: 'query',
         format: 'json',
@@ -143,7 +151,7 @@ export async function getWikipediaContent(pageTitle: string, language: 'ru' | 'e
 export async function searchPubMed(query: string, limit: number = 5) {
   try {
     // Search for articles
-    const searchResponse = await axios.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi', {
+    const searchResponse = await axiosInstance.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi', {
       params: {
         db: 'pubmed',
         term: query,
@@ -159,7 +167,7 @@ export async function searchPubMed(query: string, limit: number = 5) {
     }
 
     // Fetch article details
-    const summaryResponse = await axios.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi', {
+    const summaryResponse = await axiosInstance.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi', {
       params: {
         db: 'pubmed',
         id: ids.join(','),
@@ -191,7 +199,7 @@ export async function searchPubMed(query: string, limit: number = 5) {
  */
 export async function searchMedlinePlus(query: string) {
   try {
-    const response = await axios.get('https://connect.medlineplus.gov/service', {
+    const response = await axiosInstance.get('https://connect.medlineplus.gov/service', {
       params: {
         mainSearchCriteria: {
           v: {
@@ -330,9 +338,8 @@ Return ONLY valid JSON.`
  */
 export async function downloadImage(imageUrl: string): Promise<Buffer> {
   try {
-    const response = await axios.get(imageUrl, {
+    const response = await axiosInstance.get(imageUrl, {
       responseType: 'arraybuffer',
-      timeout: 30000,
     })
 
     return Buffer.from(response.data)
