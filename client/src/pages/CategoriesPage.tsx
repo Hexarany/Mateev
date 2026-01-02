@@ -17,14 +17,14 @@ import {
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import SchoolIcon from '@mui/icons-material/School'
 import { useCategories } from '@/hooks/useCategories'
-import { useAuthStore } from '@/store/authStore'
+import { useAuth } from '@/contexts/AuthContext'
 import type { Category } from '@/types'
 
 const CategoriesPage = () => {
   const { t, i18n } = useTranslation()
   const theme = useTheme()
   const { data: categories = [], isLoading, error } = useCategories()
-  const { user } = useAuthStore()
+  const { user } = useAuth()
 
   const lang = i18n.language as 'ru' | 'ro'
   const isTeacherOrAdmin = user?.role === 'teacher' || user?.role === 'admin'
