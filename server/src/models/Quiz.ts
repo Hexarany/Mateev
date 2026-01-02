@@ -16,6 +16,8 @@ interface IQuizQuestion {
   correctAnswer: number
   explanation?: IMultiLangText
   image?: string
+  difficulty?: 'easy' | 'medium' | 'hard'
+  points?: number
 }
 
 export interface IQuiz extends Document {
@@ -46,6 +48,15 @@ const QuizQuestionSchema = new Schema({
     ro: String,
   },
   image: String,
+  difficulty: {
+    type: String,
+    enum: ['easy', 'medium', 'hard'],
+    default: 'medium',
+  },
+  points: {
+    type: Number,
+    default: 10,
+  },
 })
 
 const QuizSchema: Schema = new Schema(

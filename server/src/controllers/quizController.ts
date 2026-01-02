@@ -34,11 +34,34 @@ const hasAccessToQuiz = async (
   return { hasAccess, userAccessLevel }
 }
 
+// Helper: Randomly select N questions from the quiz
+const getRandomQuestions = (questions: any[], count: number = 10) => {
+  if (questions.length <= count) {
+    // If quiz has 10 or fewer questions, return all shuffled
+    return [...questions].sort(() => Math.random() - 0.5)
+  }
+
+  // Fisher-Yates shuffle to get random sample
+  const shuffled = [...questions]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+
+  return shuffled.slice(0, count)
+}
+
 // Helper: Apply content lock
 const createSafeQuiz = (quiz: any, hasAccess: boolean, userAccessLevel: string) => {
+  // For users with access, return 10 random questions from the question bank
+  const questions = hasAccess && quiz.questions && quiz.questions.length > 0
+    ? getRandomQuestions(quiz.questions, 10)
+    : []
+
   return {
     ...quiz.toObject(),
-    questions: hasAccess ? quiz.questions : [], // Hide questions for non-premium users
+    questions, // Return 10 random questions for premium users, empty array for others
+    totalQuestionsInBank: quiz.questions?.length || 0, // Show total available questions
     hasFullContentAccess: hasAccess,
     accessInfo: {
       hasFullAccess: hasAccess,

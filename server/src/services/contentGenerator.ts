@@ -175,21 +175,24 @@ Return ONLY valid JSON, no additional text.`
 }
 
 /**
- * Generate quiz questions using Claude AI
+ * Helper: Generate a batch of questions for a specific difficulty level
  */
-export async function generateQuizQuestions(params: GenerateQuizParams) {
-  const { topicId, questionCount = 10, difficulty = 'medium' } = params
+async function generateQuestionBatch(topic: any, count: number, difficulty: 'easy' | 'medium' | 'hard') {
+  const batchSize = 30 // Claude works best with smaller batches
+  const batches = Math.ceil(count / batchSize)
+  const allQuestions: any[] = []
 
-  const topic = await Topic.findById(topicId).populate('categoryId')
-  if (!topic) {
-    throw new Error('Topic not found')
-  }
+  for (let i = 0; i < batches; i++) {
+    const questionsInBatch = Math.min(batchSize, count - (i * batchSize))
 
-  const prompt = `You are a medical education expert creating assessment questions.
+    const prompt = `You are a medical education expert creating assessment questions.
 
-Generate ${questionCount} multiple-choice quiz questions for the topic "${topic.name.ru}" (Romanian: "${topic.name.ro}").
+Generate ${questionsInBatch} multiple-choice quiz questions for the topic "${topic.name.ru}" (Romanian: "${topic.name.ro}").
 
-Difficulty: ${difficulty}
+DIFFICULTY LEVEL: ${difficulty}
+${difficulty === 'easy' ? '- Focus on basic facts, definitions, simple recall' : ''}
+${difficulty === 'medium' ? '- Focus on understanding concepts, relationships, application' : ''}
+${difficulty === 'hard' ? '- Focus on analysis, synthesis, complex scenarios, clinical reasoning' : ''}
 
 Topic content:
 ${topic.content?.ru || topic.description?.ru || 'General anatomy and massage therapy'}
@@ -205,48 +208,95 @@ Provide questions in JSON format:
       "correctAnswer": 0,
       "explanation_ru": "Why this answer is correct (Russian)",
       "explanation_ro": "Why this answer is correct (Romanian)",
-      "points": 10
+      "difficulty": "${difficulty}",
+      "points": ${difficulty === 'easy' ? 5 : difficulty === 'medium' ? 10 : 15}
     }
   ]
 }
 
 Requirements:
-- Questions test understanding, not just memorization
+- Questions test ${difficulty} level understanding
 - Distractors (wrong answers) should be plausible
-- Mix of difficulty within the ${difficulty} range
 - Cover different aspects of the topic
 - Include practical application questions
 - Explanations should be educational
 - IMPORTANT: Use only regular ASCII quotes (") in JSON, NOT typographic quotes („" «» "")
+- Make questions unique and diverse
 
 Return ONLY valid JSON, no additional text.`
 
-  const response = await getAnthropicClient().messages.create({
-    model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 8000,
-    messages: [{ role: 'user', content: prompt }],
-  })
+    const response = await getAnthropicClient().messages.create({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 8000,
+      messages: [{ role: 'user', content: prompt }],
+    })
 
-  const content = response.content[0]
-  if (content.type !== 'text') {
-    throw new Error('Unexpected response type from Claude')
+    const content = response.content[0]
+    if (content.type !== 'text') {
+      throw new Error('Unexpected response type from Claude')
+    }
+
+    if (response.stop_reason === 'max_tokens') {
+      console.warn(`Question batch ${i+1} was truncated, generated questions may be incomplete`)
+    }
+
+    const generatedData = parseClaudeJSON(content.text)
+    allQuestions.push(...generatedData.questions)
+
+    console.log(`Generated ${generatedData.questions.length} ${difficulty} questions (batch ${i+1}/${batches})`)
   }
 
-  // Check if response was truncated
-  if (response.stop_reason === 'max_tokens') {
-    console.error('Quiz generation response was truncated due to max_tokens limit')
-    throw new Error('Ответ был обрезан из-за ограничения токенов. Попробуйте уменьшить количество вопросов или сложность.')
+  return allQuestions
+}
+
+/**
+ * Generate quiz questions using Claude AI with difficulty distribution
+ * Default: 150 questions (60 easy, 60 medium, 30 hard)
+ */
+export async function generateQuizQuestions(params: GenerateQuizParams) {
+  const { topicId, questionCount = 150 } = params
+
+  const topic = await Topic.findById(topicId).populate('categoryId')
+  if (!topic) {
+    throw new Error('Topic not found')
   }
 
-  const generatedQuestions = parseClaudeJSON(content.text)
+  // Calculate distribution: 40% easy, 40% medium, 20% hard
+  const easyCount = Math.floor(questionCount * 0.4)
+  const mediumCount = Math.floor(questionCount * 0.4)
+  const hardCount = questionCount - easyCount - mediumCount
+
+  console.log(`Generating ${questionCount} questions: ${easyCount} easy, ${mediumCount} medium, ${hardCount} hard`)
+
+  // Generate questions in batches by difficulty
+  const allQuestions: any[] = []
+
+  // Generate easy questions
+  if (easyCount > 0) {
+    const easyQuestions = await generateQuestionBatch(topic, easyCount, 'easy')
+    allQuestions.push(...easyQuestions)
+  }
+
+  // Generate medium questions
+  if (mediumCount > 0) {
+    const mediumQuestions = await generateQuestionBatch(topic, mediumCount, 'medium')
+    allQuestions.push(...mediumQuestions)
+  }
+
+  // Generate hard questions
+  if (hardCount > 0) {
+    const hardQuestions = await generateQuestionBatch(topic, hardCount, 'hard')
+    allQuestions.push(...hardQuestions)
+  }
 
   // Generate slug from topic name
   const slug = topic.name.ru
     .toLowerCase()
     .replace(/[^a-zа-я0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-    + '-' + Date.now()
+    + '-quiz-' + Date.now()
 
+  // Return the quiz data with all generated questions
   return {
     title: {
       ru: `Тест: ${topic.name.ru}`,
@@ -258,7 +308,7 @@ Return ONLY valid JSON, no additional text.`
     },
     slug,
     topicId,
-    questions: generatedQuestions.questions.map((q: any) => ({
+    questions: allQuestions.map((q: any) => ({
       question: {
         ru: q.question_ru,
         ro: q.question_ro,
@@ -272,8 +322,9 @@ Return ONLY valid JSON, no additional text.`
         ru: q.explanation_ru,
         ro: q.explanation_ro,
       },
+      difficulty: q.difficulty,
+      points: q.points,
     })),
-    difficulty,
   }
 }
 
