@@ -15,15 +15,19 @@ import {
   useTheme,
 } from '@mui/material'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import SchoolIcon from '@mui/icons-material/School'
 import { useCategories } from '@/hooks/useCategories'
+import { useAuthStore } from '@/store/authStore'
 import type { Category } from '@/types'
 
 const CategoriesPage = () => {
   const { t, i18n } = useTranslation()
   const theme = useTheme()
   const { data: categories = [], isLoading, error } = useCategories()
+  const { user } = useAuthStore()
 
   const lang = i18n.language as 'ru' | 'ro'
+  const isTeacherOrAdmin = user?.role === 'teacher' || user?.role === 'admin'
 
   const getCategoryColor = (index: number) => {
     const colors = theme.palette.mode === 'dark'
@@ -124,19 +128,39 @@ const CategoriesPage = () => {
                   }}
                 >
                   <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                    <Typography
-                      variant="h5"
-                      component="h2"
-                      gutterBottom
-                      sx={{
-                        fontWeight: 600,
-                        color: theme.palette.mode === 'dark'
-                          ? theme.palette.text.primary
-                          : 'text.primary',
-                      }}
-                    >
-                      {category.name[lang]}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <Typography
+                        variant="h5"
+                        component="h2"
+                        sx={{
+                          fontWeight: 600,
+                          color: theme.palette.mode === 'dark'
+                            ? theme.palette.text.primary
+                            : 'text.primary',
+                        }}
+                      >
+                        {category.name[lang]}
+                      </Typography>
+                      {category.teacherOnly && isTeacherOrAdmin && (
+                        <Box
+                          sx={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 0.5,
+                            bgcolor: alpha(theme.palette.info.main, 0.15),
+                            color: theme.palette.info.main,
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                          }}
+                        >
+                          <SchoolIcon sx={{ fontSize: 16 }} />
+                          {lang === 'ru' ? 'Для преподавателей' : 'Pentru profesori'}
+                        </Box>
+                      )}
+                    </Box>
                     <Typography
                       variant="body2"
                       color="textSecondary"

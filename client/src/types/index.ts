@@ -12,6 +12,7 @@ export interface Category {
   icon?: string
   slug: string
   order: number
+  teacherOnly?: boolean // Restricted access for teachers/admins only
 }
 
 export interface Topic {

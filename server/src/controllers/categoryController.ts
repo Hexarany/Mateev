@@ -4,7 +4,15 @@ import { createAuditLog } from '../services/auditLogService'
 
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
-    const categories = await Category.find().sort({ order: 1 })
+    const userRole = (req as any).userRole
+
+    // Filter categories based on user role
+    // Teachers and admins see all categories, students only see non-restricted ones
+    const query = (userRole === 'teacher' || userRole === 'admin')
+      ? {} // Show all categories
+      : { teacherOnly: { $ne: true } } // Show only non-teacher-only categories
+
+    const categories = await Category.find(query).sort({ order: 1 })
     res.json(categories)
   } catch (error) {
     res.status(500).json({ error: { message: 'Failed to fetch categories' } })

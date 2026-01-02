@@ -11,6 +11,7 @@ export interface ICategory extends Document {
   icon?: string
   slug: string
   order: number
+  teacherOnly: boolean // Restricted access - only teachers and admins can see
   createdAt: Date
   updatedAt: Date
 }
@@ -28,6 +29,7 @@ const CategorySchema: Schema = new Schema(
     icon: { type: String },
     slug: { type: String, required: true, unique: true },
     order: { type: Number, default: 0 },
+    teacherOnly: { type: Boolean, default: false }, // Restricted access for teachers/admins only
   },
   {
     timestamps: true,
