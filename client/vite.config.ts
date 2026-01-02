@@ -17,8 +17,9 @@ export default defineConfig({
     }),
     // PWA configuration
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate', // Changed from 'prompt' for faster updates
       includeAssets: ['apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
+      injectRegister: 'auto',
       manifest: {
         name: 'Anatomia Study Platform',
         short_name: 'Anatomia',
@@ -43,9 +44,11 @@ export default defineConfig({
       },
       workbox: {
         // Increase file size limit for large assets
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB (reduced from 5)
         // Exclude certain files from precaching
-        globIgnores: ['**/stats.html', '**/node_modules/**'],
+        globIgnores: ['**/stats.html', '**/node_modules/**', '**/three-vendor-*.js'],
+        // Don't precache large vendor files - load them on demand
+        globPatterns: ['**/*.{html,css,woff2}', '**/react-vendor-*.js', '**/mui-vendor-*.js', '**/index-*.js'],
         // Cache strategies
         runtimeCaching: [
           {
