@@ -34,7 +34,10 @@ import AddIcon from '@mui/icons-material/Add'
 import UploadIcon from '@mui/icons-material/Upload'
 import ImageIcon from '@mui/icons-material/Image'
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import type { MassageProtocol } from '@/types'
+import PdfExportDialog from '@/components/admin/PdfExportDialog'
+import { usePdfExport } from '@/hooks/usePdfExport'
 import {
   getMassageProtocols,
   createMassageProtocol,
@@ -91,6 +94,8 @@ const MassageProtocolsManager = () => {
     videoId?: string
     caption: { ru: string; ro: string }
   } | null>(null)
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const { exportPdf, loading: exportLoading } = usePdfExport('massage-protocols')
 
   useEffect(() => {
     loadProtocols()
@@ -301,17 +306,43 @@ const MassageProtocolsManager = () => {
     setSnackbar({ open: true, message, severity })
   }
 
+  const handlePdfExport = async (language: 'ru' | 'ro', exportType: 'single' | 'all') => {
+    try {
+      const id = exportType === 'single' && editingProtocol ? editingProtocol._id : undefined
+      await exportPdf(language, id)
+      showSnackbar(
+        language === 'ru' ? 'PDF успешно экспортирован' : 'PDF exportat cu succes',
+        'success'
+      )
+      setExportDialogOpen(false)
+    } catch (error) {
+      showSnackbar(
+        language === 'ru' ? 'Ошибка экспорта PDF' : 'Eroare la exportul PDF',
+        'error'
+      )
+    }
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h5">Управление протоколами массажа</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenDialog()}
-        >
-          Добавить протокол
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => setExportDialogOpen(true)}
+          >
+            Экспорт в PDF
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
+            Добавить протокол
+          </Button>
+        </Box>
       </Box>
 
       <TableContainer
@@ -869,6 +900,15 @@ const MassageProtocolsManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <PdfExportDialog
+        open={exportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        onExport={handlePdfExport}
+        entityType="massage-protocols"
+        entityName={editingProtocol?.name.ru}
+        loading={exportLoading}
+      />
 
       <Snackbar
         open={snackbar.open}

@@ -24,6 +24,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import type { HygieneGuideline } from '@/types'
 import {
   getHygieneGuidelines,
@@ -31,6 +32,8 @@ import {
   updateHygieneGuideline,
   deleteHygieneGuideline,
 } from '@/services/api'
+import PdfExportDialog from '@/components/admin/PdfExportDialog'
+import { usePdfExport } from '@/hooks/usePdfExport'
 
 const categories = [
   { value: 'sterilization', labelRu: 'Методы стерилизации', labelRo: 'Metode de sterilizare' },
@@ -54,6 +57,8 @@ const HygieneGuidelinesManager = () => {
     isPublished: true,
   })
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const { exportPdf, loading: exportLoading } = usePdfExport('hygiene-guidelines')
 
   useEffect(() => {
     loadGuidelines()
@@ -130,17 +135,43 @@ const HygieneGuidelinesManager = () => {
     setSnackbar({ open: true, message, severity })
   }
 
+  const handlePdfExport = async (language: 'ru' | 'ro', exportType: 'single' | 'all') => {
+    try {
+      const id = exportType === 'single' && editingGuideline ? editingGuideline._id : undefined
+      await exportPdf(language, id)
+      showSnackbar(
+        language === 'ru' ? 'PDF успешно экспортирован' : 'PDF exportat cu succes',
+        'success'
+      )
+      setExportDialogOpen(false)
+    } catch (error) {
+      showSnackbar(
+        language === 'ru' ? 'Ошибка экспорта PDF' : 'Eroare la exportul PDF',
+        'error'
+      )
+    }
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h5">Управление рекомендациями по гигиене</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenDialog()}
-        >
-          Добавить
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => setExportDialogOpen(true)}
+          >
+            Экспорт в PDF
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
+            Добавить
+          </Button>
+        </Box>
       </Box>
 
       <TableContainer
@@ -280,6 +311,15 @@ const HygieneGuidelinesManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <PdfExportDialog
+        open={exportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        onExport={handlePdfExport}
+        entityType="hygiene-guidelines"
+        entityName={editingGuideline?.title.ru}
+        loading={exportLoading}
+      />
 
       <Snackbar
         open={snackbar.open}

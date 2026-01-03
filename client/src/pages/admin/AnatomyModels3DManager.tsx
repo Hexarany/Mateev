@@ -6,8 +6,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import ImageIcon from '@mui/icons-material/Image'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import type { AnatomyModel3D } from '@/types'
 import { getAnatomyModels3D, createAnatomyModel3D, updateAnatomyModel3D, deleteAnatomyModel3D, uploadMedia } from '@/services/api'
+import PdfExportDialog from '@/components/admin/PdfExportDialog'
+import { usePdfExport } from '@/hooks/usePdfExport'
 
 const categories = [
   { value: 'bones', label: 'Кости / Oase' },
@@ -41,6 +44,8 @@ const AnatomyModels3DManager = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
   const [uploadingModel, setUploadingModel] = useState(false)
   const [uploadingPreview, setUploadingPreview] = useState(false)
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const { exportPdf, loading: exportLoading } = usePdfExport('anatomy-models')
 
   useEffect(() => { loadModels() }, [])
 
@@ -189,13 +194,39 @@ const AnatomyModels3DManager = () => {
     setSnackbar({ open: true, message, severity })
   }
 
+  const handlePdfExport = async (language: 'ru' | 'ro', exportType: 'single' | 'all') => {
+    try {
+      const id = exportType === 'single' && editing ? editing._id : undefined
+      await exportPdf(language, id)
+      showSnackbar(
+        language === 'ru' ? 'PDF успешно экспортирован' : 'PDF exportat cu succes',
+        'success'
+      )
+      setExportDialogOpen(false)
+    } catch (error) {
+      showSnackbar(
+        language === 'ru' ? 'Ошибка экспорта PDF' : 'Eroare la exportul PDF',
+        'error'
+      )
+    }
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h5">Управление 3D моделями</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpen()}>
-          Добавить
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => setExportDialogOpen(true)}
+          >
+            Экспорт в PDF
+          </Button>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpen()}>
+            Добавить
+          </Button>
+        </Box>
       </Box>
 
       <TableContainer
@@ -396,6 +427,15 @@ const AnatomyModels3DManager = () => {
           <Button onClick={handleSave} variant="contained" sx={{ minHeight: 40 }}>Сохранить</Button>
         </DialogActions>
       </Dialog>
+
+      <PdfExportDialog
+        open={exportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        onExport={handlePdfExport}
+        entityType="anatomy-models"
+        entityName={editing?.name.ru}
+        loading={exportLoading}
+      />
 
       <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>

@@ -27,8 +27,11 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import type { TriggerPoint } from '@/types'
 import { getTriggerPoints, deleteTriggerPoint, createTriggerPoint, updateTriggerPoint } from '@/services/api'
+import PdfExportDialog from '@/components/admin/PdfExportDialog'
+import { usePdfExport } from '@/hooks/usePdfExport'
 
 const categories = [
   { value: 'head_neck', label: 'Голова/Шея / Cap/Gât' },
@@ -74,6 +77,8 @@ const TriggerPointsManager = () => {
     order: 0,
   })
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const { exportPdf, loading: exportLoading } = usePdfExport('trigger-points')
 
   useEffect(() => { loadPoints() }, [])
 
@@ -177,17 +182,43 @@ const TriggerPointsManager = () => {
     setSnackbar({ open: true, message, severity })
   }
 
+  const handlePdfExport = async (language: 'ru' | 'ro', exportType: 'single' | 'all') => {
+    try {
+      const id = exportType === 'single' && editingPoint ? editingPoint._id : undefined
+      await exportPdf(language, id)
+      showSnackbar(
+        language === 'ru' ? 'PDF успешно экспортирован' : 'PDF exportat cu succes',
+        'success'
+      )
+      setExportDialogOpen(false)
+    } catch (error) {
+      showSnackbar(
+        language === 'ru' ? 'Ошибка экспорта PDF' : 'Eroare la exportul PDF',
+        'error'
+      )
+    }
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h5">Управление триггерными точками</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenDialog()}
-        >
-          Добавить точку
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => setExportDialogOpen(true)}
+          >
+            Экспорт в PDF
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
+            Добавить точку
+          </Button>
+        </Box>
       </Box>
 
       {loading ? (
@@ -517,6 +548,15 @@ const TriggerPointsManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <PdfExportDialog
+        open={exportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        onExport={handlePdfExport}
+        entityType="trigger-points"
+        entityName={editingPoint?.name.ru}
+        loading={exportLoading}
+      />
 
       <Snackbar
         open={snackbar.open}

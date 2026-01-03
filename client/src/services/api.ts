@@ -1488,4 +1488,66 @@ export const sendBulkEmail = async (
   return response.data
 }
 
+// ==================== PDF EXPORT ====================
+
+// Export Massage Protocols to PDF
+export const exportMassageProtocolsPdf = (
+  language: 'ru' | 'ro',
+  id?: string,
+  token?: string
+) => {
+  const params = new URLSearchParams({ language })
+  if (id) params.append('id', id)
+
+  return api.post(`/export/massage-protocols/pdf?${params}`, {}, {
+    responseType: 'blob',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+}
+
+// Export Trigger Points to PDF
+export const exportTriggerPointsPdf = (
+  language: 'ru' | 'ro',
+  id?: string,
+  token?: string
+) => {
+  const params = new URLSearchParams({ language })
+  if (id) params.append('id', id)
+
+  return api.post(`/export/trigger-points/pdf?${params}`, {}, {
+    responseType: 'blob',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+}
+
+// Export Hygiene Guidelines to PDF
+export const exportHygieneGuidelinesPdf = (
+  language: 'ru' | 'ro',
+  id?: string,
+  token?: string
+) => {
+  const params = new URLSearchParams({ language })
+  if (id) params.append('id', id)
+
+  return api.post(`/export/hygiene-guidelines/pdf?${params}`, {}, {
+    responseType: 'blob',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+}
+
+// Export Anatomy 3D Models to PDF
+export const exportAnatomyModelsPdf = (
+  language: 'ru' | 'ro',
+  id?: string,
+  token?: string
+) => {
+  const params = new URLSearchParams({ language })
+  if (id) params.append('id', id)
+
+  return api.post(`/export/anatomy-models/pdf?${params}`, {}, {
+    responseType: 'blob',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+}
+
 export default api
