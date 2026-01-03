@@ -77,6 +77,27 @@ interface AnatomyModel3D {
   }
 }
 
+interface YouTubeVideo {
+  url: string
+  title: MultiLangText
+  description?: MultiLangText
+  author?: string
+  duration?: number
+}
+
+interface Topic {
+  name: MultiLangText
+  description: MultiLangText
+  content: MultiLangText
+  images?: MediaFile[]
+  videos?: MediaFile[]
+  youtubeVideos?: YouTubeVideo[]
+  model3D?: string
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  estimatedTime: number
+  region?: MultiLangText
+}
+
 /**
  * Generate PDF for Massage Protocols
  */
@@ -484,6 +505,166 @@ export async function generateAnatomyModelsPdf(
       checkPageBreak(doc, 250)
       addSectionHeading(doc, language === 'ru' ? 'ПРЕДПРОСМОТР' : 'PREVIZUALIZARE', 2)
       await addImageToPdf(doc, model.previewImage)
+    }
+
+    doc.moveDown(1)
+  }
+}
+
+/**
+ * Generate PDF for Topics (Anatomy Themes)
+ */
+export async function generateTopicsPdf(
+  doc: PDFKit.PDFDocument,
+  topics: Topic[],
+  language: 'ru' | 'ro'
+): Promise<void> {
+  const title = language === 'ru' ? 'Темы по анатомии' : 'Teme de anatomie'
+  addPdfHeader(doc, title)
+
+  for (let i = 0; i < topics.length; i++) {
+    const topic = topics[i]
+
+    if (i > 0) {
+      checkPageBreak(doc, 300)
+      addSeparator(doc, 'solid')
+      doc.moveDown(1)
+    }
+
+    // Topic name
+    addSectionHeading(doc, topic.name[language], 1)
+
+    // Metadata
+    addMetadataField(
+      doc,
+      language === 'ru' ? 'Сложность' : 'Dificultate',
+      formatDifficulty(topic.difficulty, language)
+    )
+    addMetadataField(
+      doc,
+      language === 'ru' ? 'Время изучения' : 'Timp de studiu',
+      `${topic.estimatedTime} ${language === 'ru' ? 'мин' : 'min'}`
+    )
+
+    if (topic.region?.[language]) {
+      addMetadataField(
+        doc,
+        language === 'ru' ? 'Регион' : 'Regiune',
+        topic.region[language]
+      )
+    }
+
+    doc.moveDown(0.5)
+
+    // Description
+    if (topic.description?.[language]) {
+      addSectionHeading(doc, language === 'ru' ? 'ОПИСАНИЕ' : 'DESCRIERE', 2)
+      addBodyText(doc, topic.description[language])
+    }
+
+    // Content
+    if (topic.content?.[language]) {
+      checkPageBreak(doc)
+      addSectionHeading(doc, language === 'ru' ? 'СОДЕРЖАНИЕ' : 'CONȚINUT', 2)
+      addBodyText(doc, topic.content[language])
+    }
+
+    // Images
+    if (topic.images && topic.images.length > 0) {
+      checkPageBreak(doc, 250)
+      addSectionHeading(doc, language === 'ru' ? 'ИЗОБРАЖЕНИЯ' : 'IMAGINI', 2)
+
+      for (const image of topic.images) {
+        if (image.type === 'image') {
+          await addImageToPdf(doc, image.url, image.caption?.[language])
+        }
+      }
+    }
+
+    // Videos
+    const allVideos = [
+      ...(topic.videos?.filter(v => v.type === 'video') || []),
+    ]
+
+    if (allVideos.length > 0) {
+      checkPageBreak(doc)
+      addSectionHeading(doc, language === 'ru' ? 'ВИДЕО' : 'VIDEOCLIPURI', 2)
+
+      for (const video of allVideos) {
+        doc
+          .fontSize(PDF_STYLES.sizes.body)
+          .fillColor(PDF_STYLES.colors.text)
+          .text(`• ${video.filename || video.url}`, {
+            link: video.url,
+            underline: true,
+            continued: false,
+          })
+
+        if (video.caption?.[language]) {
+          doc
+            .fontSize(PDF_STYLES.sizes.caption)
+            .fillColor(PDF_STYLES.colors.lightGray)
+            .text(`  ${video.caption[language]}`)
+        }
+
+        doc.moveDown(0.3)
+      }
+    }
+
+    // YouTube Videos
+    if (topic.youtubeVideos && topic.youtubeVideos.length > 0) {
+      checkPageBreak(doc)
+      addSectionHeading(doc, language === 'ru' ? 'YOUTUBE ВИДЕО' : 'VIDEOCLIPURI YOUTUBE', 2)
+
+      for (const ytVideo of topic.youtubeVideos) {
+        doc
+          .fontSize(PDF_STYLES.sizes.body)
+          .fillColor(PDF_STYLES.colors.text)
+          .text(`• ${ytVideo.title[language]}`, {
+            link: ytVideo.url,
+            underline: true,
+            continued: false,
+          })
+
+        if (ytVideo.description?.[language]) {
+          doc
+            .fontSize(PDF_STYLES.sizes.caption)
+            .fillColor(PDF_STYLES.colors.lightGray)
+            .text(`  ${ytVideo.description[language]}`)
+        }
+
+        if (ytVideo.author) {
+          doc
+            .fontSize(PDF_STYLES.sizes.caption)
+            .fillColor(PDF_STYLES.colors.lightGray)
+            .text(`  ${language === 'ru' ? 'Автор' : 'Autor'}: ${ytVideo.author}`)
+        }
+
+        if (ytVideo.duration) {
+          doc
+            .fontSize(PDF_STYLES.sizes.caption)
+            .fillColor(PDF_STYLES.colors.lightGray)
+            .text(`  ${language === 'ru' ? 'Длительность' : 'Durată'}: ${ytVideo.duration} ${language === 'ru' ? 'мин' : 'min'}`)
+        }
+
+        doc.moveDown(0.5)
+      }
+    }
+
+    // 3D Model
+    if (topic.model3D) {
+      checkPageBreak(doc)
+      addSectionHeading(doc, language === 'ru' ? '3D МОДЕЛЬ' : 'MODEL 3D', 2)
+
+      doc
+        .fontSize(PDF_STYLES.sizes.body)
+        .fillColor(PDF_STYLES.colors.primary)
+        .text(topic.model3D, {
+          link: topic.model3D,
+          underline: true,
+        })
+        .fillColor(PDF_STYLES.colors.text)
+        .moveDown(0.5)
     }
 
     doc.moveDown(1)

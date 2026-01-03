@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import api from '@/services/api'
 
-type EntityType = 'massage-protocols' | 'trigger-points' | 'hygiene-guidelines' | 'anatomy-models'
+type EntityType = 'massage-protocols' | 'trigger-points' | 'hygiene-guidelines' | 'anatomy-models' | 'topics'
 
 interface UsePdfExportReturn {
   exportPdf: (language: 'ru' | 'ro', id?: string) => Promise<void>

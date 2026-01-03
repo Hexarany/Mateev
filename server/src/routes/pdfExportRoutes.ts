@@ -3,7 +3,7 @@ import {
   exportMassageProtocolsPdf,
   exportTriggerPointsPdf,
   exportHygieneGuidelinesPdf,
-  exportAnatomyModelsPdf,
+  exportTopicsPdf,
 } from '../controllers/pdfExportController'
 import { authenticateToken, authorizeRole } from '../middleware/auth'
 
@@ -46,14 +46,14 @@ router.post(
 )
 
 /**
- * Export Anatomy 3D Models to PDF
- * POST /api/export/anatomy-models/pdf?language=ru&id={optional}
+ * Export Topics (Anatomy Themes) to PDF
+ * POST /api/export/topics/pdf?language=ru&id={optional}
  */
 router.post(
-  '/anatomy-models/pdf',
+  '/topics/pdf',
   authenticateToken,
   authorizeRole('admin'),
-  exportAnatomyModelsPdf
+  exportTopicsPdf
 )
 
 export default router

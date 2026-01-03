@@ -27,9 +27,12 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import type { Topic, Category } from '@/types'
 import TopicImagesManager from '@/components/TopicImagesManager'
 import { createTopic, updateTopic, deleteTopic } from '@/services/api' // <-- ИМПОРТ НОВЫХ ФУНКЦИЙ
+import PdfExportDialog from '@/components/admin/PdfExportDialog'
+import { usePdfExport } from '@/hooks/usePdfExport'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
 
@@ -74,6 +77,8 @@ const TopicsManager = () => {
     }>,
   })
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const { exportPdf, loading: exportLoading } = usePdfExport('topics')
 
   useEffect(() => {
     loadTopics()
@@ -195,17 +200,42 @@ const TopicsManager = () => {
     return categoryId.name?.ru || 'Без категории'
   }
 
+  const handlePdfExport = async (language: 'ru' | 'ro', id?: string) => {
+    try {
+      await exportPdf(language, id)
+      showSnackbar(
+        language === 'ru' ? 'PDF успешно экспортирован' : 'PDF exportat cu succes',
+        'success'
+      )
+      setExportDialogOpen(false)
+    } catch (error) {
+      showSnackbar(
+        language === 'ru' ? 'Ошибка экспорта PDF' : 'Eroare la exportul PDF',
+        'error'
+      )
+    }
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h5">Управление темами</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenDialog()}
-        >
-          Добавить тему
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => setExportDialogOpen(true)}
+          >
+            Экспорт в PDF
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
+            Добавить тему
+          </Button>
+        </Box>
       </Box>
 
       <TableContainer
@@ -656,6 +686,16 @@ const TopicsManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <PdfExportDialog
+        open={exportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        onExport={handlePdfExport}
+        entityType="topics"
+        entityName={editingTopic?.name.ru}
+        loading={exportLoading}
+        items={topics}
+      />
 
       <Snackbar
         open={snackbar.open}

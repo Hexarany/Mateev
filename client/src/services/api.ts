@@ -1550,4 +1550,19 @@ export const exportAnatomyModelsPdf = (
   })
 }
 
+// Export Topics (Anatomy Themes) to PDF
+export const exportTopicsPdf = (
+  language: 'ru' | 'ro',
+  id?: string,
+  token?: string
+) => {
+  const params = new URLSearchParams({ language })
+  if (id) params.append('id', id)
+
+  return api.post(`/export/topics/pdf?${params}`, {}, {
+    responseType: 'blob',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+}
+
 export default api

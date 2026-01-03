@@ -3,12 +3,12 @@ import PDFDocument from 'pdfkit'
 import MassageProtocol from '../models/MassageProtocol'
 import TriggerPoint from '../models/TriggerPoint'
 import HygieneGuideline from '../models/HygieneGuideline'
-import AnatomyModel3D from '../models/AnatomyModel3D'
+import Topic from '../models/Topic'
 import {
   generateMassageProtocolsPdf,
   generateTriggerPointsPdf,
   generateHygieneGuidelinesPdf,
-  generateAnatomyModelsPdf,
+  generateTopicsPdf,
 } from '../services/pdfExportService'
 import { generatePdfFilename } from '../utils/pdfHelpers'
 
@@ -237,10 +237,10 @@ export const exportHygieneGuidelinesPdf = async (req: Request, res: Response) =>
 }
 
 /**
- * Export Anatomy 3D Models to PDF
- * POST /api/export/anatomy-models/pdf?language=ru&id={optional}
+ * Export Topics (Anatomy Themes) to PDF
+ * POST /api/export/topics/pdf?language=ru&id={optional}
  */
-export const exportAnatomyModelsPdf = async (req: Request, res: Response) => {
+export const exportTopicsPdf = async (req: Request, res: Response) => {
   try {
     const { language, id } = req.query
 
@@ -252,38 +252,38 @@ export const exportAnatomyModelsPdf = async (req: Request, res: Response) => {
     }
 
     // Fetch data
-    let models
+    let topics
     let slug = undefined
 
     if (id) {
-      // Single model export
-      const model = await AnatomyModel3D.findById(id)
-      if (!model) {
-        return res.status(404).json({ message: 'Anatomy 3D model not found' })
+      // Single topic export
+      const topic = await Topic.findById(id)
+      if (!topic) {
+        return res.status(404).json({ message: 'Topic not found' })
       }
-      models = [model]
-      slug = model.slug
+      topics = [topic]
+      slug = topic.slug
     } else {
-      // Bulk export - all models
-      models = await AnatomyModel3D.find({ isPublished: true }).sort({ category: 1, order: 1 })
+      // Bulk export - all topics
+      topics = await Topic.find().sort({ order: 1 })
     }
 
-    if (models.length === 0) {
-      return res.status(404).json({ message: 'No anatomy 3D models found' })
+    if (topics.length === 0) {
+      return res.status(404).json({ message: 'No topics found' })
     }
 
     // Generate filename
-    const filename = generatePdfFilename('anatomy-models', language as 'ru' | 'ro', slug)
+    const filename = generatePdfFilename('topics', language as 'ru' | 'ro', slug)
 
     // Create PDF document
     const doc = new PDFDocument({
       size: 'A4',
       margins: { top: 50, bottom: 50, left: 50, right: 50 },
       info: {
-        Title: language === 'ru' ? '3D Модели анатомии' : 'Modele 3D de anatomie',
+        Title: language === 'ru' ? 'Темы по анатомии' : 'Teme de anatomie',
         Author: 'Anatomia Interactive',
-        Subject: 'Anatomy 3D Models Export',
-        Keywords: 'anatomy, 3d, models, anatomia',
+        Subject: 'Anatomy Topics Export',
+        Keywords: 'anatomy, topics, anatomia',
       },
     })
 
@@ -295,16 +295,16 @@ export const exportAnatomyModelsPdf = async (req: Request, res: Response) => {
     doc.pipe(res)
 
     // Generate PDF content
-    await generateAnatomyModelsPdf(doc, models as any, language as 'ru' | 'ro')
+    await generateTopicsPdf(doc, topics as any, language as 'ru' | 'ro')
 
     // Finalize PDF
     doc.end()
   } catch (error) {
-    console.error('Error exporting anatomy 3D models to PDF:', error)
+    console.error('Error exporting topics to PDF:', error)
 
     if (!res.headersSent) {
       res.status(500).json({
-        message: 'Failed to export anatomy 3D models to PDF',
+        message: 'Failed to export topics to PDF',
         error: error instanceof Error ? error.message : 'Unknown error',
       })
     }

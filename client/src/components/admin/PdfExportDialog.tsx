@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -23,11 +23,12 @@ import CloseIcon from '@mui/icons-material/Close'
 interface PdfExportDialogProps {
   open: boolean
   onClose: () => void
-  onExport: (language: 'ru' | 'ro', exportType: 'single' | 'all') => Promise<void>
+  onExport: (language: 'ru' | 'ro', id?: string) => Promise<void>
   entityType: string
   entityName?: string
   singleMode?: boolean
   loading?: boolean
+  items?: Array<{ _id: string; name: { ru: string; ro: string } }>
 }
 
 const PdfExportDialog: React.FC<PdfExportDialogProps> = ({
@@ -38,13 +39,43 @@ const PdfExportDialog: React.FC<PdfExportDialogProps> = ({
   entityName,
   singleMode = false,
   loading = false,
+  items = [],
 }) => {
   const [language, setLanguage] = useState<'ru' | 'ro'>('ru')
-  const [exportType, setExportType] = useState<'single' | 'all'>('all')
+  const [exportType, setExportType] = useState<'all' | 'single' | 'selected'>('all')
+  const [selectedItemId, setSelectedItemId] = useState<string>('')
+
+  // Reset selected item when items change
+  useEffect(() => {
+    if (items.length > 0 && !selectedItemId) {
+      setSelectedItemId(items[0]._id)
+    }
+  }, [items])
+
+  // Reset to 'all' when dialog opens
+  useEffect(() => {
+    if (open) {
+      setExportType('all')
+      if (items.length > 0) {
+        setSelectedItemId(items[0]._id)
+      }
+    }
+  }, [open, items])
 
   const handleExport = async () => {
-    const type = singleMode ? 'single' : exportType
-    await onExport(language, type)
+    if (singleMode) {
+      // Single mode: always export without ID (relies on editing context)
+      await onExport(language, undefined)
+    } else if (exportType === 'all') {
+      // Export all items
+      await onExport(language, undefined)
+    } else if (exportType === 'single') {
+      // Export currently editing item (no ID needed, context-based)
+      await onExport(language, undefined)
+    } else if (exportType === 'selected') {
+      // Export selected item from dropdown
+      await onExport(language, selectedItemId)
+    }
   }
 
   const getEntityDisplayName = (type: string, lang: 'ru' | 'ro') => {
@@ -52,7 +83,7 @@ const PdfExportDialog: React.FC<PdfExportDialogProps> = ({
       'massage-protocols': { ru: 'Протоколы массажа', ro: 'Protocoale de masaj' },
       'trigger-points': { ru: 'Триггерные точки', ro: 'Puncte de declanșare' },
       'hygiene-guidelines': { ru: 'Правила гигиены', ro: 'Reguli de igienă' },
-      'anatomy-models': { ru: '3D Модели анатомии', ro: 'Modele 3D de anatomie' },
+      'topics': { ru: 'Темы по анатомии', ro: 'Teme de anatomie' },
     }
     return names[type]?.[lang] || type
   }
@@ -92,7 +123,7 @@ const PdfExportDialog: React.FC<PdfExportDialogProps> = ({
               </FormLabel>
               <RadioGroup
                 value={exportType}
-                onChange={(e) => setExportType(e.target.value as 'single' | 'all')}
+                onChange={(e) => setExportType(e.target.value as 'all' | 'single' | 'selected')}
               >
                 <FormControlLabel
                   value="all"
@@ -104,6 +135,22 @@ const PdfExportDialog: React.FC<PdfExportDialogProps> = ({
                   }
                   disabled={loading}
                 />
+
+                {/* Option to select specific item from list */}
+                {items.length > 0 && (
+                  <FormControlLabel
+                    value="selected"
+                    control={<Radio />}
+                    label={
+                      language === 'ru'
+                        ? 'Выбрать конкретный элемент'
+                        : 'Selectați un element specific'
+                    }
+                    disabled={loading}
+                  />
+                )}
+
+                {/* Option to export currently editing item */}
                 {entityName && (
                   <FormControlLabel
                     value="single"
@@ -117,6 +164,27 @@ const PdfExportDialog: React.FC<PdfExportDialogProps> = ({
                   />
                 )}
               </RadioGroup>
+            </FormControl>
+          )}
+
+          {/* Item Selection Dropdown (when "selected" is chosen) */}
+          {!singleMode && exportType === 'selected' && items.length > 0 && (
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>
+                {language === 'ru' ? 'Выберите элемент' : 'Selectați elementul'}
+              </InputLabel>
+              <Select
+                value={selectedItemId}
+                label={language === 'ru' ? 'Выберите элемент' : 'Selectați elementul'}
+                onChange={(e) => setSelectedItemId(e.target.value)}
+                disabled={loading}
+              >
+                {items.map((item) => (
+                  <MenuItem key={item._id} value={item._id}>
+                    {item.name[language]}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           )}
 

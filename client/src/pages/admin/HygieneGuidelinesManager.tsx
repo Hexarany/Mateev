@@ -135,9 +135,8 @@ const HygieneGuidelinesManager = () => {
     setSnackbar({ open: true, message, severity })
   }
 
-  const handlePdfExport = async (language: 'ru' | 'ro', exportType: 'single' | 'all') => {
+  const handlePdfExport = async (language: 'ru' | 'ro', id?: string) => {
     try {
-      const id = exportType === 'single' && editingGuideline ? editingGuideline._id : undefined
       await exportPdf(language, id)
       showSnackbar(
         language === 'ru' ? 'PDF успешно экспортирован' : 'PDF exportat cu succes',
@@ -319,6 +318,7 @@ const HygieneGuidelinesManager = () => {
         entityType="hygiene-guidelines"
         entityName={editingGuideline?.title.ru}
         loading={exportLoading}
+        items={guidelines.map(g => ({ _id: g._id, name: g.title }))}
       />
 
       <Snackbar

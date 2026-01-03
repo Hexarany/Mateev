@@ -306,9 +306,8 @@ const MassageProtocolsManager = () => {
     setSnackbar({ open: true, message, severity })
   }
 
-  const handlePdfExport = async (language: 'ru' | 'ro', exportType: 'single' | 'all') => {
+  const handlePdfExport = async (language: 'ru' | 'ro', id?: string) => {
     try {
-      const id = exportType === 'single' && editingProtocol ? editingProtocol._id : undefined
       await exportPdf(language, id)
       showSnackbar(
         language === 'ru' ? 'PDF успешно экспортирован' : 'PDF exportat cu succes',
@@ -908,6 +907,7 @@ const MassageProtocolsManager = () => {
         entityType="massage-protocols"
         entityName={editingProtocol?.name.ru}
         loading={exportLoading}
+        items={protocols}
       />
 
       <Snackbar
