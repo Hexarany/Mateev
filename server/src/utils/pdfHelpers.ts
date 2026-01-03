@@ -3,6 +3,13 @@ import axios from 'axios'
 import fs from 'fs/promises'
 import path from 'path'
 
+// Font paths
+const FONTS_DIR = path.join(__dirname, '../../fonts')
+export const FONT_PATHS = {
+  regular: path.join(FONTS_DIR, 'DejaVuSans.ttf'),
+  bold: path.join(FONTS_DIR, 'DejaVuSans-Bold.ttf'),
+}
+
 // PDF Style Constants
 export const PDF_STYLES = {
   colors: {
@@ -13,9 +20,9 @@ export const PDF_STYLES = {
     border: '#CCCCCC',
   },
   fonts: {
-    regular: 'Helvetica',
-    bold: 'Helvetica-Bold',
-    italic: 'Helvetica-Oblique',
+    regular: 'DejaVuSans',
+    bold: 'DejaVuSans-Bold',
+    italic: 'DejaVuSans',
   },
   sizes: {
     title: 22,
@@ -101,6 +108,14 @@ export function wrapText(
   }
 
   return lines
+}
+
+/**
+ * Register custom fonts with the PDF document
+ */
+export function registerFonts(doc: PDFKit.PDFDocument): void {
+  doc.registerFont('DejaVuSans', FONT_PATHS.regular)
+  doc.registerFont('DejaVuSans-Bold', FONT_PATHS.bold)
 }
 
 /**

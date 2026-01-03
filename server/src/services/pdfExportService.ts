@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit'
 import {
   PDF_STYLES,
+  registerFonts,
   addPdfHeader,
   addSectionHeading,
   addBodyText,
@@ -106,6 +107,9 @@ export async function generateMassageProtocolsPdf(
   protocols: MassageProtocol[],
   language: 'ru' | 'ro'
 ): Promise<void> {
+  // Register fonts for Cyrillic and Romanian support
+  registerFonts(doc)
+
   const title = language === 'ru' ? 'Протоколы массажа' : 'Protocoale de masaj'
   addPdfHeader(doc, title)
 
@@ -222,6 +226,9 @@ export async function generateTriggerPointsPdf(
   points: TriggerPoint[],
   language: 'ru' | 'ro'
 ): Promise<void> {
+  // Register fonts for Cyrillic and Romanian support
+  registerFonts(doc)
+
   const title = language === 'ru' ? 'Триггерные точки' : 'Puncte de declanșare'
   addPdfHeader(doc, title)
 
@@ -338,6 +345,9 @@ export async function generateHygieneGuidelinesPdf(
   guidelines: HygieneGuideline[],
   language: 'ru' | 'ro'
 ): Promise<void> {
+  // Register fonts for Cyrillic and Romanian support
+  registerFonts(doc)
+
   const title = language === 'ru' ? 'Правила гигиены' : 'Reguli de igienă'
   addPdfHeader(doc, title)
 
@@ -390,6 +400,9 @@ export async function generateAnatomyModelsPdf(
   models: AnatomyModel3D[],
   language: 'ru' | 'ro'
 ): Promise<void> {
+  // Register fonts for Cyrillic and Romanian support
+  registerFonts(doc)
+
   const title = language === 'ru' ? '3D Модели анатомии' : 'Modele 3D de anatomie'
   addPdfHeader(doc, title)
 
@@ -519,6 +532,9 @@ export async function generateTopicsPdf(
   topics: Topic[],
   language: 'ru' | 'ro'
 ): Promise<void> {
+  // Register fonts for Cyrillic and Romanian support
+  registerFonts(doc)
+
   const title = language === 'ru' ? 'Темы по анатомии' : 'Teme de anatomie'
   addPdfHeader(doc, title)
 
