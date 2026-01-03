@@ -15,6 +15,7 @@ COPY client/tsconfig*.json ./client/
 COPY server/package*.json ./server/
 COPY server/src ./server/src
 COPY server/tsconfig*.json ./server/
+COPY server/fonts ./server/fonts
 
 # Build client FIRST
 WORKDIR /app/client
