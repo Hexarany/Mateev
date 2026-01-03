@@ -12,6 +12,7 @@ import {
   formatDifficulty,
   formatCategory,
 } from '../utils/pdfHelpers'
+import { renderMarkdownToPdf } from '../utils/markdownPdfRenderer'
 
 interface MultiLangText {
   ru: string
@@ -147,35 +148,35 @@ export async function generateMassageProtocolsPdf(
     // Description
     if (protocol.description?.[language]) {
       addSectionHeading(doc, language === 'ru' ? 'ОПИСАНИЕ' : 'DESCRIERE', 2)
-      addBodyText(doc, protocol.description[language])
+      await renderMarkdownToPdf(doc, protocol.description[language])
     }
 
     // Content
     if (protocol.content?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'СОДЕРЖАНИЕ' : 'CONȚINUT', 2)
-      addBodyText(doc, protocol.content[language])
+      await renderMarkdownToPdf(doc, protocol.content[language])
     }
 
     // Benefits
     if (protocol.benefits?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'ПОЛЬЗА' : 'BENEFICII', 2)
-      addBodyText(doc, protocol.benefits[language])
+      await renderMarkdownToPdf(doc, protocol.benefits[language])
     }
 
     // Contraindications
     if (protocol.contraindications?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'ПРОТИВОПОКАЗАНИЯ' : 'CONTRAINDICAȚII', 2)
-      addBodyText(doc, protocol.contraindications[language])
+      await renderMarkdownToPdf(doc, protocol.contraindications[language])
     }
 
     // Technique
     if (protocol.technique?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'ТЕХНИКА ВЫПОЛНЕНИЯ' : 'TEHNICA DE EXECUȚIE', 2)
-      addBodyText(doc, protocol.technique[language])
+      await renderMarkdownToPdf(doc, protocol.technique[language])
     }
 
     // Images
@@ -266,35 +267,35 @@ export async function generateTriggerPointsPdf(
     // Location
     if (point.location?.[language]) {
       addSectionHeading(doc, language === 'ru' ? 'ЛОКАЛИЗАЦИЯ' : 'LOCALIZARE', 2)
-      addBodyText(doc, point.location[language])
+      await renderMarkdownToPdf(doc, point.location[language])
     }
 
     // Symptoms
     if (point.symptoms?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'СИМПТОМЫ' : 'SIMPTOME', 2)
-      addBodyText(doc, point.symptoms[language])
+      await renderMarkdownToPdf(doc, point.symptoms[language])
     }
 
     // Referral Pattern
     if (point.referralPattern?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'ПАТТЕРН ОТРАЖЕННОЙ БОЛИ' : 'MODEL DE DURERE REFERATĂ', 2)
-      addBodyText(doc, point.referralPattern[language])
+      await renderMarkdownToPdf(doc, point.referralPattern[language])
     }
 
     // Technique
     if (point.technique?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'ТЕХНИКА РАБОТЫ' : 'TEHNICA DE LUCRU', 2)
-      addBodyText(doc, point.technique[language])
+      await renderMarkdownToPdf(doc, point.technique[language])
     }
 
     // Contraindications
     if (point.contraindications?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'ПРОТИВОПОКАЗАНИЯ' : 'CONTRAINDICAȚII', 2)
-      addBodyText(doc, point.contraindications[language])
+      await renderMarkdownToPdf(doc, point.contraindications[language])
     }
 
     // Images
@@ -375,7 +376,7 @@ export async function generateHygieneGuidelinesPdf(
     // Content
     if (guideline.content?.[language]) {
       addSectionHeading(doc, language === 'ru' ? 'СОДЕРЖАНИЕ' : 'CONȚINUT', 2)
-      addBodyText(doc, guideline.content[language])
+      await renderMarkdownToPdf(doc, guideline.content[language])
     }
 
     // Images
@@ -454,7 +455,7 @@ export async function generateAnatomyModelsPdf(
     // Description
     if (model.description?.[language]) {
       addSectionHeading(doc, language === 'ru' ? 'ОПИСАНИЕ' : 'DESCRIERE', 2)
-      addBodyText(doc, model.description[language])
+      await renderMarkdownToPdf(doc, model.description[language])
     }
 
     // Tags
@@ -575,14 +576,14 @@ export async function generateTopicsPdf(
     // Description
     if (topic.description?.[language]) {
       addSectionHeading(doc, language === 'ru' ? 'ОПИСАНИЕ' : 'DESCRIERE', 2)
-      addBodyText(doc, topic.description[language])
+      await renderMarkdownToPdf(doc, topic.description[language])
     }
 
     // Content
     if (topic.content?.[language]) {
       checkPageBreak(doc)
       addSectionHeading(doc, language === 'ru' ? 'СОДЕРЖАНИЕ' : 'CONȚINUT', 2)
-      addBodyText(doc, topic.content[language])
+      await renderMarkdownToPdf(doc, topic.content[language])
     }
 
     // Images
