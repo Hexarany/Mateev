@@ -114,8 +114,31 @@ export function wrapText(
  * Register custom fonts with the PDF document
  */
 export function registerFonts(doc: PDFKit.PDFDocument): void {
-  doc.registerFont('DejaVuSans', FONT_PATHS.regular)
-  doc.registerFont('DejaVuSans-Bold', FONT_PATHS.bold)
+  try {
+    // Check if font files exist
+    const regularExists = require('fs').existsSync(FONT_PATHS.regular)
+    const boldExists = require('fs').existsSync(FONT_PATHS.bold)
+
+    if (!regularExists) {
+      console.error(`Font file not found: ${FONT_PATHS.regular}`)
+      throw new Error(`Font file not found: ${FONT_PATHS.regular}`)
+    }
+
+    if (!boldExists) {
+      console.error(`Font file not found: ${FONT_PATHS.bold}`)
+      throw new Error(`Font file not found: ${FONT_PATHS.bold}`)
+    }
+
+    console.log('Registering fonts:', { regular: FONT_PATHS.regular, bold: FONT_PATHS.bold })
+
+    doc.registerFont('DejaVuSans', FONT_PATHS.regular)
+    doc.registerFont('DejaVuSans-Bold', FONT_PATHS.bold)
+
+    console.log('Fonts registered successfully')
+  } catch (error) {
+    console.error('Error registering fonts:', error)
+    throw error
+  }
 }
 
 /**
