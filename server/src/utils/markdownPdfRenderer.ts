@@ -50,7 +50,7 @@ async function renderToken(
       break
 
     case 'space':
-      doc.moveDown(0.5)
+      doc.moveDown(0.2)
       break
 
     case 'hr':
@@ -72,7 +72,7 @@ async function renderToken(
           width: maxWidth,
           align: 'left',
         })
-        doc.moveDown(0.5)
+        doc.moveDown(0.3)
       }
       break
   }
@@ -89,7 +89,7 @@ function renderHeading(
   const sizes = [22, 18, 16, 14, 12, 11] // h1-h6
   const fontSize = sizes[token.depth - 1] || PDF_STYLES.sizes.body
 
-  doc.moveDown(0.5)
+  doc.moveDown(0.3)
   doc
     .fontSize(fontSize)
     .font(PDF_STYLES.fonts.bold)
@@ -99,7 +99,7 @@ function renderHeading(
       align: 'left',
     })
   doc.fillColor(PDF_STYLES.colors.text).font(PDF_STYLES.fonts.regular)
-  doc.moveDown(0.3)
+  doc.moveDown(0.2)
 }
 
 /**
@@ -115,7 +115,7 @@ async function renderParagraph(
       width: maxWidth,
       align: 'left',
     })
-    doc.moveDown(0.5)
+    doc.moveDown(0.3)
     return
   }
 
@@ -125,7 +125,7 @@ async function renderParagraph(
 
   // Only move down if we actually rendered something
   if (doc.y > startY) {
-    doc.moveDown(0.5)
+    doc.moveDown(0.3)
   }
 }
 
@@ -137,94 +137,134 @@ async function renderInlineTokens(
   tokens: Token[],
   maxWidth: number
 ): Promise<void> {
-  let currentLine = ''
-  let currentFont = PDF_STYLES.fonts.regular
-  let currentX = doc.x
+  if (!tokens || tokens.length === 0) return
 
-  for (const token of tokens) {
+  // Build segments with their styles
+  const segments: Array<{ text: string; style: 'regular' | 'bold' | 'italic' | 'link' | 'code'; link?: string }> = []
+  let currentText = ''
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i]
+    const isLast = i === tokens.length - 1
+
     switch (token.type) {
       case 'strong':
-        // Render accumulated text first
-        if (currentLine) {
-          doc.font(currentFont).text(currentLine, currentX, doc.y, { continued: true })
-          currentLine = ''
+        if (currentText) {
+          segments.push({ text: currentText, style: 'regular' })
+          currentText = ''
         }
-        // Render bold text
-        doc.font(PDF_STYLES.fonts.bold).text((token as Tokens.Strong).text, { continued: true })
-        currentFont = PDF_STYLES.fonts.regular
+        segments.push({ text: (token as Tokens.Strong).text, style: 'bold' })
         break
 
       case 'em':
-        // Render accumulated text first
-        if (currentLine) {
-          doc.font(currentFont).text(currentLine, currentX, doc.y, { continued: true })
-          currentLine = ''
+        if (currentText) {
+          segments.push({ text: currentText, style: 'regular' })
+          currentText = ''
         }
-        // Render italic text
-        doc.font(PDF_STYLES.fonts.italic).text((token as Tokens.Em).text, { continued: true })
-        currentFont = PDF_STYLES.fonts.regular
+        segments.push({ text: (token as Tokens.Em).text, style: 'italic' })
         break
 
       case 'link':
-        // Render accumulated text first
-        if (currentLine) {
-          doc.font(currentFont).text(currentLine, currentX, doc.y, { continued: true })
-          currentLine = ''
+        if (currentText) {
+          segments.push({ text: currentText, style: 'regular' })
+          currentText = ''
         }
-        // Render link in blue
         const linkToken = token as Tokens.Link
-        doc
-          .fillColor(PDF_STYLES.colors.primary)
-          .font(PDF_STYLES.fonts.regular)
-          .text(linkToken.text, { continued: true, link: linkToken.href })
-        doc.fillColor(PDF_STYLES.colors.text)
+        segments.push({ text: linkToken.text, style: 'link', link: linkToken.href })
         break
 
       case 'image':
-        // Finish current line first
-        if (currentLine) {
-          doc.font(currentFont).text(currentLine, { continued: false })
-          currentLine = ''
+        // Finish current segments first
+        if (currentText) {
+          segments.push({ text: currentText, style: 'regular' })
+          currentText = ''
         }
+        // Render all accumulated segments
+        renderSegments(doc, segments)
+        segments.length = 0
+
         // Render image
         const imgToken = token as Tokens.Image
         await renderImage(doc, imgToken.href, imgToken.text)
-        currentX = doc.x
         break
 
       case 'text':
-        currentLine += (token as Tokens.Text).text
+        currentText += (token as Tokens.Text).text
         break
 
       case 'codespan':
-        // Render accumulated text first
-        if (currentLine) {
-          doc.font(currentFont).text(currentLine, currentX, doc.y, { continued: true })
-          currentLine = ''
+        if (currentText) {
+          segments.push({ text: currentText, style: 'regular' })
+          currentText = ''
         }
-        // Render code span with gray background
-        doc
-          .fontSize(PDF_STYLES.sizes.body - 1)
-          .fillColor('#666666')
-          .text((token as Tokens.Codespan).text, { continued: true })
-        doc.fontSize(PDF_STYLES.sizes.body).fillColor(PDF_STYLES.colors.text)
+        segments.push({ text: (token as Tokens.Codespan).text, style: 'code' })
         break
 
       default:
         if ('text' in token) {
-          currentLine += token.text
+          currentText += token.text
         }
         break
     }
   }
 
-  // Render any remaining text
-  if (currentLine) {
-    doc.font(currentFont).text(currentLine, { continued: false })
-  } else {
-    // If we ended with a continued text, break the line
-    doc.text('')
+  // Add remaining text
+  if (currentText) {
+    segments.push({ text: currentText, style: 'regular' })
   }
+
+  // Render all segments
+  renderSegments(doc, segments)
+}
+
+/**
+ * Render text segments with different styles on the same line
+ */
+function renderSegments(
+  doc: PDFKit.PDFDocument,
+  segments: Array<{ text: string; style: 'regular' | 'bold' | 'italic' | 'link' | 'code'; link?: string }>
+): void {
+  if (segments.length === 0) return
+
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i]
+    const isLast = i === segments.length - 1
+
+    // Set font based on style
+    switch (segment.style) {
+      case 'bold':
+        doc.font(PDF_STYLES.fonts.bold)
+        break
+      case 'italic':
+        doc.font(PDF_STYLES.fonts.italic)
+        break
+      case 'regular':
+        doc.font(PDF_STYLES.fonts.regular)
+        break
+      case 'link':
+        doc.font(PDF_STYLES.fonts.regular).fillColor(PDF_STYLES.colors.primary)
+        break
+      case 'code':
+        doc.font(PDF_STYLES.fonts.regular).fontSize(PDF_STYLES.sizes.body - 1).fillColor('#666666')
+        break
+    }
+
+    // Render text
+    if (segment.style === 'link' && segment.link) {
+      doc.text(segment.text, { continued: !isLast, link: segment.link })
+      doc.fillColor(PDF_STYLES.colors.text)
+    } else {
+      doc.text(segment.text, { continued: !isLast })
+    }
+
+    // Reset styles after code
+    if (segment.style === 'code') {
+      doc.fontSize(PDF_STYLES.sizes.body).fillColor(PDF_STYLES.colors.text)
+    }
+  }
+
+  // Reset to regular font
+  doc.font(PDF_STYLES.fonts.regular)
 }
 
 /**
@@ -240,7 +280,7 @@ async function renderImage(doc: PDFKit.PDFDocument, url: string, alt: string): P
       .fillColor(PDF_STYLES.colors.lightGray)
       .text(`[Image: ${alt || url}]`)
       .fillColor(PDF_STYLES.colors.text)
-    doc.moveDown(0.5)
+    doc.moveDown(0.3)
     return
   }
 
@@ -257,7 +297,7 @@ async function renderImage(doc: PDFKit.PDFDocument, url: string, alt: string): P
       align: 'center',
     })
 
-    doc.moveDown(0.3)
+    doc.moveDown(0.2)
 
     if (alt) {
       doc
@@ -267,7 +307,7 @@ async function renderImage(doc: PDFKit.PDFDocument, url: string, alt: string): P
         .fillColor(PDF_STYLES.colors.text)
     }
 
-    doc.moveDown(0.5)
+    doc.moveDown(0.3)
   } catch (error) {
     console.error('Error adding image to PDF:', error)
     doc
@@ -275,7 +315,7 @@ async function renderImage(doc: PDFKit.PDFDocument, url: string, alt: string): P
       .fillColor(PDF_STYLES.colors.lightGray)
       .text(`[Image could not be loaded: ${alt || url}]`)
       .fillColor(PDF_STYLES.colors.text)
-    doc.moveDown(0.5)
+    doc.moveDown(0.3)
   }
 }
 
@@ -422,21 +462,21 @@ async function renderTable(
 
   // Move cursor below table
   doc.y = currentY
-  doc.moveDown(1)
+  doc.moveDown(0.5)
 }
 
 /**
  * Render horizontal rule
  */
 function renderHorizontalRule(doc: PDFKit.PDFDocument, maxWidth: number): void {
-  doc.moveDown(0.5)
+  doc.moveDown(0.3)
   doc
     .strokeColor(PDF_STYLES.colors.border)
     .lineWidth(1)
     .moveTo(PDF_STYLES.spacing.margin, doc.y)
     .lineTo(PDF_STYLES.spacing.margin + maxWidth, doc.y)
     .stroke()
-  doc.moveDown(0.5)
+  doc.moveDown(0.3)
 }
 
 /**
@@ -472,7 +512,7 @@ async function renderBlockquote(
   doc.x = savedX
   doc.fillColor(PDF_STYLES.colors.text)
 
-  doc.moveDown(0.5)
+  doc.moveDown(0.3)
 }
 
 /**
@@ -511,5 +551,5 @@ function renderCodeBlock(
     })
 
   doc.font(PDF_STYLES.fonts.regular).fillColor(PDF_STYLES.colors.text)
-  doc.moveDown(1)
+  doc.moveDown(0.5)
 }
