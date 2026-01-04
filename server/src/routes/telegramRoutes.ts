@@ -11,10 +11,8 @@ import { telegramWebhookCallback } from '../services/telegram'
 
 const router = express.Router()
 
-// Webhook endpoint (public, called by Telegram servers)
-router.post('/webhook', telegramWebhookCallback)
-
-// All other routes require authentication
+// Webhook endpoint is now registered directly in index.ts (public, no auth)
+// All routes here require authentication
 router.use(authenticateToken)
 
 // Linking/unlinking

@@ -137,7 +137,10 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running', timestamp: new Date().toISOString() })
 })
 
-// Telegram webhook must be registered BEFORE any auth middleware
+// Telegram webhook endpoint - MUST be public (no auth)
+app.post('/api/telegram/webhook', telegramWebhookCallback)
+
+// Telegram other routes (with auth)
 app.use('/api/telegram', telegramRoutes)
 
 // Static files (uploads) - using absolute path with CORS
