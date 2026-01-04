@@ -11,6 +11,12 @@ if (BOT_TOKEN) {
   // Middleware for logging
   bot.use(async (ctx, next) => {
     const start = Date.now()
+
+    // Debug: log all incoming messages to see what's received
+    if (ctx.message && 'text' in ctx.message) {
+      console.log(`[Telegram Bot] Message from ${ctx.chat?.type} chat (ID: ${ctx.chat?.id}):`, ctx.message.text.substring(0, 50))
+    }
+
     await next()
     const ms = Date.now() - start
     console.log(`[Telegram Bot] ${ctx.updateType} processed in ${ms}ms`)
