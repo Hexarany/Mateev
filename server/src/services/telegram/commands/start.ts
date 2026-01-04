@@ -28,6 +28,7 @@ const getWebAppButton = (lang: 'ru' | 'ro', chatType?: string) => {
 
 export async function startCommand(ctx: Context) {
   try {
+    console.log('[Telegram Bot] /start command received in chat:', ctx.chat?.type, 'from user:', ctx.from?.id)
     const telegramId = ctx.from?.id.toString()
     const args =
       ctx.message && 'text' in ctx.message ? ctx.message.text.split(' ').slice(1) : []

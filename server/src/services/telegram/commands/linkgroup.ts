@@ -6,11 +6,13 @@ import { escapeMarkdown, t } from '../i18n'
 import { getLocalizedText, getTelegramLang } from '../utils'
 
 export async function linkgroupCommand(ctx: Context) {
+  console.log('[Telegram Bot] /linkgroup command received in chat:', ctx.chat?.type, 'chatId:', ctx.chat?.id, 'from user:', ctx.from?.id)
   const telegramId = ctx.from?.id.toString()
   const lang = getTelegramLang(ctx)
   const chatId = ctx.chat?.id
 
   if (ctx.chat?.type === 'private') {
+    console.log('[Telegram Bot] /linkgroup rejected: private chat')
     return ctx.reply(t(lang, 'linkgroup.privateOnly'))
   }
 
