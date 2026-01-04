@@ -137,6 +137,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running', timestamp: new Date().toISOString() })
 })
 
+// Telegram webhook must be registered BEFORE any auth middleware
+app.use('/api/telegram', telegramRoutes)
+
 // Static files (uploads) - using absolute path with CORS
 const uploadsPath = path.join(__dirname, '..', 'uploads')
 console.log('📁 Uploads directory:', uploadsPath)
@@ -200,7 +203,7 @@ app.use('/api/groups', groupRoutes)
 app.use('/api/group-files', groupFileRoutes)
 app.use('/api/schedule', scheduleRoutes)
 app.use('/api/assignments', assignmentRoutes)
-app.use('/api/telegram', telegramRoutes)
+// Telegram routes moved to top (before auth middleware)
 app.use('/api/ai', aiRoutes)
 app.use('/api/audit-logs', auditLogRoutes)
 app.use('/api/push-notifications', pushNotificationRoutes)
