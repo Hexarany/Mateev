@@ -34,21 +34,7 @@ export const telegramWebhookCallback = bot ? bot.webhookCallback(telegramWebhook
 
 // Only register handlers if bot is initialized
 if (bot) {
-  // Middleware to filter out group messages (bot should only respond to commands in groups)
-  const privateMessageFilter = async (ctx: Context, next: () => Promise<void>) => {
-    // Allow only private chats for message processing
-    // In groups, bot will only respond to commands (handled separately)
-    if (ctx.chat?.type === 'private') {
-      return next()
-    }
-    // In groups/supergroups/channels - skip message processing
-    // Bot will only respond to commands and programmatic messages from admin panel
-  }
-
-  // Handle pending homework submissions and caption-based commands (ONLY in private chats)
-  bot.on('message', privateMessageFilter, pendingSubmissionMiddleware)
-
-  // Register commands
+  // Register commands FIRST (before any message handlers)
   bot.command('start', startCommand)
   bot.command('menu', showMainMenu)
   bot.command('quiz', quizCommand)
@@ -111,6 +97,18 @@ bot.on('callback_query', async (ctx) => {
     const lang = getTelegramLang(ctx)
     return ctx.answerCbQuery(t(lang, 'common.unknownCommand'))
   })
+
+  // Homework submission middleware (ONLY in private chats, registered AFTER commands)
+  const privateMessageFilter = async (ctx: Context, next: () => Promise<void>) => {
+    // Skip homework processing for group chats
+    if (ctx.chat?.type !== 'private') {
+      return // Don't process homework in groups
+    }
+    // Process homework submissions only in private chats
+    return next()
+  }
+
+  bot.on('message', privateMessageFilter, pendingSubmissionMiddleware)
 
   // Error handling
   bot.catch((err, ctx) => {
