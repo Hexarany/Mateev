@@ -13,6 +13,7 @@ export interface ISchedule extends Document {
   title: IMultiLangText
   description?: IMultiLangText
   topic?: mongoose.Types.ObjectId // ссылка на Topic
+  customTopic?: string // пользовательская тема (не привязана к анатомии)
   location?: string // например, "Аудитория 305" или "Online"
   status: 'scheduled' | 'completed' | 'cancelled'
   homework?: IMultiLangText
@@ -59,6 +60,9 @@ const scheduleSchema = new Schema<ISchedule>(
     topic: {
       type: Schema.Types.ObjectId,
       ref: 'Topic',
+    },
+    customTopic: {
+      type: String,
     },
     location: {
       type: String,

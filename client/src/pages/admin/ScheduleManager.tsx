@@ -41,6 +41,7 @@ import {
   Checkbox,
   FormControlLabel,
   SelectChangeEvent,
+  Autocomplete,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
@@ -151,6 +152,8 @@ const ScheduleManager = () => {
     if (lesson) {
       setEditingLesson(lesson)
       const lessonDate = new Date(lesson.date)
+      // Use customTopic if available, otherwise use topic name from anatomy
+      const topicValue = lesson.customTopic || lesson.topic?.name?.ru || ''
       setLessonForm({
         lessonNumber: lesson.lessonNumber,
         date: lessonDate.toISOString().split('T')[0],
@@ -160,7 +163,7 @@ const ScheduleManager = () => {
         titleRo: lesson.title.ro,
         descriptionRu: lesson.description?.ru || '',
         descriptionRo: lesson.description?.ro || '',
-        topic: lesson.topic?._id || '',
+        topic: topicValue,
         location: lesson.location,
         homeworkRu: lesson.homework?.ru || '',
         homeworkRo: lesson.homework?.ro || '',
@@ -198,6 +201,9 @@ const ScheduleManager = () => {
       const lessonDate = new Date(lessonForm.date)
       lessonDate.setHours(hours, minutes, 0, 0)
 
+      // Determine if topic is from anatomy list or custom
+      const matchingTopic = topics.find((t) => t.name.ru === lessonForm.topic)
+
       const lessonData = {
         group: selectedGroup,
         lessonNumber: lessonForm.lessonNumber,
@@ -211,7 +217,8 @@ const ScheduleManager = () => {
           ru: lessonForm.descriptionRu,
           ro: lessonForm.descriptionRo,
         } : undefined,
-        topic: lessonForm.topic || undefined,
+        topic: matchingTopic ? matchingTopic._id : undefined,
+        customTopic: matchingTopic ? undefined : (lessonForm.topic || undefined),
         location: lessonForm.location,
         homework: lessonForm.homeworkRu || lessonForm.homeworkRo ? {
           ru: lessonForm.homeworkRu,
@@ -425,7 +432,7 @@ const ScheduleManager = () => {
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
-                        {lesson.topic?.name?.ru || '-'}
+                        {lesson.customTopic || lesson.topic?.name?.ru || '-'}
                       </TableCell>
                       <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                         <Chip
@@ -564,38 +571,47 @@ const ScheduleManager = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Тема (опционально)</InputLabel>
-                <Select
-                  value={lessonForm.topic}
-                  onChange={(e: SelectChangeEvent) => {
-                    const topicId = e.target.value
-                    const selectedTopic = topics.find((t) => t._id === topicId)
-
-                    // Auto-fill titles from topic only if title fields are empty
-                    if (selectedTopic && !lessonForm.titleRu && !lessonForm.titleRo) {
+              <Autocomplete
+                freeSolo
+                options={topics}
+                getOptionLabel={(option) => {
+                  if (typeof option === 'string') return option
+                  return option.name?.ru || ''
+                }}
+                value={lessonForm.topic}
+                onChange={(event, newValue) => {
+                  if (typeof newValue === 'string') {
+                    // Custom text entered
+                    setLessonForm({ ...lessonForm, topic: newValue })
+                  } else if (newValue && newValue._id) {
+                    // Topic selected from list - auto-fill only if titles are empty
+                    if (!lessonForm.titleRu && !lessonForm.titleRo) {
                       setLessonForm({
                         ...lessonForm,
-                        topic: topicId,
-                        titleRu: selectedTopic.name.ru,
-                        titleRo: selectedTopic.name.ro,
+                        topic: newValue.name.ru,
+                        titleRu: newValue.name.ru,
+                        titleRo: newValue.name.ro,
                       })
                     } else {
-                      setLessonForm({ ...lessonForm, topic: topicId })
+                      setLessonForm({ ...lessonForm, topic: newValue.name.ru })
                     }
-                  }}
-                  label="Тема (опционально)"
-                >
-                  <MenuItem value="">
-                    <em>Нет (ручное название)</em>
-                  </MenuItem>
-                  {topics.map((topic) => (
-                    <MenuItem key={topic._id} value={topic._id}>
-                      {topic.name.ru}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  } else {
+                    setLessonForm({ ...lessonForm, topic: '' })
+                  }
+                }}
+                onInputChange={(event, newInputValue) => {
+                  // Update topic as user types
+                  setLessonForm({ ...lessonForm, topic: newInputValue })
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Тема (опционально)"
+                    placeholder="Введите тему или выберите из списка"
+                    size="small"
+                  />
+                )}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
