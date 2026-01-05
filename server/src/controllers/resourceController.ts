@@ -1,10 +1,86 @@
 import { Request, Response } from 'express'
 import Resource from '../models/Resource'
+import User from '../models/User'
 import { createAuditLog } from '../services/auditLogService'
 
 interface CustomRequest extends Request {
   userId?: string
+  userRole?: string
   user?: any
+}
+
+// Helper: Check if user has access to resource based on tier
+const hasAccessToResource = async (
+  resource: any,
+  userId: string | undefined,
+  userRole: string | undefined
+): Promise<{ hasAccess: boolean; userAccessLevel: string; requiredTier: string }> => {
+  // Admins and teachers have full access
+  if (userRole === 'admin' || userRole === 'teacher') {
+    return { hasAccess: true, userAccessLevel: 'premium', requiredTier: resource.accessLevel }
+  }
+
+  // Get user access level
+  let userAccessLevel: 'free' | 'basic' | 'premium' = 'free'
+  if (userId) {
+    const user = await User.findById(userId)
+    userAccessLevel = user?.accessLevel || 'free'
+  }
+
+  const requiredTier = resource.accessLevel || 'free'
+
+  // Check tier hierarchy
+  const tierHierarchy: { [key: string]: number } = { free: 0, basic: 1, premium: 2 }
+  const userLevel = tierHierarchy[userAccessLevel]
+  const requiredLevel = tierHierarchy[requiredTier]
+
+  const hasAccess = userLevel >= requiredLevel
+
+  return { hasAccess, userAccessLevel, requiredTier }
+}
+
+// Helper: Apply content lock
+const createSafeResource = (
+  resource: any,
+  hasAccess: boolean,
+  userAccessLevel: string,
+  requiredTier: string
+) => {
+  if (hasAccess) {
+    return {
+      ...resource,
+      hasFullContentAccess: true,
+      accessInfo: {
+        hasFullAccess: true,
+        userAccessLevel,
+        requiredTier,
+      },
+    }
+  }
+
+  // Limited access - hide file URLs and truncate description
+  const previewDescriptionRu = resource.description?.ru
+    ? resource.description.ru.substring(0, 400) + '...'
+    : ''
+  const previewDescriptionRo = resource.description?.ro
+    ? resource.description.ro.substring(0, 400) + '...'
+    : ''
+
+  return {
+    ...resource,
+    fileUrl: null, // Hide file URL for users without access
+    externalUrl: null, // Hide external URL
+    description: {
+      ru: previewDescriptionRu,
+      ro: previewDescriptionRo,
+    },
+    hasFullContentAccess: false,
+    accessInfo: {
+      hasFullAccess: false,
+      userAccessLevel,
+      requiredTier,
+    },
+  }
 }
 
 // Получить все ресурсы (с фильтрами)
@@ -32,7 +108,33 @@ export const getResources = async (req: Request, res: Response) => {
       .sort({ order: 1, createdAt: -1 })
       .lean()
 
-    res.json(resources)
+    // Apply tier-based access control to each resource
+    const customReq = req as CustomRequest
+
+    // Get user access level once
+    let userAccessLevel: 'free' | 'basic' | 'premium' = 'free'
+    const userRole = customReq.userRole
+
+    if (userRole === 'admin' || userRole === 'teacher') {
+      userAccessLevel = 'premium'
+    } else if (customReq.userId) {
+      const user = await User.findById(customReq.userId)
+      userAccessLevel = user?.accessLevel || 'free'
+    }
+
+    const tierHierarchy: { [key: string]: number } = { free: 0, basic: 1, premium: 2 }
+    const userLevel = tierHierarchy[userAccessLevel]
+
+    // Apply access control to each resource
+    const safeResources = resources.map((resource) => {
+      const requiredTier = resource.accessLevel || 'free'
+      const requiredLevel = tierHierarchy[requiredTier]
+      const hasAccess = userLevel >= requiredLevel
+
+      return createSafeResource(resource, hasAccess, userAccessLevel, requiredTier)
+    })
+
+    res.json(safeResources)
   } catch (error) {
     console.error('Get resources error:', error)
     res.status(500).json({ message: 'Failed to get resources' })
@@ -52,7 +154,18 @@ export const getResourceById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Resource not found' })
     }
 
-    res.json(resource)
+    // Apply tier-based access control
+    const customReq = req as CustomRequest
+    const accessInfo = await hasAccessToResource(resource, customReq.userId, customReq.userRole)
+
+    const safeResource = createSafeResource(
+      resource,
+      accessInfo.hasAccess,
+      accessInfo.userAccessLevel,
+      accessInfo.requiredTier
+    )
+
+    res.json(safeResource)
   } catch (error) {
     console.error('Get resource error:', error)
     res.status(500).json({ message: 'Failed to get resource' })

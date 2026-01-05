@@ -79,15 +79,15 @@ const PricingPage = () => {
       billing: { ru: '', ro: '' },
       features: {
         ru: [
-          '3 бесплатных урока по основам',
-          'Просмотр структуры всего курса',
-          'Доступ к базовым материалам',
+          'Просмотр структуры курса',
+          'Preview всех протоколов массажа',
+          'Базовые материалы библиотеки',
           'Участие в Telegram-сообществе',
         ],
         ro: [
-          '3 lecții gratuite de bază',
-          'Vizualizare structură completă',
-          'Acces la materiale de bază',
+          'Vizualizare structură curs',
+          'Preview toate protocoalele de masaj',
+          'Materiale de bază din bibliotecă',
           'Participare în comunitatea Telegram',
         ],
       },
@@ -100,17 +100,17 @@ const PricingPage = () => {
       billing: { ru: 'месяц', ro: 'lună' },
       features: {
         ru: [
-          '4 протокола массажа с видео',
-          '8 уроков по анатомии для массажистов',
+          '4 базовых протокола массажа с видео',
+          'Библиотека учебных материалов Basic',
           'Правила гигиены и санитарии',
-          'Практические тесты после каждого урока',
+          'Практические тесты',
           'Поддержка преподавателя в Telegram',
         ],
         ro: [
-          '4 protocoale de masaj cu video',
-          '8 lecții de anatomie pentru masori',
+          '4 protocoale de bază de masaj cu video',
+          'Bibliotecă de materiale educative Basic',
           'Reguli de igienă și sanitație',
-          'Teste practice după fiecare lecție',
+          'Teste practice',
           'Suport de la instructor în Telegram',
         ],
       },
@@ -124,8 +124,8 @@ const PricingPage = () => {
       features: {
         ru: [
           'Всё из месячного тарифа',
-          '4 протокола массажа с видео',
-          '8 уроков по анатомии',
+          '4 базовых протокола массажа',
+          'Библиотека учебных материалов',
           'Правила гигиены и санитарии',
           'Практические тесты',
           'Поддержка преподавателя в Telegram',
@@ -133,8 +133,8 @@ const PricingPage = () => {
         ],
         ro: [
           'Tot din tariful lunar',
-          '4 protocoale de masaj cu video',
-          '8 lecții de anatomie',
+          '4 protocoale de bază de masaj',
+          'Bibliotecă de materiale educative',
           'Reguli de igienă și sanitație',
           'Teste practice',
           'Suport de la instructor în Telegram',
@@ -503,6 +503,33 @@ const PricingPage = () => {
         </Alert>
       )}
 
+      {/* Early Access Pricing Alert */}
+      <Box sx={{ maxWidth: 700, mx: 'auto', mb: 4 }}>
+        <Alert
+          severity="warning"
+          icon={<StarIcon />}
+          sx={{
+            background: 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)',
+            border: '2px solid #ff9800',
+            '& .MuiAlert-icon': {
+              color: '#f57c00',
+            },
+          }}
+        >
+          <Box>
+            <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: '#e65100' }}>
+              🎓 Специальная цена Early Access
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.primary' }}>
+              Вы попали в число первых студентов платформы! Текущие цены действуют только для первых 500 человек.
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, fontWeight: 600, color: '#e65100' }}>
+              После: Premium $49.99/месяц • $399/год
+            </Typography>
+          </Box>
+        </Alert>
+      </Box>
+
       {/* Trial Activation Button */}
       {isAuthenticated && user?.accessLevel === 'free' && !user?.trialEndsAt && (
         <Box sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>
@@ -683,14 +710,39 @@ const PricingPage = () => {
                   />
                 )}
                 {isBestValue && (
+                  <Box sx={{ position: 'absolute', top: 16, right: 16, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Chip
+                      label="Рекомендуем"
+                      color="primary"
+                      size="small"
+                      sx={{ fontWeight: 600 }}
+                    />
+                    {isPremium && (
+                      <Chip
+                        label="Early Access"
+                        size="small"
+                        sx={{
+                          bgcolor: '#ff9800',
+                          color: 'white',
+                          fontWeight: 600,
+                          '& .MuiChip-label': {
+                            px: 1.5,
+                          },
+                        }}
+                      />
+                    )}
+                  </Box>
+                )}
+                {!isBestValue && isPremium && (
                   <Chip
-                    label="Рекомендуем"
-                    color="primary"
+                    label="Early Access"
                     size="small"
                     sx={{
                       position: 'absolute',
                       top: 16,
                       right: 16,
+                      bgcolor: '#ff9800',
+                      color: 'white',
                       fontWeight: 600,
                     }}
                   />
