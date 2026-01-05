@@ -572,8 +572,8 @@ const ScheduleManager = () => {
                     const topicId = e.target.value
                     const selectedTopic = topics.find((t) => t._id === topicId)
 
-                    // Auto-fill titles from topic if selected
-                    if (selectedTopic) {
+                    // Auto-fill titles from topic only if title fields are empty
+                    if (selectedTopic && !lessonForm.titleRu && !lessonForm.titleRo) {
                       setLessonForm({
                         ...lessonForm,
                         topic: topicId,
