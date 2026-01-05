@@ -73,121 +73,131 @@ const PricingPage = () => {
   const plans: TierPlan[] = [
     {
       id: 'free',
-      name: { ru: 'Free', ro: 'Gratuit' },
+      name: { ru: 'Бесплатный доступ', ro: 'Acces gratuit' },
       price: 0,
       currency: 'USD',
       billing: { ru: '', ro: '' },
       features: {
         ru: [
-          'Ознакомление со структурой курса',
-          'Без доступа к урокам и материалам',
-          'Без практики и тестов',
+          '3 бесплатных урока по основам',
+          'Просмотр структуры всего курса',
+          'Доступ к базовым материалам',
+          'Участие в Telegram-сообществе',
         ],
         ro: [
-          'Vizualizare structură curs',
-          'Fără acces la lecții și materiale',
-          'Fără practică și teste',
+          '3 lecții gratuite de bază',
+          'Vizualizare structură completă',
+          'Acces la materiale de bază',
+          'Participare în comunitatea Telegram',
         ],
       },
     },
     {
       id: 'basic-monthly',
-      name: { ru: 'Basic', ro: 'De bază' },
+      name: { ru: 'Базовый курс', ro: 'Curs de bază' },
       price: 9.99,
       currency: 'USD',
       billing: { ru: 'месяц', ro: 'lună' },
       features: {
         ru: [
-          '4 протокола массажа: классический, баночный, антицеллюлитный, медовый',
-          'Ключевые анатомические разделы',
-          'Гигиена',
-          'Сопровождение в Telegram',
+          '4 протокола массажа с видео',
+          '8 уроков по анатомии для массажистов',
+          'Правила гигиены и санитарии',
+          'Практические тесты после каждого урока',
+          'Поддержка преподавателя в Telegram',
         ],
         ro: [
-          '4 protocoale de masaj: clasic, cu ventuze, anticelulitic și cu miere',
-          'Secțiuni anatomice esențiale',
-          'Igienă',
-          'Suport în Telegram',
+          '4 protocoale de masaj cu video',
+          '8 lecții de anatomie pentru masori',
+          'Reguli de igienă și sanitație',
+          'Teste practice după fiecare lecție',
+          'Suport de la instructor în Telegram',
         ],
       },
     },
     {
       id: 'basic-quarterly',
-      name: { ru: 'Basic', ro: 'De bază' },
+      name: { ru: 'Базовый курс', ro: 'Curs de bază' },
       price: 24.99,
       currency: 'USD',
       billing: { ru: '3 месяца', ro: '3 luni' },
       features: {
         ru: [
-          'Всё из месячного Basic +',
-          'Экономия $5 (17%)',
-          '4 протокола массажа',
-          'Анатомические разделы',
-          'Гигиена',
-          'Сопровождение в Telegram',
+          'Всё из месячного тарифа',
+          '4 протокола массажа с видео',
+          '8 уроков по анатомии',
+          'Правила гигиены и санитарии',
+          'Практические тесты',
+          'Поддержка преподавателя в Telegram',
+          'Цена: $8.33/месяц вместо $9.99',
         ],
         ro: [
-          'Tot din Basic lunar +',
-          'Economie $5 (17%)',
-          '4 protocoale de masaj',
-          'Secțiuni anatomice',
-          'Igienă',
-          'Suport în Telegram',
+          'Tot din tariful lunar',
+          '4 protocoale de masaj cu video',
+          '8 lecții de anatomie',
+          'Reguli de igienă și sanitație',
+          'Teste practice',
+          'Suport de la instructor în Telegram',
+          'Preț: $8.33/lună în loc de $9.99',
         ],
       },
     },
     {
       id: 'premium-monthly',
-      name: { ru: 'Premium', ro: 'Premium' },
+      name: { ru: 'Полный курс', ro: 'Curs complet' },
       price: 29.99,
       currency: 'USD',
       billing: { ru: 'месяц', ro: 'lună' },
       features: {
         ru: [
-          'Все протоколы массажа',
-          'Триггерные точки',
-          'Тесты и викторины',
-          '3D модели анатомии',
-          'Полный доступ ко всему контенту',
-          'Приоритетная поддержка',
+          '15+ протоколов массажа с видеоинструкциями',
+          'Карты триггерных точек по группам мышц',
+          '50+ интерактивных 3D моделей анатомии',
+          'Комплексные тесты и викторины',
+          'Правила санитарии и противопоказания',
+          'Ответ на вопросы в течение 24 часов',
+          'Доступ к закрытому сообществу практиков',
         ],
         ro: [
-          'Toate protocoalele de masaj',
-          'Puncte trigger',
-          'Teste și chestionare',
-          'Modele 3D de anatomie',
-          'Acces complet la tot conținutul',
-          'Suport prioritar',
+          '15+ protocoale de masaj cu video-instrucțiuni',
+          'Hărți ale punctelor trigger pe grupe musculare',
+          '50+ modele 3D interactive de anatomie',
+          'Teste și chestionare complexe',
+          'Reguli de sanitație și contraindicații',
+          'Răspuns la întrebări în 24 ore',
+          'Acces la comunitatea închisă de practicieni',
         ],
       },
     },
     {
       id: 'premium-yearly',
-      name: { ru: 'Premium', ro: 'Premium' },
+      name: { ru: 'Полный курс', ro: 'Curs complet' },
       price: 99.99,
       upgradeFromBasic: 75,
       currency: 'USD',
       billing: { ru: 'год', ro: 'an' },
       features: {
         ru: [
-          'Всё из месячного Premium +',
-          'Экономия $260 (72%)',
-          'Все протоколы массажа',
-          'Триггерные точки',
-          'Тесты и викторины',
-          '3D модели анатомии',
-          'Сертификат об окончании',
-          'Приоритетная поддержка',
+          'Всё из месячного тарифа',
+          '15+ протоколов массажа с видео',
+          'Карты триггерных точек',
+          '50+ 3D моделей анатомии',
+          'Комплексные тесты',
+          'Правила санитарии и противопоказания',
+          'Сертификат с уникальным номером',
+          'Ответ в течение 24 часов',
+          'Годовая цена: $8.33/месяц вместо $29.99',
         ],
         ro: [
-          'Tot din Premium lunar +',
-          'Economie $260 (72%)',
-          'Toate protocoalele de masaj',
-          'Puncte trigger',
-          'Teste și chestionare',
-          'Modele 3D de anatomie',
-          'Certificat de absolvire',
-          'Suport prioritar',
+          'Tot din tariful lunar',
+          '15+ protocoale de masaj cu video',
+          'Hărți ale punctelor trigger',
+          '50+ modele 3D de anatomie',
+          'Teste complexe',
+          'Reguli de sanitație și contraindicații',
+          'Certificat cu număr unic',
+          'Răspuns în 24 ore',
+          'Preț anual: $8.33/lună în loc de $29.99',
         ],
       },
     },
@@ -458,10 +468,13 @@ const PricingPage = () => {
     <Container maxWidth="lg" sx={{ py: 6 }}>
       <Box sx={{ textAlign: 'center', mb: 6 }}>
         <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
-          Тарифные планы / Planuri tarifare
+          Профессиональное обучение массажу
         </Typography>
         <Typography variant="h6" color="textSecondary" sx={{ mb: 2 }}>
-          Выберите подходящий план для обучения массажу
+          Выберите формат обучения, который подходит вам
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Проверенные методики от практикующих специалистов
         </Typography>
         {user && (
           <Chip
@@ -493,46 +506,34 @@ const PricingPage = () => {
       {/* Trial Activation Button */}
       {isAuthenticated && user?.accessLevel === 'free' && !user?.trialEndsAt && (
         <Box sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>
-          <Paper
-            elevation={3}
+          <Alert
+            severity="info"
+            icon={<StarIcon />}
             sx={{
               p: 3,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
+              borderLeft: '4px solid',
+              borderColor: 'primary.main',
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-              <StarIcon sx={{ fontSize: 40 }} />
-              <Box>
-                <Typography variant="h5" fontWeight={700}>
-                  {t('pricing.trial.title')}
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  {t('pricing.trial.subtitle')}
-                </Typography>
-              </Box>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h6" fontWeight={600} gutterBottom>
+                3 дня бесплатного доступа ко всем материалам
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Попробуйте все возможности платформы без оплаты. Автопродление не подключается.
+              </Typography>
             </Box>
-            <Typography variant="body2" sx={{ mb: 2, opacity: 0.95 }}>
-              {t('pricing.trial.description')}
-            </Typography>
             <Button
               variant="contained"
               size="large"
               fullWidth
               onClick={handleActivateTrial}
               disabled={activatingTrial}
-              sx={{
-                bgcolor: 'white',
-                color: (theme) => theme.palette.primary.main,
-                fontWeight: 700,
-                '&:hover': {
-                  bgcolor: 'rgba(255,255,255,0.9)',
-                },
-              }}
+              sx={{ fontWeight: 600 }}
             >
-              {activatingTrial ? <CircularProgress size={24} /> : t('pricing.trial.button')}
+              {activatingTrial ? <CircularProgress size={24} /> : 'Активировать пробный период'}
             </Button>
-          </Paper>
+          </Alert>
         </Box>
       )}
 
@@ -682,19 +683,17 @@ const PricingPage = () => {
                   />
                 )}
                 {isBestValue && (
-                  <Box
+                  <Chip
+                    label="Рекомендуем"
+                    color="primary"
+                    size="small"
                     sx={{
-                      bgcolor: (theme) => theme.palette.primary.main,
-                      color: 'white',
-                      py: 1,
-                      textAlign: 'center',
+                      position: 'absolute',
+                      top: 16,
+                      right: 16,
+                      fontWeight: 600,
                     }}
-                  >
-                    <Typography variant="subtitle2" fontWeight={700}>
-                      <StarIcon sx={{ fontSize: 16, verticalAlign: 'middle', mr: 0.5 }} />
-                      BEST VALUE
-                    </Typography>
-                  </Box>
+                  />
                 )}
 
                 <CardContent sx={{ flexGrow: 1, pt: isPremium ? 2 : 3 }}>
@@ -782,6 +781,60 @@ const PricingPage = () => {
           )
         })}
       </Grid>
+
+      {/* Social Proof Section */}
+      <Box sx={{ mt: 8, mb: 6, py: 6, bgcolor: 'grey.50', borderRadius: 2 }}>
+        <Container maxWidth="md">
+          <Typography variant="h4" textAlign="center" gutterBottom fontWeight={600}>
+            Присоединяйтесь к сообществу практиков
+          </Typography>
+          <Typography variant="body1" textAlign="center" color="text.secondary" sx={{ mb: 4 }}>
+            Более 500 студентов уже обучаются на нашей платформе
+          </Typography>
+
+          <Grid container spacing={4} sx={{ mt: 2 }}>
+            <Grid item xs={12} md={4}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h3" color="primary.main" fontWeight={700}>
+                  15+
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Протоколов массажа
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  С подробными видеоинструкциями
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h3" color="primary.main" fontWeight={700}>
+                  50+
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  3D моделей анатомии
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Интерактивные модели для изучения
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h3" color="primary.main" fontWeight={700}>
+                  500+
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Студентов обучаются
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  В активном сообществе практиков
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
 
       <Box sx={{ mt: 6, textAlign: 'center' }}>
         <Typography variant="body2" color="textSecondary">
