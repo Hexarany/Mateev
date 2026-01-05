@@ -568,13 +568,26 @@ const ScheduleManager = () => {
                 <InputLabel>Тема (опционально)</InputLabel>
                 <Select
                   value={lessonForm.topic}
-                  onChange={(e: SelectChangeEvent) =>
-                    setLessonForm({ ...lessonForm, topic: e.target.value })
-                  }
+                  onChange={(e: SelectChangeEvent) => {
+                    const topicId = e.target.value
+                    const selectedTopic = topics.find((t) => t._id === topicId)
+
+                    // Auto-fill titles from topic if selected
+                    if (selectedTopic) {
+                      setLessonForm({
+                        ...lessonForm,
+                        topic: topicId,
+                        titleRu: selectedTopic.name.ru,
+                        titleRo: selectedTopic.name.ro,
+                      })
+                    } else {
+                      setLessonForm({ ...lessonForm, topic: topicId })
+                    }
+                  }}
                   label="Тема (опционально)"
                 >
                   <MenuItem value="">
-                    <em>Нет</em>
+                    <em>Нет (ручное название)</em>
                   </MenuItem>
                   {topics.map((topic) => (
                     <MenuItem key={topic._id} value={topic._id}>
