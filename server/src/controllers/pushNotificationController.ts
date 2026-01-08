@@ -15,7 +15,7 @@ const vapidKeys = {
 // Configure web-push
 if (vapidKeys.publicKey && vapidKeys.privateKey) {
   webpush.setVapidDetails(
-    'mailto:support@anatomia.md',
+    'mailto:support@mateevmassage.com',
     vapidKeys.publicKey,
     vapidKeys.privateKey
   )

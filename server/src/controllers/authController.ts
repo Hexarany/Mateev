@@ -447,7 +447,7 @@ export const telegramAuth = async (req: Request, res: Response) => {
         telegramUsername: telegramUser.username,
         firstName: telegramUser.first_name,
         lastName: telegramUser.last_name,
-        email: `telegram_${telegramUser.id}@anatomia.md`, // Temporary email
+        email: `telegram_${telegramUser.id}@mateevmassage.com`, // Temporary email
         password: crypto.randomBytes(32).toString('hex'), // Random password
         role: 'student',
         accessLevel: 'free',
