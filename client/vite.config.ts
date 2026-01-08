@@ -49,6 +49,9 @@ export default defineConfig({
         globIgnores: ['**/stats.html', '**/node_modules/**', '**/three-vendor-*.js'],
         // Don't precache large vendor files - load them on demand
         globPatterns: ['**/*.{html,css,woff2}', '**/react-vendor-*.js', '**/mui-vendor-*.js', '**/index-*.js'],
+        // Skip waiting and claim clients immediately on update
+        skipWaiting: true,
+        clientsClaim: true,
         // Cache strategies
         runtimeCaching: [
           {
@@ -78,13 +81,14 @@ export default defineConfig({
           },
           {
             urlPattern: /\.(?:js|css|woff2?)$/,
-            handler: 'StaleWhileRevalidate',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'static-resources',
               expiration: {
                 maxEntries: 100,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
               },
+              networkTimeoutSeconds: 3,
             },
           },
         ],
