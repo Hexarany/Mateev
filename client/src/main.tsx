@@ -12,6 +12,32 @@ import { TelegramProvider } from './contexts/TelegramContext'
 import './i18n'
 import './index.css'
 
+// One-time service worker cleanup (version-based)
+const SW_VERSION = '2026-01-08-v1'
+const lastSwVersion = localStorage.getItem('sw_version')
+
+if ('serviceWorker' in navigator && lastSwVersion !== SW_VERSION) {
+  console.log('[SW] Cleaning up old service worker and caches...')
+
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => {
+      registration.unregister()
+    })
+  })
+
+  if ('caches' in window) {
+    caches.keys().then((names) => {
+      names.forEach((name) => {
+        caches.delete(name)
+      })
+    }).then(() => {
+      localStorage.setItem('sw_version', SW_VERSION)
+      console.log('[SW] Cleanup complete, reloading...')
+      window.location.reload()
+    })
+  }
+}
+
 // Create QueryClient with default options
 const queryClient = new QueryClient({
   defaultOptions: {
